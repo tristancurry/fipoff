@@ -4,6 +4,27 @@
 
 const viewport = document.getElementsByClassName('viewport')[0];
 
+const subtypes = {
+	pe: 'Photoelectric Detector',
+	io: 'Ionisation Detector',
+	th: 'Thermal Detector',
+	mcp: 'Manual Call Point',
+	multi: 'Smoke/Heat Detector',
+	flame: 'Flame Detector',
+	vesda: 'VESDA', //Very Early Smoke Detection Apparatus - has own interface/panel
+	ps: 'Pressure Switch'
+}
+
+
+//General Utility Functions
+//modify a value if it exceeds limits
+function constrain(n, min, max){
+	if(n > max){n = max;} else if(n < min){n = min;}
+	return n;	
+}
+
+
+//System-specific stuff
 
 //build a system from the jsonny madness
 //create objects for each entry
@@ -13,8 +34,12 @@ const viewport = document.getElementsByClassName('viewport')[0];
 //also produce a separate list of zones (administrative, as opposed to circuitry)
 
 let sysObjects = [];
+let zones = {};
 
 buildSystem(system);
+buildZoneLists();
+console.log(sysObjects);
+console.log(zones);
 
 function buildSystem (sys) {
 //expect to encounter system name first
@@ -93,8 +118,25 @@ function createSystemObjects(node, parent){
 	viewport.appendChild(o.divrep);
 }
 
-//modify a value if it exceeds limits
-function constrain(n, min, max){
-	if(n > max){n = max;} else if(n < min){n = min;}
-	return n;	
+
+//Gather all things of the same ZONE NAME and plop in a list
+//for each object in the systemObjects
+// - does it have a zone name?
+// - if so, has this zone name been encountered yet?
+// 		- if not, create an entry in a 'zones' list, ie zones.thiszonename: [];
+// 		- then add itself to this list
+//		-if so, then add itself to the list with that property name
+function buildZoneLists(){
+	for(let i = 0, l = sysObjects.length; i < l; i++){
+		let o = sysObjects[i];
+		
+		if(o.zone){
+			if(zones[o.zone]){
+				zones[o.zone].push(o);
+			} else {
+				zones[o.zone] = [];
+				zones[o.zone].push(o);
+			}
+		}
+	}
 }

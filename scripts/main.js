@@ -16,6 +16,14 @@ const subtypes = {
 }
 
 
+
+let sysObjects = [];
+let fips = [];
+let circuits = [];
+let dets = [];
+let zones = {};
+
+
 //General Utility Functions
 //modify a value if it exceeds limits
 function constrain(n, min, max){
@@ -33,8 +41,7 @@ function constrain(n, min, max){
 //sort out parents and children of these objects
 //also produce a separate list of zones (administrative, as opposed to circuitry)
 
-let sysObjects = [];
-let zones = {};
+
 
 buildSystem(system);
 buildZoneLists();
@@ -139,4 +146,11 @@ function buildZoneLists(){
 			}
 		}
 	}
+}
+
+//templates for building the various DOM representations of the alarm system components
+InnerHtmlInstructions = {
+	fip: '<div class="panel"></div>',
+	blockplan: '<div class="blockplan"></div>',
+	det: '<div class="det"><div class ="det-header"></div><div class="det-body"><div class="det-image"></div><div class="det-info"></div></div><div class="det-options"></div></div>'
 }

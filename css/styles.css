@@ -10,6 +10,10 @@ html {
 	font-family: Arial;
 }
 
+body {
+	background-color: black;
+}
+
 button {
 	border:none;
      cursor: pointer;
@@ -25,7 +29,6 @@ button {
 	flex-direction:column;
 	width: 100%;
 	height:100%;
-	background-color: black;
 	color: #FFDD00;
 }
 

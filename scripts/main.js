@@ -120,6 +120,7 @@ function createSystemObjects(node, parent){
 	
 	//TESTING: create a div with name and shortname, and append to viewport
 	o.divrep = document.createElement('div');
+	o.divrep.className = 'test';
 	o.divrep.innerHTML = '<p>'+ o.name + '</p><p>' + o.shname + '</p><p>' + o.zone + '</p>';
 	o.divrep.style.padding = '5px';
 	viewport.appendChild(o.divrep);

@@ -5,6 +5,10 @@
 	
 }
 
+.test {
+	display: none;
+}
+
 html {
 	font-size: 14px;
 	font-family: Arial;
@@ -33,13 +37,123 @@ button {
 }
 
 div {
+	
+}
+
+.panel {
+	position:relative;
+	width: 700px;
+	height: 400px;
+	margin: 20px;
 	border: 1px solid orange;
+}
+
+.panel-fff {
+	position:absolute;
+	display:flex;
+	flex-direction: column;
+	top: 5%;
+	left: 5%;
+	width: 90%;
+	height: 90%;
+	border: 4px solid red;
+	border-radius: 25px;
+}
+
+.panel-inner {
+	position:absolute;
+	display:flex;
+	flex-direction: column;
+	top:5%;
+	left:2.5%;
+	height: 90%;
+	width: 95%;
+	border: none;
+}
+
+.panel-upper {
+	display:flex;
+	flex-direction: row;
+	height:80%;
+	border:none;
+}
+
+.panel-annunciators {
+	flex-grow: 1;
+	display:flex;
+	flex-direction:column;
+	font-size: 0px;
+}
+
+.panel-annunciators button {
+	flex-grow:1;
+	border: 1px solid orange;
+	background: none;
+	color: orange;
+}
+
+.panel-display-container {
+	flex-grow:1;
+	width: 70%;
+	position:relative;
+	border:none;
+} 
+
+.panel-display-bezel {
+	position:absolute;
+	top:10%;
+	left:5%;
+	width: 90%;
+	height:80%;
+	border:5px solid blue;
+	border-radius: 10px;
+	background-color: blue;
+}
+
+.panel-display {
+	position:absolute;
+	top: 5px;
+	left: 5px;
+	height:calc(100% - 10px);
+	width:calc(100% - 10px);
+	background-image: linear-gradient(to bottom right, #ccff99, #666633);
+	box-shadow: 2px 2px 5px 5px rgba(0,0,0,0.7) inset;
+	border:none;
+}
+
+.panel-lower {
+	flex-grow: 1;
+}
+
+.panel-controls {
+	height:100%;
+	font-size: 0px;
+}
+
+.panel-controls button {
+	height:100%;
+	width: calc(100% * 1/7);
+	vertical-align:top;
+	border: 1px solid orange;
+	background: none;
+	color: orange;
+	font-size: 0.9rem;
 }
 
 
 /* control styles */
 
-
+.closeBox {
+	position:absolute;
+	top: -15px;
+	right: -15px;
+	width: 30px;
+	height:30px;
+	border: 2px solid orange;
+	border-radius: 15px;
+	font-size: 24px;
+	text-align: center;
+}
 
 .update {
 	display:none;

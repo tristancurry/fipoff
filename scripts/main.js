@@ -155,3 +155,61 @@ InnerHtmlInstructions = {
 	blockplan: '<div class="blockplan"></div>',
 	det: '<div class="det"><div class ="det-header"></div><div class="det-body"><div class="det-image"></div><div class="det-info"></div></div><div class="det-options"></div></div>'
 }
+
+//TESTING ALARM PANEL FUNCTIONS
+
+let alarmList = ['Me', 'You', 'Vlad', 'Donald', 'Jeeves', 'Snow'];
+
+let ackList = [];
+let isoList = [];
+let testDisplay = document.getElementsByClassName('panel-display-content')[0];
+
+let alarmText = 'Alarm: ';
+let ackText = 'Acknowledged alarm: ';
+
+function displayAlarm(display, list, index){
+	display.innerHTML = alarmText + list[index] + '.  Alarm ' + (index + 1) + ' of ' + alarmList.length;
+}
+
+function displayAcknowledged(display, list, index){
+	display.innerHTML = ackText + list[index] + '.  Alarm ' + (index + 1) + ' of ' + ackList.length;
+}
+
+let testCurrentIndex = 0;
+displayAlarm(testDisplay, alarmList, testCurrentIndex);
+
+function displayIncrementList(display, list, currentIndex, increment){
+	increment = Math.round(increment);
+	if(Math.abs(increment) < list.length){
+		currentIndex = (currentIndex + list.length + increment)%list.length;
+	} else {
+		if(increment < 0){
+			increment = increment + list.length;
+		} else {
+			increment = increment%list.length;
+		}
+	  displayIncrementList(display, list, currentIndex, increment);
+	}
+	return currentIndex;
+}
+
+let panel_controls = document.getElementsByClassName('panel-controls')[0];
+
+prevButton = panel_controls.getElementsByTagName('BUTTON')[2];
+nextButton = panel_controls.getElementsByTagName('BUTTON')[3];
+ackButton = panel_controls.getElementsByTagName('BUTTON')[4];
+
+
+document.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
+		let t = event.target;
+		if(t == prevButton){testCurrentIndex = displayIncrementList(testDisplay, alarmList, testCurrentIndex, -1);}
+		if(t == nextButton){testCurrentIndex = displayIncrementList(testDisplay, alarmList, testCurrentIndex, 1);}
+		if(t == ackButton){handleAcknowledged();}
+		
+		displayAlarm(testDisplay, alarmList, testCurrentIndex);
+});
+	
+function handleAcknowledged(){
+	
+}
+

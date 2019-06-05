@@ -1,3 +1,8 @@
+@font-face {
+	font-family: lcd_font;
+	src: url(nokiafc22.ttf);
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -119,6 +124,14 @@ div {
 	background-image: linear-gradient(to bottom right, #ccff99, #666633);
 	box-shadow: 2px 2px 5px 5px rgba(0,0,0,0.7) inset;
 	border:none;
+}
+
+.panel-display-content {
+	padding: 10px;
+	font-family: lcd_font;
+	font-size: 14px;
+	//text-shadow: 1px 1px 10px #223322;
+	color: #224422;
 }
 
 .panel-lower {

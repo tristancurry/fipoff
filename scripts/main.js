@@ -158,7 +158,25 @@ InnerHtmlInstructions = {
 
 //TESTING ALARM PANEL FUNCTIONS
 
-let alarmList = ['Me', 'You', 'Vlad', 'Donald', 'Jeeves', 'Snow'];
+
+
+let deviceList = [
+	{desc:'Me', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:1, zone:1, lastAlarmTime:'today'}, 
+	{desc:'You', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:2, zone:1, lastAlarmTime:'today'}, 
+	{desc:'Vlad', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:3, zone:1, lastAlarmTime:'today'}, 
+	{desc:'Donald', status:'normal', type:'smoke', subtype:'pe', loop:2, num:1, zone:1, lastAlarmTime:'yesterday'}, 
+	{desc:'Jeeves', status:'alarm', type:'smoke', subtype:'pe', loop:2, num:2, zone:1, lastAlarmTime:'today'}, 
+	{desc:'Snow', status:'normal', type:'smoke', subtype:'pe', loop:2, num:3, zone:1, lastAlarmTime:'yesterday'}
+	]; //everything that is directly addressable by/at FIP.
+	
+	//fip should hold info on:
+	////detector description
+	////detector type
+	////loop address and zone
+	////current status
+	////date and time of occurrence
+	
+	//this can be derived from the objects as they are created
 
 let ackList = [];
 let isoList = [];
@@ -166,9 +184,10 @@ let testDisplay = document.getElementsByClassName('panel-display-content')[0];
 
 let alarmText = 'Alarm: ';
 let ackText = 'Acknowledged alarm: ';
+let isoText = 'Isolated: ';
 
 function displayAlarm(display, list, index){
-	display.innerHTML = alarmText + list[index] + '.  Alarm ' + (index + 1) + ' of ' + alarmList.length;
+	//display.innerHTML = alarmText + list[index] + '.  Alarm ' + (index + 1) + ' of ' + deviceList.length;
 }
 
 function displayAcknowledged(display, list, index){
@@ -176,7 +195,7 @@ function displayAcknowledged(display, list, index){
 }
 
 let testCurrentIndex = 0;
-displayAlarm(testDisplay, alarmList, testCurrentIndex);
+displayAlarm(testDisplay, deviceList, testCurrentIndex);
 
 function displayIncrementList(display, list, currentIndex, increment){
 	increment = Math.round(increment);
@@ -202,11 +221,11 @@ ackButton = panel_controls.getElementsByTagName('BUTTON')[4];
 
 document.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
 		let t = event.target;
-		if(t == prevButton){testCurrentIndex = displayIncrementList(testDisplay, alarmList, testCurrentIndex, -1);}
-		if(t == nextButton){testCurrentIndex = displayIncrementList(testDisplay, alarmList, testCurrentIndex, 1);}
+		if(t == prevButton){testCurrentIndex = displayIncrementList(testDisplay, deviceList, testCurrentIndex, -1);}
+		if(t == nextButton){testCurrentIndex = displayIncrementList(testDisplay, deviceList, testCurrentIndex, 1);}
 		if(t == ackButton){handleAcknowledged();}
 		
-		displayAlarm(testDisplay, alarmList, testCurrentIndex);
+		displayAlarm(testDisplay, deviceList, testCurrentIndex);
 });
 	
 function handleAcknowledged(){

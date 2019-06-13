@@ -129,10 +129,15 @@ div {
 .panel-display-content {
 	padding: 10px;
 	font-family: lcd_font;
-	font-size: 14px;
+	font-size: 16px;
 	//text-shadow: 1px 1px 10px #223322;
 	color: #224422;
 }
+
+.display-line {
+	height: 2em; 
+}
+
 
 .panel-lower {
 	flex-grow: 1;
@@ -152,7 +157,9 @@ div {
 	color: orange;
 	font-size: 0.9rem;
 }
-
+.right-info {
+	float: right;
+}
 
 /* control styles */
 

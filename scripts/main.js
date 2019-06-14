@@ -161,7 +161,7 @@ InnerHtmlInstructions = {
 
 
 let deviceList = [
-	{desc:'Me', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:1, zone:1, lastAlarmTime:'today'}, 
+	{desc:'Me', status:'normal', type:'smoke', subtype:'pe', loop:1, num:1, zone:1, lastAlarmTime:'today'}, 
 	{desc:'You', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:2, zone:1, lastAlarmTime:'today'}, 
 	{desc:'Vlad', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:3, zone:1, lastAlarmTime:'today'}, 
 	{desc:'Donald', status:'normal', type:'smoke', subtype:'pe', loop:2, num:1, zone:1, lastAlarmTime:'yesterday'}, 
@@ -178,24 +178,107 @@ let deviceList = [
 	
 	//this can be derived from the objects as they are created
 
-let ackList = [];
-let isoList = [];
+
 let testDisplay = document.getElementsByClassName('panel-display-content')[0];
+let displayLines = testDisplay.getElementsByClassName('display-line');
+let descLine = displayLines[0].getElementsByClassName('left-info')[0];
+let typeLine = displayLines[0].getElementsByClassName('right-info')[0];
 
 let alarmText = 'Alarm: ';
 let ackText = 'Acknowledged alarm: ';
 let isoText = 'Isolated: ';
 
-function displayAlarm(display, list, index){
-	//display.innerHTML = alarmText + list[index] + '.  Alarm ' + (index + 1) + ' of ' + deviceList.length;
-}
-
-function displayAcknowledged(display, list, index){
-	display.innerHTML = ackText + list[index] + '.  Alarm ' + (index + 1) + ' of ' + ackList.length;
-}
+let alarmCount = 0;
+let ackedCount = 0;
+let isolCount = 0;   //these counts will reside with the FIP itself (rather than having global scope)
 
 let testCurrentIndex = 0;
-displayAlarm(testDisplay, deviceList, testCurrentIndex);
+
+function assignStatusIds(list){
+	//go through list of devices.
+	//if in alarm, assign an alarmID
+	//if in alarm, but acknowledged, assign an ackID
+	//if isolated, assign isoID
+	//count how many are in alarm, how many acked, how many isolated
+	alarmCount = 0;
+	ackedCount = 0;
+	isolCount = 0;
+	
+	for(let i = 0, l = list.length; i < l; i++){
+		let device = list[i];
+		switch(device.status){
+			case 'alarm':
+				alarmCount ++;
+				device.alarmID = alarmCount;
+				break;
+			
+			case 'acked':
+				alarmCount ++;
+				ackedCount ++;
+				device.alarmID = alarmCount;
+				device.ackedID = ackedCount;
+				break;
+				
+			case 'isol':
+				isolCount ++;
+				device.isolID = isolCount;
+				device.alarmID = -1;
+				device.ackedID = -1;
+				break;
+				
+			default:
+				device.alarmID = -1;
+				device.ackedID = -1;
+				device.isolID = -1;
+			break;
+		}
+	}
+}
+
+assignStatusIds(deviceList);
+testCurrentIndex = displayStatus(deviceList, testDisplay, testCurrentIndex);
+
+
+function displayStatus(list, display, currentIndex) {
+	//access the FIP list
+	//work out if anything is still in alarm
+	if(alarmCount > 0){  //alarms have priority for display
+		//find the first alarm from the specified index
+		//keep looping until found, or until max loops have been reached (prevent infinite looping)
+		let loops = 0;
+		for(let i = currentIndex, l = list.length; i < l; i = (i+1)%l){
+			if(loops > 5){console.log('overlooped'); break;}
+			if(i == l - 1){loops++;}
+			if(list[i].status == 'alarm'){
+				let device = list[i];
+				//display this alarm
+				descLine.innerHTML = device.desc;
+				typeLine.innerHTML = device.type;
+				displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ALARM';
+				displayLines[2].innerHTML = device.lastAlarmTime;
+				if(ackedCount > 0){
+					displayLines[3].innerHTML = 'Acked alarms ' + ackedCount + ' of ' + alarmCount;
+				} else {
+					displayLines[3].innerHTML = 'Sensor alarms ' + device.alarmID + ' of ' + alarmCount;
+				}
+				//display this alarm's number
+				//display how many other alarms there are, or, if some have been acknowledged, display this number
+				//and we are done!
+				currentIndex = i;
+				return currentIndex;
+			} 
+		}
+		
+	
+	} else if(ackedCount > 0) { //if there alarms waiting for reset
+		
+	} else if (isolCount > 0) { //if there are isolates
+	 //also need conditional for FAULTS
+	} else {
+		//status normal
+	}
+	
+}
 
 function displayIncrementList(display, list, currentIndex, increment){
 	increment = Math.round(increment);
@@ -212,6 +295,16 @@ function displayIncrementList(display, list, currentIndex, increment){
 	return currentIndex;
 }
 
+
+function displayAcknowledged(display, list, index){
+	display.innerHTML = ackText + list[index] + '.  Alarm ' + (index + 1) + ' of ' + ackList.length;
+}
+
+
+//displayAlarm(testDisplay, deviceList, testCurrentIndex);
+
+
+
 let panel_controls = document.getElementsByClassName('panel-controls')[0];
 
 prevButton = panel_controls.getElementsByTagName('BUTTON')[2];
@@ -225,7 +318,6 @@ document.getElementsByClassName('panel-controls')[0].addEventListener('click', f
 		if(t == nextButton){testCurrentIndex = displayIncrementList(testDisplay, deviceList, testCurrentIndex, 1);}
 		if(t == ackButton){handleAcknowledged();}
 		
-		displayAlarm(testDisplay, deviceList, testCurrentIndex);
 });
 	
 function handleAcknowledged(){

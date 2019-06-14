@@ -157,6 +157,10 @@ div {
 	color: orange;
 	font-size: 0.9rem;
 }
+.left-info {
+	float: left;
+}
+
 .right-info {
 	float: right;
 }

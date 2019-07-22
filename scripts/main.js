@@ -292,7 +292,9 @@ function displayIncrementList(display, list, currentIndex, increment){
 		}
 	  displayIncrementList(display, list, currentIndex, increment);
 	}
+	displayStatus(list, display, currentIndex);
 	return currentIndex;
+	//TODO: then do something with the currentIndex, like updating the display (e.g. displayStatus)
 }
 
 

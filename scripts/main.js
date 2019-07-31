@@ -134,6 +134,10 @@ function createSystemObjects(node, parent){
 // 		- if not, create an entry in a 'zones' list, ie zones.thiszonename: [];
 // 		- then add itself to this list
 //		-if so, then add itself to the list with that property name
+
+//NOTE: these might end up residing with the FIPs themselves (no need for global scope)
+//the only list of things available globally will be the list of FIPs
+
 function buildZoneLists(){
 	for(let i = 0, l = sysObjects.length; i < l; i++){
 		let o = sysObjects[i];
@@ -157,172 +161,167 @@ InnerHtmlInstructions = {
 }
 
 //TESTING ALARM PANEL FUNCTIONS
+//(trying to establish a format for a FIP OBJECT)
 
-
-
-let deviceList = [
-	{desc:'Me', status:'normal', type:'smoke', subtype:'pe', loop:1, num:1, zone:1, lastAlarmTime:'today'}, 
+let myFip = {
+	deviceList:	[{desc:'Me', status:'normal', type:'smoke', subtype:'pe', loop:1, num:1, zone:1, lastAlarmTime:'today'}, 
 	{desc:'You', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:2, zone:1, lastAlarmTime:'today'}, 
 	{desc:'Vlad', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:3, zone:1, lastAlarmTime:'today'}, 
 	{desc:'Donald', status:'normal', type:'smoke', subtype:'pe', loop:2, num:1, zone:1, lastAlarmTime:'yesterday'}, 
 	{desc:'Jeeves', status:'alarm', type:'smoke', subtype:'pe', loop:2, num:2, zone:1, lastAlarmTime:'today'}, 
 	{desc:'Snow', status:'normal', type:'smoke', subtype:'pe', loop:2, num:3, zone:1, lastAlarmTime:'yesterday'}
-	]; //everything that is directly addressable by/at FIP.
+	],
 	
-	//fip should hold info on:
-	////detector description
-	////detector type
-	////loop address and zone
-	////current status
-	////date and time of occurrence
+	zones: [],
+	circuits: [],
 	
-	//this can be derived from the objects as they are created
-
-
-let testDisplay = document.getElementsByClassName('panel-display-content')[0];
-let displayLines = testDisplay.getElementsByClassName('display-line');
-let descLine = displayLines[0].getElementsByClassName('left-info')[0];
-let typeLine = displayLines[0].getElementsByClassName('right-info')[0];
-
-let alarmText = 'Alarm: ';
-let ackText = 'Acknowledged alarm: ';
-let isoText = 'Isolated: ';
-
-let alarmCount = 0;
-let ackedCount = 0;
-let isolCount = 0;   //these counts will reside with the FIP itself (rather than having global scope)
-
-let testCurrentIndex = 0;
-
-function assignStatusIds(list){
-	//go through list of devices.
-	//if in alarm, assign an alarmID
-	//if in alarm, but acknowledged, assign an ackID
-	//if isolated, assign isoID
-	//count how many are in alarm, how many acked, how many isolated
-	alarmCount = 0;
-	ackedCount = 0;
-	isolCount = 0;
+	panel: document.getElementsByClassName('panel')[0], //for testing - this will be linked to the right panel dynamically
 	
-	for(let i = 0, l = list.length; i < l; i++){
-		let device = list[i];
-		switch(device.status){
-			case 'alarm':
-				alarmCount ++;
-				device.alarmID = alarmCount;
+	alarmCount: 0,
+	ackedCount: 0,
+	isolCount: 0,
+	
+	currentIndex: 0,
+	
+	alarmText: 'Alarm: ',
+	ackText: 'Acknowledged alarm: ',
+	isoText: 'Isolated: ',
+	
+	assignStatusIds: function() {
+		
+		let list = this.deviceList;
+		//go through list of devices.
+		//if in alarm, assign an alarmID
+		//if in alarm, but acknowledged, assign an ackID
+		//if isolated, assign isoID
+		//count how many are in alarm, how many acked, how many isolated
+		this.alarmCount = 0;
+		this.ackedCount = 0;
+		this.isolCount = 0;
+		
+		for(let i = 0, l = list.length; i < l; i++){
+			let device = list[i];
+			switch(device.status){
+				case 'alarm':
+					alarmCount ++;
+					device.alarmID = alarmCount;
+					break;
+				
+				case 'acked':
+					alarmCount ++;
+					ackedCount ++;
+					device.alarmID = alarmCount;
+					device.ackedID = ackedCount;
+					break;
+					
+				case 'isol':
+					isolCount ++;
+					device.isolID = isolCount;
+					device.alarmID = -1;
+					device.ackedID = -1;
+					break;
+					
+				default:
+					device.alarmID = -1;
+					device.ackedID = -1;
+					device.isolID = -1;
 				break;
+			}
+		}
+	},
+	
+	displayStatus: function() {
+		let list = this.deviceList;
+		//access the FIP's list
+		//work out if anything is still in alarm
+		if(this.alarmCount > 0){  //alarms have priority for display
+			//find the first alarm from the specified index
+			//keep looping until found, or until max loops have been reached (prevent infinite looping)
+			//if no alarms at all are found, despite alarmCount > 0, then display an error code and put system into error status
+			let loops = 0;
+			for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
+				if(loops > 5){console.log('overlooped'); break;}
+				if(i == l - 1){loops++;}
+				if(list[i].status == 'alarm'){
+					let device = list[i];
+					//display this alarm
+					descLine.innerHTML = device.desc;
+					typeLine.innerHTML = device.type;
+					displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ALARM';
+					displayLines[2].innerHTML = device.lastAlarmTime;
+					if(ackedCount > 0){
+						displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
+					} else {
+						displayLines[3].innerHTML = 'Sensor alarms ' + device.alarmID + ' of ' + this.alarmCount;
+					}
+					//display this alarm's number
+					//display how many other alarms there are, or, if some have been acknowledged, display this number
+					//and we are done!
+					this.currentIndex = i;
+				} 
+			}
 			
-			case 'acked':
-				alarmCount ++;
-				ackedCount ++;
-				device.alarmID = alarmCount;
-				device.ackedID = ackedCount;
-				break;
-				
-			case 'isol':
-				isolCount ++;
-				device.isolID = isolCount;
-				device.alarmID = -1;
-				device.ackedID = -1;
-				break;
-				
-			default:
-				device.alarmID = -1;
-				device.ackedID = -1;
-				device.isolID = -1;
-			break;
-		}
-	}
-}
-
-assignStatusIds(deviceList);
-testCurrentIndex = displayStatus(deviceList, testDisplay, testCurrentIndex);
-
-
-function displayStatus(list, display, currentIndex) {
-	//access the FIP list
-	//work out if anything is still in alarm
-	if(alarmCount > 0){  //alarms have priority for display
-		//find the first alarm from the specified index
-		//keep looping until found, or until max loops have been reached (prevent infinite looping)
-		let loops = 0;
-		for(let i = currentIndex, l = list.length; i < l; i = (i+1)%l){
-			if(loops > 5){console.log('overlooped'); break;}
-			if(i == l - 1){loops++;}
-			if(list[i].status == 'alarm'){
-				let device = list[i];
-				//display this alarm
-				descLine.innerHTML = device.desc;
-				typeLine.innerHTML = device.type;
-				displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ALARM';
-				displayLines[2].innerHTML = device.lastAlarmTime;
-				if(ackedCount > 0){
-					displayLines[3].innerHTML = 'Acked alarms ' + ackedCount + ' of ' + alarmCount;
-				} else {
-					displayLines[3].innerHTML = 'Sensor alarms ' + device.alarmID + ' of ' + alarmCount;
-				}
-				//display this alarm's number
-				//display how many other alarms there are, or, if some have been acknowledged, display this number
-				//and we are done!
-				currentIndex = i;
-				return currentIndex;
-			} 
-		}
-		
-	
-	} else if(ackedCount > 0) { //if there alarms waiting for reset
-		
-	} else if (isolCount > 0) { //if there are isolates
-	 //also need conditional for FAULTS
-	} else {
-		//status normal
-	}
-	
-}
-
-function displayIncrementList(display, list, currentIndex, increment){
-	increment = Math.round(increment);
-	if(Math.abs(increment) < list.length){
-		currentIndex = (currentIndex + list.length + increment)%list.length;
-	} else {
-		if(increment < 0){
-			increment = increment + list.length;
+		} else if(this.ackedCount > 0) { //if there alarms waiting for reset
+			
+		} else if (this.isolCount > 0) { //if there are isolates
+		 //also need conditional for FAULTS
 		} else {
-			increment = increment%list.length;
+			//status normal
+		}	
+	},
+	
+	incrementList: function(increment){
+		let inc = Math.round(increment);
+		let list = this.deviceList;
+		if(Math.abs(inc) < list.length){
+			this.currentIndex = (this.currentIndex + list.length + inc)%list.length;
+		} else {
+			if(inc < 0){
+				inc += list.length;
+			} else {
+				inc = inc%list.length;
+			}
+		  this.incrementList(inc);
 		}
-	  displayIncrementList(display, list, currentIndex, increment);
-	}
-	displayStatus(list, display, currentIndex);
-	return currentIndex;
-	//TODO: then do something with the currentIndex, like updating the display (e.g. displayStatus)
+		this.displayStatus();
+	},
+	
+	handleAcknowledged: function(){
+		//do some stuff that moves only an active alarm to the acknowledged list
+	}	
+	
 }
 
 
-function displayAcknowledged(display, list, index){
-	display.innerHTML = ackText + list[index] + '.  Alarm ' + (index + 1) + ' of ' + ackList.length;
-}
-
-
-//displayAlarm(testDisplay, deviceList, testCurrentIndex);
-
-
-
-let panel_controls = document.getElementsByClassName('panel-controls')[0];
-
-prevButton = panel_controls.getElementsByTagName('BUTTON')[2];
-nextButton = panel_controls.getElementsByTagName('BUTTON')[3];
-ackButton = panel_controls.getElementsByTagName('BUTTON')[4];
-
-
-document.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
+//TODO: bundle the following up into a method on the FIP itself.
+//or find a way to do this within object notation 
+	myFip.display = myFip.panel.getElementsByClassName('panel-display-content')[0];
+	myFip.displayLines = myFip.display.getElementsByClassName('display-line');
+	myFip.descLine = myFip.displayLines[0].getElementsByClassName('left-info')[0];
+	myFip.typeLine = myFip.displayLines[0].getElementsByClassName('right-info')[0];
+	
+	
+	myFip.panel_controls = myFip.panel.getElementsByClassName('panel-controls')[0];
+	myFip.prevButton = myFip.panel_controls.getElementsByTagName('BUTTON')[2];
+	myFip.nextButton = myFip.panel_controls.getElementsByTagName('BUTTON')[3];
+	myFip.ackButton = myFip.panel_controls.getElementsByTagName('BUTTON')[4];
+	
+	//EVENT LISTENERS - bundle these into the FIP as well?
+	myFip.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
 		let t = event.target;
-		if(t == prevButton){testCurrentIndex = displayIncrementList(testDisplay, deviceList, testCurrentIndex, -1);}
-		if(t == nextButton){testCurrentIndex = displayIncrementList(testDisplay, deviceList, testCurrentIndex, 1);}
-		if(t == ackButton){handleAcknowledged();}
+		if(t == myFip.prevButton){myFip.currentIndex = myFip.incrementList(-1);}
+		if(t == myFip.nextButton){myFip.currentIndex = myFip.incrementList(1);}
+		if(t == myFip.ackButton){myFip.handleAcknowledged();}
 		
 });
+
+
+
+
+
+
+
+
 	
-function handleAcknowledged(){
-	
-}
+
 

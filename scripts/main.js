@@ -164,6 +164,8 @@ InnerHtmlInstructions = {
 //(trying to establish a format for a FIP OBJECT)
 
 let myFip = {
+	
+	//this device list will be generated from the system description file
 	deviceList:	[{desc:'Me', status:'normal', type:'smoke', subtype:'pe', loop:1, num:1, zone:1, lastAlarmTime:'today'}, 
 	{desc:'You', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:2, zone:1, lastAlarmTime:'today'}, 
 	{desc:'Vlad', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:3, zone:1, lastAlarmTime:'today'}, 

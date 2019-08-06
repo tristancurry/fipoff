@@ -192,7 +192,6 @@ let myFip = {
 	lastPressed: 'reset',
 	
 	assignStatusIds: function() {
-		
 		let list = this.deviceList;
 		//go through list of devices.
 		//if in alarm, assign an alarmID
@@ -247,7 +246,7 @@ let myFip = {
 				for(let i = this.currentIndex, l = list.length; i >= 0; i--){
 					if(loops > 5){console.log('overlooped'); break;}
 					
-					if(list[i].status == 'alarm'){
+					if(list[i].status == 'alarm' || list[i].status == 'acked'){
 						let device = list[i];
 						//display this alarm
 						this.displayAlarm(device);
@@ -261,7 +260,7 @@ let myFip = {
 				for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
 					if(loops > 5){console.log('overlooped'); break;}
 					if(i == l - 1){loops++;}
-					if(list[i].status == 'alarm'){
+					if(list[i].status == 'alarm' || list[i].status == 'acked'){
 						let device = list[i];
 						//display this alarm
 						this.displayAlarm(device);
@@ -272,6 +271,8 @@ let myFip = {
 				}
 			}
 		} else if(this.ackedCount > 0) { //if there alarms waiting for reset
+			//now show whatever needs to be shown on the screen when all alarms are acknowledged
+			//actually, this isn't necessary, user can scroll through all alarms anyway....
 			
 		} else if (this.isolCount > 0) { //if there are isolates
 		 //also need conditional for FAULTS
@@ -285,6 +286,7 @@ let myFip = {
 		this.descLine.innerHTML = device.desc;
 		this.typeLine.innerHTML = device.type;
 		this.displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ALARM';
+		if(device.status == 'acked'){this.displayLines[1].innerHTML += '(Acknowledged)';}
 		this.displayLines[2].innerHTML = device.lastAlarmTime;
 		if(this.ackedCount > 0){
 			this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
@@ -297,26 +299,48 @@ let myFip = {
 	},
 	
 	incrementList: function(increment){
+		//assumes increments won't be bigger than the deviceList's length
 		let inc = Math.round(increment);
 		let list = this.deviceList;
-		if(Math.abs(inc) < list.length){
-			console.log('before ' + this.currentIndex);
-			this.currentIndex = (this.currentIndex + list.length + inc)%list.length;
-			console.log('after ' + this.currentIndex);
-		} else {
-			if(inc < 0){
-				inc += list.length;
-			} else {
-				inc = inc%list.length;
-			}
-		  this.incrementList(inc);
+		let idx = this.currentIndex;
+		
+		idx += inc;
+		if(idx < 0){
+			idx += list.length;
 		}
+		idx = idx%list.length;
+		
+		this.currentIndex = idx;
+		
 		this.displayStatus();
 	},
 	
 	handleAcknowledged: function(){
-		//do some stuff that moves only an active alarm to the acknowledged list
-	}	
+		let list = this.deviceList;
+		let device = list[this.currentIndex]; //grab the currently viewed device
+		//if the device is alarmed, and not already acknowledged, then do some stuff that moves only an active alarm to the acknowledged list
+		if(device.status == 'alarm'){
+			//change status to 'acknowledged'
+			device.status ='acked';
+			//move off this alarm and on to the next on the alarm list
+			//we do this by reassigning status IDs and then invoking displayStatus()
+			this.assignStatusIds();
+			this.displayStatus();
+			//once we have acknowledged the last alarm, put the display into a different state...
+			//this should already happen through displayStatus though...:-)
+			
+		}
+		
+		//otherwise, check if we're in a state where the system is waiting for the user to acknowledge something (e.g. reset instruction)
+		//then, execute whatever thing it is that the user is trying to do.
+
+	}
+	
+	handleReset: function(){
+		//if there are acknowledged alarms, attempt to reset these to normal
+		//if there are no acknowledged alarms, attempt to reset the currently displayed alarm (temporarily give it 'acknowledged status'?)
+		//in either case, prompt user for acknowledgement...
+	}
 	
 }
 
@@ -340,6 +364,9 @@ let myFip = {
 		if(t == myFip.prevButton){myFip.incrementList(-1); myFip.lastPressed = 'prev';}
 		if(t == myFip.nextButton){myFip.incrementList(1); myFip.lastPressed = 'next';}
 		if(t == myFip.ackButton){myFip.handleAcknowledged(); myFip.lastPressed = 'ack';}
+		if(t == myFip.resetButton){myFip.handleReset(); myFip.lastPressed = 'reset';}
+		
+		
 		
 	});
 	

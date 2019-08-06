@@ -188,6 +188,8 @@ let myFip = {
 	alarmText: 'Alarm: ',
 	ackText: 'Acknowledged alarm: ',
 	isoText: 'Isolated: ',
+
+	lastPressed: 'reset',
 	
 	assignStatusIds: function() {
 		
@@ -205,20 +207,20 @@ let myFip = {
 			let device = list[i];
 			switch(device.status){
 				case 'alarm':
-					alarmCount ++;
-					device.alarmID = alarmCount;
+					this.alarmCount ++;
+					device.alarmID = this.alarmCount;
 					break;
 				
 				case 'acked':
-					alarmCount ++;
-					ackedCount ++;
-					device.alarmID = alarmCount;
-					device.ackedID = ackedCount;
+					this.alarmCount ++;
+					this.ackedCount ++;
+					device.alarmID = this.alarmCount;
+					device.ackedID = this.ackedCount;
 					break;
 					
 				case 'isol':
-					isolCount ++;
-					device.isolID = isolCount;
+					this.isolCount ++;
+					device.isolID = this.isolCount;
 					device.alarmID = -1;
 					device.ackedID = -1;
 					break;
@@ -241,28 +243,34 @@ let myFip = {
 			//keep looping until found, or until max loops have been reached (prevent infinite looping)
 			//if no alarms at all are found, despite alarmCount > 0, then display an error code and put system into error status
 			let loops = 0;
-			for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
-				if(loops > 5){console.log('overlooped'); break;}
-				if(i == l - 1){loops++;}
-				if(list[i].status == 'alarm'){
-					let device = list[i];
-					//display this alarm
-					descLine.innerHTML = device.desc;
-					typeLine.innerHTML = device.type;
-					displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ALARM';
-					displayLines[2].innerHTML = device.lastAlarmTime;
-					if(ackedCount > 0){
-						displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
-					} else {
-						displayLines[3].innerHTML = 'Sensor alarms ' + device.alarmID + ' of ' + this.alarmCount;
-					}
-					//display this alarm's number
-					//display how many other alarms there are, or, if some have been acknowledged, display this number
-					//and we are done!
-					this.currentIndex = i;
-				} 
+			if(this.lastPressed == 'prev'){
+				for(let i = this.currentIndex, l = list.length; i >= 0; i--){
+					if(loops > 5){console.log('overlooped'); break;}
+					
+					if(list[i].status == 'alarm'){
+						let device = list[i];
+						//display this alarm
+						this.displayAlarm(device);
+						this.currentIndex = i;
+						console.log('current index = ' + i );
+						break;
+					} 
+					if(i == 0){loops++; i = list.length - 1}
+				}
+			} else {
+				for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
+					if(loops > 5){console.log('overlooped'); break;}
+					if(i == l - 1){loops++;}
+					if(list[i].status == 'alarm'){
+						let device = list[i];
+						//display this alarm
+						this.displayAlarm(device);
+						this.currentIndex = i;
+						console.log('current index = ' + i );
+						break;
+					} 
+				}
 			}
-			
 		} else if(this.ackedCount > 0) { //if there alarms waiting for reset
 			
 		} else if (this.isolCount > 0) { //if there are isolates
@@ -272,11 +280,29 @@ let myFip = {
 		}	
 	},
 	
+	displayAlarm: function(device){
+		//display this alarm
+		this.descLine.innerHTML = device.desc;
+		this.typeLine.innerHTML = device.type;
+		this.displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ALARM';
+		this.displayLines[2].innerHTML = device.lastAlarmTime;
+		if(this.ackedCount > 0){
+			this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
+		} else {
+			this.displayLines[3].innerHTML = 'Sensor alarms ' + device.alarmID + ' of ' + this.alarmCount;
+		}
+		//display this alarm's number
+		//display how many other alarms there are, or, if some have been acknowledged, display this number
+		//and we are done!
+	},
+	
 	incrementList: function(increment){
 		let inc = Math.round(increment);
 		let list = this.deviceList;
 		if(Math.abs(inc) < list.length){
+			console.log('before ' + this.currentIndex);
 			this.currentIndex = (this.currentIndex + list.length + inc)%list.length;
+			console.log('after ' + this.currentIndex);
 		} else {
 			if(inc < 0){
 				inc += list.length;
@@ -311,11 +337,17 @@ let myFip = {
 	//EVENT LISTENERS - bundle these into the FIP as well?
 	myFip.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
 		let t = event.target;
-		if(t == myFip.prevButton){myFip.currentIndex = myFip.incrementList(-1);}
-		if(t == myFip.nextButton){myFip.currentIndex = myFip.incrementList(1);}
-		if(t == myFip.ackButton){myFip.handleAcknowledged();}
+		if(t == myFip.prevButton){myFip.incrementList(-1); myFip.lastPressed = 'prev';}
+		if(t == myFip.nextButton){myFip.incrementList(1); myFip.lastPressed = 'next';}
+		if(t == myFip.ackButton){myFip.handleAcknowledged(); myFip.lastPressed = 'ack';}
 		
-});
+	});
+	
+	//put the above into action
+	
+	myFip.assignStatusIds(); //i.e. go through device list and assign sequential IDs based on device status.
+	myFip.displayStatus();
+	
 
 
 

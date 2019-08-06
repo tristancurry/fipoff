@@ -166,7 +166,7 @@ InnerHtmlInstructions = {
 let myFip = {
 	
 	//this device list will be generated from the system description file
-	deviceList:	[{desc:'Me', status:'normal', type:'smoke', subtype:'pe', loop:1, num:1, zone:1, lastAlarmTime:'today'}, 
+	deviceList:	[{desc:'Me', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:1, zone:1, lastAlarmTime:'today'}, 
 	{desc:'You', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:2, zone:1, lastAlarmTime:'today'}, 
 	{desc:'Vlad', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:3, zone:1, lastAlarmTime:'today'}, 
 	{desc:'Donald', status:'normal', type:'smoke', subtype:'pe', loop:2, num:1, zone:1, lastAlarmTime:'yesterday'}, 
@@ -243,7 +243,7 @@ let myFip = {
 			//if no alarms at all are found, despite alarmCount > 0, then display an error code and put system into error status
 			let loops = 0;
 			if(this.lastPressed == 'prev'){
-				for(let i = this.currentIndex, l = list.length; i >= 0; i--){
+				for(let i = this.currentIndex, l = list.length; i >= 0; i = (i - 1 + l)%l){
 					if(loops > 5){console.log('overlooped'); break;}
 					
 					if(list[i].status == 'alarm' || list[i].status == 'acked'){
@@ -251,10 +251,9 @@ let myFip = {
 						//display this alarm
 						this.displayAlarm(device);
 						this.currentIndex = i;
-						console.log('current index = ' + i );
 						break;
 					} 
-					if(i == 0){loops++; i = list.length - 1}
+					if(i == 0){loops++;}
 				}
 			} else {
 				for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
@@ -265,7 +264,6 @@ let myFip = {
 						//display this alarm
 						this.displayAlarm(device);
 						this.currentIndex = i;
-						console.log('current index = ' + i );
 						break;
 					} 
 				}
@@ -303,13 +301,11 @@ let myFip = {
 		let inc = Math.round(increment);
 		let list = this.deviceList;
 		let idx = this.currentIndex;
-		
 		idx += inc;
 		if(idx < 0){
 			idx += list.length;
 		}
 		idx = idx%list.length;
-		
 		this.currentIndex = idx;
 		
 		this.displayStatus();
@@ -334,12 +330,17 @@ let myFip = {
 		//otherwise, check if we're in a state where the system is waiting for the user to acknowledge something (e.g. reset instruction)
 		//then, execute whatever thing it is that the user is trying to do.
 
-	}
+	},
 	
 	handleReset: function(){
 		//if there are acknowledged alarms, attempt to reset these to normal
+		if(this.ackedCount > 0){}
+		
+		else if(this.deviceList[this.currentIndex].status == 'alarm'){}
 		//if there are no acknowledged alarms, attempt to reset the currently displayed alarm (temporarily give it 'acknowledged status'?)
 		//in either case, prompt user for acknowledgement...
+		
+		//also, successful reset should prevent additional alarms being sent upstream (i.e. Sub FIP --> Main FIP)
 	}
 	
 }
@@ -361,10 +362,10 @@ let myFip = {
 	//EVENT LISTENERS - bundle these into the FIP as well?
 	myFip.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
 		let t = event.target;
-		if(t == myFip.prevButton){myFip.incrementList(-1); myFip.lastPressed = 'prev';}
-		if(t == myFip.nextButton){myFip.incrementList(1); myFip.lastPressed = 'next';}
-		if(t == myFip.ackButton){myFip.handleAcknowledged(); myFip.lastPressed = 'ack';}
-		if(t == myFip.resetButton){myFip.handleReset(); myFip.lastPressed = 'reset';}
+		if(t == myFip.prevButton){myFip.lastPressed = 'prev'; myFip.incrementList(-1);}
+		if(t == myFip.nextButton){myFip.lastPressed = 'next'; myFip.incrementList(1);}
+		if(t == myFip.ackButton){myFip.lastPressed = 'ack'; myFip.handleAcknowledged();}
+		if(t == myFip.resetButton){myFip.lastPressed = 'reset'; myFip.handleReset();}
 		
 		
 		

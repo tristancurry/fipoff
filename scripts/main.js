@@ -165,6 +165,8 @@ InnerHtmlInstructions = {
 
 let myFip = {
 	
+	status:'normal',
+	
 	//this device list will be generated from the system description file
 	deviceList:	[{desc:'Me', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:1, zone:1, lastAlarmTime:'today'}, 
 	{desc:'You', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:2, zone:1, lastAlarmTime:'today'}, 
@@ -190,6 +192,7 @@ let myFip = {
 	isoText: 'Isolated: ',
 
 	lastPressed: 'reset',
+	confirmState: 'none', //options are: none, single, multi, isol
 	
 	assignStatusIds: function() {
 		let list = this.deviceList;
@@ -231,6 +234,23 @@ let myFip = {
 				break;
 			}
 		}
+		
+		//handling statuses: this.status is what's checked by any upstream FIPs, status_i is for managing panel lights etc
+		if(this.status != 'isol'){
+			if(this.alarmCount > 0){
+				this.status = 'alarm';
+				this.status_i = 'alarm';
+			} else if(this.ackedCount > 0){
+				this.status = 'alarm'
+				this.status_i = 'alarm_acked';
+			} else if(this.isolCount > 0){
+				this.status_i = 'alarm_isol';
+			} else {
+				this.status = 'normal';
+				this.status_i = 'normal';
+			}
+		
+		}
 	},
 	
 	displayStatus: function() {
@@ -268,15 +288,16 @@ let myFip = {
 					} 
 				}
 			}
-		} else if(this.ackedCount > 0) { //if there alarms waiting for reset
-			//now show whatever needs to be shown on the screen when all alarms are acknowledged
-			//actually, this isn't necessary, user can scroll through all alarms anyway....
-			
 		} else if (this.isolCount > 0) { //if there are isolates
 		 //also need conditional for FAULTS
 		} else {
 			//status normal
-		}	
+			this.descLine.innerHTML = 'FireFinder';
+			this.typeLine.innerHTML = Date.now();
+			this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
+			this.displayLines[2].innerHTML = 'Ph: 0444 444444';
+			this.displayLines[3].innerHTML = 'System NORMAL';
+		}
 	},
 	
 	displayAlarm: function(device){
@@ -286,14 +307,35 @@ let myFip = {
 		this.displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ALARM';
 		if(device.status == 'acked'){this.displayLines[1].innerHTML += '(Acknowledged)';}
 		this.displayLines[2].innerHTML = device.lastAlarmTime;
-		if(this.ackedCount > 0){
-			this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
+		if(this.confirmState == 'none'){
+			//display this alarm's number
+			//display how many other alarms there are, or, if some have been acknowledged, display this number
+			if(this.ackedCount > 0){
+				this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
+			} else {
+				this.displayLines[3].innerHTML = 'Sensor alarms ' + device.alarmID + ' of ' + this.alarmCount;
+			}
 		} else {
-			this.displayLines[3].innerHTML = 'Sensor alarms ' + device.alarmID + ' of ' + this.alarmCount;
+			switch(this.confirmState){
+				case 'single' :
+					this.displayLines[3].innerHTML = 'Press ACK to reset alarm :-)';
+					break;
+				
+				case 'multi' :
+					this.displayLines[3].innerHTML = 'Press ACK to reset acknowledged alarm';
+					if(this.ackedCount > 1){this.displayLines[3].innerHTML += 's';}
+					this.displayLines[3].innerHTML += ' :-)';
+					
+					break;
+					
+				case 'isol' :
+					this.displayLines[3].innerHTML = 'Press ACK to isolate device :-)';
+					break;
+					
+			}
+			
 		}
-		//display this alarm's number
-		//display how many other alarms there are, or, if some have been acknowledged, display this number
-		//and we are done!
+
 	},
 	
 	incrementList: function(increment){
@@ -314,29 +356,70 @@ let myFip = {
 	handleAcknowledged: function(){
 		let list = this.deviceList;
 		let device = list[this.currentIndex]; //grab the currently viewed device
-		//if the device is alarmed, and not already acknowledged, then do some stuff that moves only an active alarm to the acknowledged list
-		if(device.status == 'alarm'){
-			//change status to 'acknowledged'
-			device.status ='acked';
-			//move off this alarm and on to the next on the alarm list
-			//we do this by reassigning status IDs and then invoking displayStatus()
-			this.assignStatusIds();
-			this.displayStatus();
-			//once we have acknowledged the last alarm, put the display into a different state...
-			//this should already happen through displayStatus though...:-)
-			
-		}
-		
+		if(this.confirmState == 'none'){
+			//if the device is alarmed, and not already acknowledged, then do some stuff that moves only an active alarm to the acknowledged list
+			if(device.status == 'alarm'){
+				//change status to 'acknowledged' 
+				device.status ='acked';
+				this.assignStatusIds();
+				this.displayStatus();
+				//once we have acknowledged the last alarm, set the ALARM light to solid, rather than flashing
+			}
+		} else {
 		//otherwise, check if we're in a state where the system is waiting for the user to acknowledge something (e.g. reset instruction)
 		//then, execute whatever thing it is that the user is trying to do.
-
+			switch(this.confirmState){
+				case 'single':
+					//attempt to reset the device, and then the FIP. Failure will only happen if the device is flagged 'stuck' for some reason
+					this.resetDevice(device);
+					break;
+					
+				case 'multi':
+					//attempt to reset all acknowledged devices, and then the FIP.
+					for(let i = 0, l = list.length; i < l; i++){
+						if(list[i].status == 'acked'){
+							this.resetDevice(list[i]);
+						}
+					}
+					break;
+					
+				case 'isol':
+					//isolate the device, then reset the FIP
+					//see what happens
+			}
+			//return confirmState to 'none'
+			this.confirmState = 'none';
+			//return system to normal and see what happens
+			this.assignStatusIds();
+			this.displayStatus();
+		}
+	},
+	
+	resetDevice: function(device){
+		//try to remove alarm status from a device (i.e. set status to 'normal')
+		//this will fail if the device has 'stuck' set to true
+		if(!device.stuck && (device.status == 'alarm' || device.status == 'acked')){
+			device.status = 'normal';
+		}
 	},
 	
 	handleReset: function(){
-		//if there are acknowledged alarms, attempt to reset these to normal
-		if(this.ackedCount > 0){}
+		if(this.confirmState == 'none'){
 		
-		else if(this.deviceList[this.currentIndex].status == 'alarm'){}
+			//if there are acknowledged alarms, attempt to reset these to normal
+			if(this.ackedCount > 0){
+				this.confirmState = 'multi';
+			}
+			
+			else if(this.deviceList[this.currentIndex].status == 'alarm'){
+				this.confirmState = 'single';
+			}
+			
+		} else if(this.confirmState == 'single' || this.confirmState == 'multi' || this.confirmState == 'isol'){
+			//go back
+			this.confirmState = 'none';
+		}
+		this.displayStatus();
 		//if there are no acknowledged alarms, attempt to reset the currently displayed alarm (temporarily give it 'acknowledged status'?)
 		//in either case, prompt user for acknowledgement...
 		
@@ -358,12 +441,13 @@ let myFip = {
 	myFip.prevButton = myFip.panel_controls.getElementsByTagName('BUTTON')[2];
 	myFip.nextButton = myFip.panel_controls.getElementsByTagName('BUTTON')[3];
 	myFip.ackButton = myFip.panel_controls.getElementsByTagName('BUTTON')[4];
+	myFip.resetButton = myFip.panel_controls.getElementsByTagName('BUTTON')[5];
 	
 	//EVENT LISTENERS - bundle these into the FIP as well?
 	myFip.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
 		let t = event.target;
-		if(t == myFip.prevButton){myFip.lastPressed = 'prev'; myFip.incrementList(-1);}
-		if(t == myFip.nextButton){myFip.lastPressed = 'next'; myFip.incrementList(1);}
+		if(t == myFip.prevButton && myFip.confirmState == 'none'){myFip.lastPressed = 'prev'; myFip.incrementList(-1);}
+		if(t == myFip.nextButton && myFip.confirmState == 'none'){myFip.lastPressed = 'next'; myFip.incrementList(1);}
 		if(t == myFip.ackButton){myFip.lastPressed = 'ack'; myFip.handleAcknowledged();}
 		if(t == myFip.resetButton){myFip.lastPressed = 'reset'; myFip.handleReset();}
 		

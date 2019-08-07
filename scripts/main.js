@@ -292,8 +292,9 @@ let myFip = {
 		 //also need conditional for FAULTS
 		} else {
 			//status normal
+			let d = new Date();
 			this.descLine.innerHTML = 'FireFinder';
-			this.typeLine.innerHTML = Date.now();
+			this.typeLine.innerHTML = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + ' ' + d.getDay() + '/' + d.getMonth() + '/' + d.getFullYear();
 			this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
 			this.displayLines[2].innerHTML = 'Ph: 0444 444444';
 			this.displayLines[3].innerHTML = 'System NORMAL';

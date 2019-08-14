@@ -190,6 +190,7 @@ let myFip = {
 	alarmText: 'Alarm: ',
 	ackText: 'Acknowledged alarm: ',
 	isoText: 'Isolated: ',
+	statusStrings : {alarm: 'ALARM', acked: 'ALARM(Acknowledged)', isol: 'ISOLATED', normal: 'NORMAL'},
 
 	lastPressed: 'reset',
 	confirmState: 'none', //options are: none, single, multi, isol
@@ -305,32 +306,33 @@ let myFip = {
 		//display this alarm
 		this.descLine.innerHTML = device.desc;
 		this.typeLine.innerHTML = device.type;
-		this.displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ALARM';
-		if(device.status == 'acked'){this.displayLines[1].innerHTML += '(Acknowledged)';}
-		this.displayLines[2].innerHTML = device.lastAlarmTime;
+		this.displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ' + this.statusStrings[device.status];
+		//this.displayLines[2].innerHTML = device.lastAlarmTime;
 		if(this.confirmState == 'none'){
 			//display this alarm's number
 			//display how many other alarms there are, or, if some have been acknowledged, display this number
 			if(this.ackedCount > 0){
 				this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
-			} else {
+			} else if (this.alarmCount > 0){
 				this.displayLines[3].innerHTML = 'Sensor alarms ' + device.alarmID + ' of ' + this.alarmCount;
+			} else if (this.isolCount > 0){
+				this.displayLines[3].innerHTML = 'Isolate ' + device.isolID + ' of ' + this.isolCount;
 			}
 		} else {
 			switch(this.confirmState){
 				case 'single' :
-					this.displayLines[3].innerHTML = 'Press ACK to reset alarm :-)';
+					this.displayLines[3].innerHTML = 'Press ACKNOWLEDGE to confirm reset of this alarm :-)';
 					break;
 				
 				case 'multi' :
-					this.displayLines[3].innerHTML = 'Press ACK to reset acknowledged alarm';
+					this.displayLines[3].innerHTML = 'Press ACKNOWLEDGE to confirm reset of acknowledged alarm';
 					if(this.ackedCount > 1){this.displayLines[3].innerHTML += 's';}
 					this.displayLines[3].innerHTML += ' :-)';
 					
 					break;
 					
 				case 'isol' :
-					this.displayLines[3].innerHTML = 'Press ACK to isolate device :-)';
+					this.displayLines[3].innerHTML = 'Press ACKNOWLEDGE to confirm isolation of this device :-)';
 					break;
 					
 			}
@@ -385,8 +387,8 @@ let myFip = {
 					break;
 					
 				case 'isol':
-					//isolate the device, then reset the FIP
-					//see what happens
+					//isolate the device
+					this.isolateDevice(device);
 			}
 			//return confirmState to 'none'
 			this.confirmState = 'none';
@@ -394,6 +396,21 @@ let myFip = {
 			this.assignStatusIds();
 			this.displayStatus();
 		}
+	},
+	
+	handleIsolate: function(){
+		if(this.confirmState == 'none'){
+			//put system in state where it's waiting for the user to confirm the isolation.
+			this.confirmState = 'isol';
+		} else if(this.confirmState == 'single' || this.confirmState == 'multi' || this.confirmState == 'isol'){
+			//go back
+			this.confirmState = 'none';
+		}
+		this.displayStatus();
+	},
+	
+	isolateDevice: function(device){
+		device.status = 'isol';
 	},
 	
 	resetDevice: function(device){
@@ -443,6 +460,7 @@ let myFip = {
 	myFip.nextButton = myFip.panel_controls.getElementsByTagName('BUTTON')[3];
 	myFip.ackButton = myFip.panel_controls.getElementsByTagName('BUTTON')[4];
 	myFip.resetButton = myFip.panel_controls.getElementsByTagName('BUTTON')[5];
+	myFip.isolButton = myFip.panel_controls.getElementsByTagName('BUTTON')[6];
 	
 	//EVENT LISTENERS - bundle these into the FIP as well?
 	myFip.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
@@ -451,6 +469,7 @@ let myFip = {
 		if(t == myFip.nextButton && myFip.confirmState == 'none'){myFip.lastPressed = 'next'; myFip.incrementList(1);}
 		if(t == myFip.ackButton){myFip.lastPressed = 'ack'; myFip.handleAcknowledged();}
 		if(t == myFip.resetButton){myFip.lastPressed = 'reset'; myFip.handleReset();}
+		if(t == myFip.isolButton){myFip.lastPressed = 'isol'; myFip.handleIsolate();}
 		
 		
 		

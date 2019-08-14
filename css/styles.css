@@ -89,6 +89,7 @@ div {
 	flex-grow: 1;
 	display:flex;
 	flex-direction:column;
+	user-select:none;
 }
 
 .panel-annunciators div {
@@ -105,6 +106,14 @@ div {
 	border: none;
 }
 
+.panel-controls .lamp {
+	width:10px;
+	height:10px;
+	margin:auto;
+	border-radius:5px;
+	background-color: orange;
+}
+
 .panel-annunciators .alarm {
 	background-color: #FF0000;
 }
@@ -113,8 +122,8 @@ div {
 	background-color: #FFEE00;
 }
 
-.panel-annunciators .unlit {
-	background-color: #000000;
+.panel-annunciators .unlit, .panel-controls .unlit {
+	background-color: #111122;
 }
 
 .panel-annunciators .flashing {

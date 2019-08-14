@@ -522,7 +522,15 @@ let myFip = {
 		//in either case, prompt user for acknowledgement...
 		
 		//also, successful reset should prevent additional alarms being sent upstream (i.e. Sub FIP --> Main FIP)
-	}
+	},
+	
+	handleEbIsol: function(){
+		this.ebIsolLamp.classList.toggle('unlit');
+	},
+	
+	handleWsIsol: function(){
+		this.wsIsolLamp.classList.toggle('unlit');
+	},
 	
 }
 
@@ -535,6 +543,10 @@ let myFip = {
 	myFip.typeLine = myFip.displayLines[0].getElementsByClassName('right-info')[0];
 	
 	myFip.panel_controls = myFip.panel.getElementsByClassName('panel-controls')[0];
+	myFip.ebIsolButton = myFip.panel_controls.getElementsByTagName('BUTTON')[0];
+	myFip.ebIsolLamp = myFip.ebIsolButton.getElementsByClassName('lamp')[0];
+	myFip.wsIsolButton = myFip.panel_controls.getElementsByTagName('BUTTON')[1];
+	myFip.wsIsolLamp = myFip.wsIsolButton.getElementsByClassName('lamp')[0];
 	myFip.prevButton = myFip.panel_controls.getElementsByTagName('BUTTON')[2];
 	myFip.nextButton = myFip.panel_controls.getElementsByTagName('BUTTON')[3];
 	myFip.ackButton = myFip.panel_controls.getElementsByTagName('BUTTON')[4];
@@ -546,9 +558,13 @@ let myFip = {
 	myFip.annunIsol = myFip.annuns[1];
 	myFip.annunFault = myFip.annuns[2];
 	
+	
+	
 	//EVENT LISTENERS - bundle these into the FIP as well?
 	myFip.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
 		let t = event.target;
+		if(t == myFip.ebIsolButton){myFip.handleEbIsol();}
+		if(t == myFip.wsIsolButton){myFip.handleWsIsol();}
 		if(t == myFip.prevButton && myFip.confirmState == 'none'){myFip.lastPressed = 'prev'; myFip.incrementList(-1);}
 		if(t == myFip.nextButton && myFip.confirmState == 'none'){myFip.lastPressed = 'next'; myFip.incrementList(1);}
 		if(t == myFip.ackButton){myFip.lastPressed = 'ack'; myFip.handleAcknowledged();}

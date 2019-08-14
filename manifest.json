@@ -2,7 +2,7 @@
 	"name": "Fipoff Alarm Simulator",
 	"short_name": "Fipoff",
 	"display": "standalone",
-	"scope": "../",
+	"scope": "../fipoff",
 	"start_url": "index.html",
 	"theme_color": "#6d3300",
 	"background_color": "#444444",

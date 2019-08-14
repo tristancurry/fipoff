@@ -47,7 +47,8 @@ div {
 
 .panel {
 	position:relative;
-	width: 700px;
+	width: 800px;
+	min-width:650px;
 	height: 400px;
 	margin: 20px;
 	border: 1px solid orange;
@@ -60,6 +61,7 @@ div {
 	top: 5%;
 	left: 5%;
 	width: 90%;
+	min-width:580px;
 	height: 90%;
 	border: 4px solid red;
 	border-radius: 25px;
@@ -96,16 +98,41 @@ div {
 	text-align: center;
 }
 
-.panel-annunciators > .alarm {
+.panel-annunciators .lamp {
+	width: 70%;
+	margin: auto;
+	height: 20px;
+	border: none;
+}
+
+.panel-annunciators .alarm {
 	background-color: #FF0000;
 }
 
-.panel-annunciators > .isol {
+.panel-annunciators .isol {
 	background-color: #FFEE00;
 }
 
-.panel-annunciators > .unlit {
+.panel-annunciators .unlit {
 	background-color: #000000;
+}
+
+.panel-annunciators .flashing {
+	animation: flash 1s infinite;
+}
+
+@keyframes flash {
+	0% {
+		opacity: 0;
+	}
+	
+	50% {
+		opacity: 1;
+	}
+	
+	100% {
+		opacity: 0;
+	}
 }
 
 .panel-display-container {
@@ -120,6 +147,7 @@ div {
 	top:10%;
 	left:5%;
 	width: 90%;
+	min-width:410px;
 	height:80%;
 	border:5px solid blue;
 	border-radius: 10px;

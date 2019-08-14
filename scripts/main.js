@@ -69,7 +69,7 @@ function assembleDate(d){
 
 function assembleTime(d){
 	let hours =  d.getHours().toString();
-	if(d.getHours() < 10){hours = addLeadingZero(day)};
+	if(d.getHours() < 10){hours = addLeadingZero(hours)};
 	let minutes =  d.getMinutes().toString();
 	if(d.getMinutes() < 10){minutes = addLeadingZero(minutes)};
 	let seconds =  d.getSeconds().toString();
@@ -277,10 +277,13 @@ let myFip = {
 		//handling states of annunciators:
 		if(this.alarmCount > 0 && this.alarmCount > this.ackedCount){
 			if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
+			if(!this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
+			
 			//alarms exist that haven't been acknowledged. Flash the ALARM annunciator
 			//TODO: invoke a CSS class that flashes a div's background-color off and on
 		} else if(this.alarmCount > 0 && this.ackedCount == this.alarmCount){
 			if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
+			if(this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
 			//all alarms have been acknowledged. Make the ALARM annunciator solid
 		} else {
 			if(!this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
@@ -538,7 +541,7 @@ let myFip = {
 	myFip.resetButton = myFip.panel_controls.getElementsByTagName('BUTTON')[5];
 	myFip.isolButton = myFip.panel_controls.getElementsByTagName('BUTTON')[6];
 	
-	myFip.annuns = myFip.panel.getElementsByClassName('panel-annunciators')[0].getElementsByClassName('annunciator');
+	myFip.annuns = myFip.panel.getElementsByClassName('panel-annunciators')[0].getElementsByClassName('lamp');
 	myFip.annunAlarm = myFip.annuns[0];
 	myFip.annunIsol = myFip.annuns[1];
 	myFip.annunFault = myFip.annuns[2];

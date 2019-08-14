@@ -290,7 +290,34 @@ let myFip = {
 				}
 			}
 		} else if (this.isolCount > 0) { //if there are isolates
-		 //also need conditional for FAULTS
+			let loops = 0;
+			if(this.lastPressed == 'prev'){
+				for(let i = this.currentIndex, l = list.length; i >= 0; i = (i - 1 + l)%l){
+					if(loops > 5){console.log('overlooped'); break;}
+					
+					if(list[i].status == 'isol'){
+						let device = list[i];
+						//display this alarm
+						this.displayAlarm(device);
+						this.currentIndex = i;
+						break;
+					} 
+					if(i == 0){loops++;}
+				}
+			} else {
+				for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
+					if(loops > 5){console.log('overlooped'); break;}
+					if(i == l - 1){loops++;}
+					if(list[i].status == 'isol'){
+						let device = list[i];
+						//display this alarm
+						this.displayAlarm(device);
+						this.currentIndex = i;
+						break;
+					} 
+				}
+			}
+		
 		} else {
 			//status normal
 			let d = new Date();
@@ -307,7 +334,7 @@ let myFip = {
 		this.descLine.innerHTML = device.desc;
 		this.typeLine.innerHTML = device.type;
 		this.displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ' + this.statusStrings[device.status];
-		//this.displayLines[2].innerHTML = device.lastAlarmTime;
+		this.displayLines[2].innerHTML = device.lastAlarmTime;
 		if(this.confirmState == 'none'){
 			//display this alarm's number
 			//display how many other alarms there are, or, if some have been acknowledged, display this number
@@ -394,6 +421,12 @@ let myFip = {
 			this.confirmState = 'none';
 			//return system to normal and see what happens
 			this.assignStatusIds();
+			//anything still in alarm gets its 'last alarm' date updated
+			for(let i = 0, l = list.length; i < l; i++){
+				if(list[i].status == 'alarm'){
+					list[i].lastAlarmTime = Date.now(); //refine this date (currently ms since 01.01.1970?)
+				}
+			}
 			this.displayStatus();
 		}
 	},

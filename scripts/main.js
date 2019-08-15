@@ -53,11 +53,35 @@ function buildSystem (sys) {
 //then delve into the hierarchy
 	if(sys.children){
 		createSystemObjects(sys.children[0]);
-	}
+	}	
+}
+
+function assembleDate(d){
+	let day =  d.getDay().toString();
+	if(d.getDay() < 10){day = addLeadingZero(day)};
+	let month =  d.getMonth().toString();
+	if(d.getMonth() < 10){month = addLeadingZero(month)};
+	let year =  d.getFullYear().toString();
 	
+	return(day +'/'+ month + '/' + year);
 	
 }
 
+function assembleTime(d){
+	let hours =  d.getHours().toString();
+	if(d.getHours() < 10){hours = addLeadingZero(day)};
+	let minutes =  d.getMinutes().toString();
+	if(d.getMinutes() < 10){minutes = addLeadingZero(minutes)};
+	let seconds =  d.getSeconds().toString();
+	if(d.getSeconds() < 10){seconds = addLeadingZero(seconds)};
+	
+	return(hours +':'+ minutes + ':' + seconds);
+}
+
+function addLeadingZero(str){
+	let newStr = '0' + str;
+	return(newStr);
+}
 
 function createSystemObjects(node, parent){
 	let o = {}; 
@@ -236,21 +260,39 @@ let myFip = {
 			}
 		}
 		
-		//handling statuses: this.status is what's checked by any upstream FIPs, status_i is for managing panel lights etc
+		//handling statuses: this.status is what's checked by any upstream FIPs
 		if(this.status != 'isol'){
 			if(this.alarmCount > 0){
 				this.status = 'alarm';
-				this.status_i = 'alarm';
+				this.stuck = true;
 			} else if(this.ackedCount > 0){
-				this.status = 'alarm'
-				this.status_i = 'alarm_acked';
-			} else if(this.isolCount > 0){
-				this.status_i = 'alarm_isol';
+				this.status = 'alarm';
+				this.stuck = true;
 			} else {
 				this.status = 'normal';
-				this.status_i = 'normal';
+				this.stuck = false;
 			}
+		}
 		
+		//handling states of annunciators:
+		if(this.alarmCount > 0 && this.alarmCount > this.ackedCount){
+			if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
+			//alarms exist that haven't been acknowledged. Flash the ALARM annunciator
+			//TODO: invoke a CSS class that flashes a div's background-color off and on
+		} else if(this.alarmCount > 0 && this.ackedCount == this.alarmCount){
+			if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
+			//all alarms have been acknowledged. Make the ALARM annunciator solid
+		} else {
+			if(!this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
+			//no alarms are active. Turn ALARM annunciator off
+		}
+		
+		if(this.isolCount > 0){
+			if(this.annunIsol.classList.contains('unlit')){this.annunIsol.classList.toggle('unlit')};
+			//isolates exist. Turn the ISOLATION annunciator on
+		} else {
+			if(!this.annunIsol.classList.contains('unlit')){this.annunIsol.classList.toggle('unlit')};
+			//no isolates exist. Turn the ISOLATION annunciator off
 		}
 	},
 	
@@ -261,6 +303,7 @@ let myFip = {
 		if(this.alarmCount > 0){  //alarms have priority for display
 			//find the first alarm from the specified index
 			//keep looping until found, or until max loops have been reached (prevent infinite looping)
+			//somehow include the ability to end up back on the main screen when the last alarm has been traveled through
 			//if no alarms at all are found, despite alarmCount > 0, then display an error code and put system into error status
 			let loops = 0;
 			if(this.lastPressed == 'prev'){
@@ -290,6 +333,7 @@ let myFip = {
 				}
 			}
 		} else if (this.isolCount > 0) { //if there are isolates
+		//somehow include the main screen in this selection i.e. if a loop occurs without finding anything?
 			let loops = 0;
 			if(this.lastPressed == 'prev'){
 				for(let i = this.currentIndex, l = list.length; i >= 0; i = (i - 1 + l)%l){
@@ -319,10 +363,10 @@ let myFip = {
 			}
 		
 		} else {
-			//status normal
+			//status normal. TODO - allow for scrolling through devices from this screen
 			let d = new Date();
 			this.descLine.innerHTML = 'FireFinder';
-			this.typeLine.innerHTML = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + ' ' + d.getDay() + '/' + d.getMonth() + '/' + d.getFullYear();
+			this.typeLine.innerHTML = assembleTime(d) + ' ' + assembleDate(d);
 			this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
 			this.displayLines[2].innerHTML = 'Ph: 0444 444444';
 			this.displayLines[3].innerHTML = 'System NORMAL';
@@ -424,7 +468,7 @@ let myFip = {
 			//anything still in alarm gets its 'last alarm' date updated
 			for(let i = 0, l = list.length; i < l; i++){
 				if(list[i].status == 'alarm'){
-					list[i].lastAlarmTime = Date.now(); //refine this date (currently ms since 01.01.1970?)
+					//list[i].lastAlarmTime = Date.now(); //refine this date (currently ms since 01.01.1970?)
 				}
 			}
 			this.displayStatus();
@@ -487,13 +531,17 @@ let myFip = {
 	myFip.descLine = myFip.displayLines[0].getElementsByClassName('left-info')[0];
 	myFip.typeLine = myFip.displayLines[0].getElementsByClassName('right-info')[0];
 	
-	
 	myFip.panel_controls = myFip.panel.getElementsByClassName('panel-controls')[0];
 	myFip.prevButton = myFip.panel_controls.getElementsByTagName('BUTTON')[2];
 	myFip.nextButton = myFip.panel_controls.getElementsByTagName('BUTTON')[3];
 	myFip.ackButton = myFip.panel_controls.getElementsByTagName('BUTTON')[4];
 	myFip.resetButton = myFip.panel_controls.getElementsByTagName('BUTTON')[5];
 	myFip.isolButton = myFip.panel_controls.getElementsByTagName('BUTTON')[6];
+	
+	myFip.annuns = myFip.panel.getElementsByClassName('panel-annunciators')[0].getElementsByClassName('annunciator');
+	myFip.annunAlarm = myFip.annuns[0];
+	myFip.annunIsol = myFip.annuns[1];
+	myFip.annunFault = myFip.annuns[2];
 	
 	//EVENT LISTENERS - bundle these into the FIP as well?
 	myFip.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
@@ -502,10 +550,7 @@ let myFip = {
 		if(t == myFip.nextButton && myFip.confirmState == 'none'){myFip.lastPressed = 'next'; myFip.incrementList(1);}
 		if(t == myFip.ackButton){myFip.lastPressed = 'ack'; myFip.handleAcknowledged();}
 		if(t == myFip.resetButton){myFip.lastPressed = 'reset'; myFip.handleReset();}
-		if(t == myFip.isolButton){myFip.lastPressed = 'isol'; myFip.handleIsolate();}
-		
-		
-		
+		if(t == myFip.isolButton){myFip.lastPressed = 'isol'; myFip.handleIsolate();}	
 	});
 	
 	//put the above into action

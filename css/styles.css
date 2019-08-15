@@ -87,14 +87,25 @@ div {
 	flex-grow: 1;
 	display:flex;
 	flex-direction:column;
-	font-size: 0px;
 }
 
-.panel-annunciators button {
+.panel-annunciators div {
 	flex-grow:1;
 	border: 1px solid orange;
-	background: none;
 	color: orange;
+	text-align: center;
+}
+
+.panel-annunciators > .alarm {
+	background-color: #FF0000;
+}
+
+.panel-annunciators > .isol {
+	background-color: #FFEE00;
+}
+
+.panel-annunciators > .unlit {
+	background-color: #000000;
 }
 
 .panel-display-container {
@@ -157,6 +168,7 @@ div {
 	color: orange;
 	font-size: 0.9rem;
 }
+
 .left-info {
 	float: left;
 }
@@ -164,6 +176,8 @@ div {
 .right-info {
 	float: right;
 }
+
+
 
 /* control styles */
 

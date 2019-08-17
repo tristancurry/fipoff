@@ -396,7 +396,7 @@ let myFip = {
 		} else {
 			//status normal. TODO - allow for scrolling through devices from this screen
 			let d = new Date();
-			this.descLine.innerHTML = 'FireFinder';
+			this.descLine.innerHTML = 'FirePanel 3000';
 			this.typeLine.innerHTML = assembleTime(d) + ' ' + assembleDate(d);
 			this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
 			this.displayLines[2].innerHTML = 'Ph: 0444 444444';

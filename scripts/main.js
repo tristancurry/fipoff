@@ -526,6 +526,9 @@ let myFip = {
 	
 	handleEbIsol: function(){
 		this.ebIsolLamp.classList.toggle('unlit');
+		//TO-DO: detect whether or not the ebIsolation is active.
+		//if the isolation is ended, check to see the status of the alarm system
+		
 	},
 	
 	handleWsIsol: function(){

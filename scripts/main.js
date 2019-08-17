@@ -289,8 +289,9 @@ let myFip = {
 			if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
 			if(this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
 			//all alarms have been acknowledged. Make the ALARM annunciator solid
-		} else {
+		} else if(this.alarmCount == 0) {
 			if(!this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
+			if(this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
 			//no alarms are active. Turn ALARM annunciator off
 		}
 		
@@ -553,14 +554,11 @@ let myFip = {
 	},
 	
 	handleEbIsol: function(){
-		this.ebIsol = !this.ebIsol;
-		this.ebIsolLamp.classList.toggle('unlit');
-		this.assignStatusIds();
-		this.displayStatus();//oooh clumsy forced update...
+			this.ebIsol = !this.ebIsol;
+			this.ebIsolLamp.classList.toggle('unlit');
+			this.assignStatusIds();
+			this.displayStatus();//oooh clumsy forced update...
 
-		//TO-DO: detect whether or not the ebIsolation is active.
-		//if the isolation is ended, check to see the status of the alarm system
-		
 	},
 	
 	handleWsIsol: function(){

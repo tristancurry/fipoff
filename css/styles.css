@@ -122,11 +122,11 @@ div {
 	background-color: #FFEE00;
 }
 
-.panel-annunciators .unlit, .panel-controls .unlit, .panel > .unlit {
+.panel .unlit {
 	background-color: #111122;
 }
 
-.panel-annunciators .flashing, .flashing {
+.panel .flashing {
 	animation: flash 1s infinite;
 }
 

@@ -219,6 +219,9 @@ let myFip = {
 	lastPressed: 'reset',
 	confirmState: 'none', //options are: none, single, multi, isol
 	
+	ebActive: false,
+	ebIsol: false,
+	
 	assignStatusIds: function() {
 		let list = this.deviceList;
 		//go through list of devices.
@@ -279,6 +282,7 @@ let myFip = {
 			if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
 			if(!this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
 			
+			
 			//alarms exist that haven't been acknowledged. Flash the ALARM annunciator
 			//TODO: invoke a CSS class that flashes a div's background-color off and on
 		} else if(this.alarmCount > 0 && this.ackedCount == this.alarmCount){
@@ -297,6 +301,30 @@ let myFip = {
 			if(!this.annunIsol.classList.contains('unlit')){this.annunIsol.classList.toggle('unlit')};
 			//no isolates exist. Turn the ISOLATION annunciator off
 		}
+		
+		if(this.alarmCount > 0){
+			if(!this.ebActive){
+				this.ebActive = true;
+			}
+			
+			if(!this.ebIsol){
+				//remove unlit class from extBell span, add flashing class
+				if(this.extBell.classList.contains('unlit')){this.extBell.classList.toggle('unlit')};
+				if(!this.extBell.classList.contains('flashing')){this.extBell.classList.toggle('flashing')};
+					
+			} else {
+				//if not already unlit, add this class and remove flashing class
+				if(!this.extBell.classList.contains('unlit')){this.extBell.classList.toggle('unlit')};
+				if(this.extBell.classList.contains('flashing')){this.extBell.classList.toggle('flashing')};
+			}
+			
+		} else {
+			this.ebActive = false;
+			if(!this.extBell.classList.contains('unlit')){this.extBell.classList.toggle('unlit')};
+			if(this.extBell.classList.contains('flashing')){this.extBell.classList.toggle('flashing')};
+		}
+		
+		//TODO: refactor the conditional toggling of classes into a toggleClass function (args are the element, and the className)
 	},
 	
 	displayStatus: function() {
@@ -525,7 +553,11 @@ let myFip = {
 	},
 	
 	handleEbIsol: function(){
+		this.ebIsol = !this.ebIsol;
 		this.ebIsolLamp.classList.toggle('unlit');
+		this.assignStatusIds();
+		this.displayStatus();//oooh clumsy forced update...
+
 		//TO-DO: detect whether or not the ebIsolation is active.
 		//if the isolation is ended, check to see the status of the alarm system
 		
@@ -561,7 +593,7 @@ let myFip = {
 	myFip.annunIsol = myFip.annuns[1];
 	myFip.annunFault = myFip.annuns[2];
 	
-	
+	myFip.extBell = myFip.panel.getElementsByClassName('extBell')[0];
 	
 	//EVENT LISTENERS - bundle these into the FIP as well?
 	myFip.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){

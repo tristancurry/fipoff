@@ -343,44 +343,60 @@ let myFip = {
 			this.findNextOrPrev('isol');
 		} else {
 			//status normal. TODO - allow for scrolling through devices from this screen
+			this.findNextOrPrev('normal');
+			//this.displayMainStatus('normal');
+		}
+		
+	},
+	
+	displayMainStatus: function(fipStatus){
 			let d = new Date();
 			this.descLine.innerHTML = 'FirePanel 3000';
 			this.typeLine.innerHTML = assembleTime(d) + ' ' + assembleDate(d);
 			this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
 			this.displayLines[2].innerHTML = 'Ph: 0444 444444';
-			this.displayLines[3].innerHTML = 'System NORMAL';
-		}
-		
+			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
 	},
 	
 	findNext: function(status, loops){
 		let list = this.deviceList;
-		for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
+		for(let i = this.currentIndex, l = list.length; i < l + 1; i = (i+1)%(l + 1)){
+			console.log(this.currentIndex + ' ' + i + ' ' + l);
 			if(loops > 5){console.log('overlooped'); break;}
-			if(i == l - 1){loops++;}
-			if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
-				let device = list[i];
-				//display this alarm
-				this.displayAlarm(device);
-				this.currentIndex = i;
+			if(i < l){
+				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
+					let device = list[i];
+					//display this alarm
+					this.displayAlarm(device);
+					this.currentIndex = i;
+					break;
+				}
+			} else if(i == l){
+				this.displayMainStatus(status);
+				loops++;
 				break;
-			} 
+			}				
 		}
 	},
 	
 	findPrev: function(status, loops){
 		let list = this.deviceList;
-		for(let i = this.currentIndex, l = list.length; i >= 0; i = (i - 1 + l)%l){
-				if(loops > 5){console.log('overlooped'); break;}
-			
-			if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
-				let device = list[i];
-				//display this device
-				this.displayAlarm(device);
-				this.currentIndex = i;
+		for(let i = this.currentIndex, l = list.length; i >= -1; i--){
+			console.log(this.currentIndex + ' ' + i + ' ' + l);
+			if(loops > 5){console.log('overlooped'); break;}
+			if(i >= 0){
+				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
+					let device = list[i];
+					//display this device
+					this.displayAlarm(device);
+					this.currentIndex = i;
+					break;
+				}
+			} else if(i < 0){
+				this.displayMainStatus(status);
+				loops++;
 				break;
-			} 
-			if(i == 0){loops++;}
+			}
 		}
 		
 	},
@@ -390,7 +406,7 @@ let myFip = {
 		if(this.lastPressed == 'prev'){
 			this.findPrev(status, loops);
 		} else {
-			this.findNext(status,loops);
+			this.findNext(status, loops);
 		}
 	},
 	
@@ -409,6 +425,8 @@ let myFip = {
 				this.displayLines[3].innerHTML = 'Sensor alarms ' + device.alarmID + ' of ' + this.alarmCount;
 			} else if (this.isolCount > 0){
 				this.displayLines[3].innerHTML = 'Isolate ' + device.isolID + ' of ' + this.isolCount;
+			} else {
+				this.displayLines[3].innerHTML = 'Device ' + (this.currentIndex + 1) + ' of ' + this.deviceList.length;
 			}
 		} else {
 			switch(this.confirmState){
@@ -439,7 +457,7 @@ let myFip = {
 		let list = this.deviceList;
 		let idx = this.currentIndex;
 		idx += inc;
-		if(idx < 0){
+		if(idx < -1){  //this is done so that scrolling PREV through index zero is possible and will display the main status screen
 			idx += list.length;
 		}
 		idx = idx%list.length;

@@ -337,63 +337,10 @@ let myFip = {
 			//keep looping until found, or until max loops have been reached (prevent infinite looping)
 			//somehow include the ability to end up back on the main screen when the last alarm has been traveled through
 			//if no alarms at all are found, despite alarmCount > 0, then display an error code and put system into error status
-			let loops = 0;
-			if(this.lastPressed == 'prev'){
-				for(let i = this.currentIndex, l = list.length; i >= 0; i = (i - 1 + l)%l){
-					if(loops > 5){console.log('overlooped'); break;}
-					
-					if(list[i].status == 'alarm' || list[i].status == 'acked'){
-						let device = list[i];
-						//display this alarm
-						this.displayAlarm(device);
-						this.currentIndex = i;
-						break;
-					} 
-					if(i == 0){loops++;}
-				}
-			} else {
-				for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
-					if(loops > 5){console.log('overlooped'); break;}
-					if(i == l - 1){loops++;}
-					if(list[i].status == 'alarm' || list[i].status == 'acked'){
-						let device = list[i];
-						//display this alarm
-						this.displayAlarm(device);
-						this.currentIndex = i;
-						break;
-					} 
-				}
-			}
+			this.findNextOrPrev('alarm');
 		} else if (this.isolCount > 0) { //if there are isolates
 		//somehow include the main screen in this selection i.e. if a loop occurs without finding anything?
-			let loops = 0;
-			if(this.lastPressed == 'prev'){
-				for(let i = this.currentIndex, l = list.length; i >= 0; i = (i - 1 + l)%l){
-					if(loops > 5){console.log('overlooped'); break;}
-					
-					if(list[i].status == 'isol'){
-						let device = list[i];
-						//display this alarm
-						this.displayAlarm(device);
-						this.currentIndex = i;
-						break;
-					} 
-					if(i == 0){loops++;}
-				}
-			} else {
-				for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
-					if(loops > 5){console.log('overlooped'); break;}
-					if(i == l - 1){loops++;}
-					if(list[i].status == 'isol'){
-						let device = list[i];
-						//display this alarm
-						this.displayAlarm(device);
-						this.currentIndex = i;
-						break;
-					} 
-				}
-			}
-		
+			this.findNextOrPrev('isol');
 		} else {
 			//status normal. TODO - allow for scrolling through devices from this screen
 			let d = new Date();
@@ -402,6 +349,48 @@ let myFip = {
 			this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
 			this.displayLines[2].innerHTML = 'Ph: 0444 444444';
 			this.displayLines[3].innerHTML = 'System NORMAL';
+		}
+		
+	},
+	
+	findNext: function(status, loops){
+		let list = this.deviceList;
+		for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
+			if(loops > 5){console.log('overlooped'); break;}
+			if(i == l - 1){loops++;}
+			if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
+				let device = list[i];
+				//display this alarm
+				this.displayAlarm(device);
+				this.currentIndex = i;
+				break;
+			} 
+		}
+	},
+	
+	findPrev: function(status, loops){
+		let list = this.deviceList;
+		for(let i = this.currentIndex, l = list.length; i >= 0; i = (i - 1 + l)%l){
+				if(loops > 5){console.log('overlooped'); break;}
+			
+			if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
+				let device = list[i];
+				//display this device
+				this.displayAlarm(device);
+				this.currentIndex = i;
+				break;
+			} 
+			if(i == 0){loops++;}
+		}
+		
+	},
+	
+	findNextOrPrev: function(status){
+		let loops = 0;
+		if(this.lastPressed == 'prev'){
+			this.findPrev(status, loops);
+		} else {
+			this.findNext(status,loops);
 		}
 	},
 	

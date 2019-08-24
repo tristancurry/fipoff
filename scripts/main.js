@@ -48,6 +48,9 @@ buildZoneLists();
 console.log(sysObjects);
 console.log(zones);
 
+
+
+
 function buildSystem (sys) {
 //expect to encounter system name first
 //then delve into the hierarchy
@@ -175,6 +178,13 @@ function buildZoneLists(){
 			}
 		}
 	}
+}
+
+
+//take an object from the list that is of type 'fip', and give it some additional properties
+function buildFip(obj) {
+
+	
 }
 
 //templates for building the various DOM representations of the alarm system components

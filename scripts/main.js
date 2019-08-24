@@ -360,7 +360,7 @@ let myFip = {
 	
 	findNext: function(status, loops){
 		let list = this.deviceList;
-		for(let i = this.currentIndex, l = list.length; i < l + 1; i = (i+1)%(l + 1)){
+		for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
 			console.log(this.currentIndex + ' ' + i + ' ' + l);
 			if(loops > 5){console.log('overlooped'); break;}
 			if(i < l){
@@ -371,18 +371,18 @@ let myFip = {
 					this.currentIndex = i;
 					break;
 				}
-			} else if(i == l){
+			} /*else if(i == l){
 				this.displayMainStatus(status);
 				loops++;
 				break;
-			}				
+			}*/				
 		}
 	},
 	
 	findPrev: function(status, loops){
 		let list = this.deviceList;
-		for(let i = this.currentIndex, l = list.length; i >= -1; i--){
-			console.log(this.currentIndex + ' ' + i + ' ' + l);
+		for(let i = this.currentIndex, l = list.length; i >= 0; i--){
+			//console.log(this.currentIndex + ' ' + i + ' ' + l);
 			if(loops > 5){console.log('overlooped'); break;}
 			if(i >= 0){
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
@@ -392,11 +392,11 @@ let myFip = {
 					this.currentIndex = i;
 					break;
 				}
-			} else if(i < 0){
+			} /*else if(i < 0){
 				this.displayMainStatus(status);
 				loops++;
 				break;
-			}
+			}*/
 		}
 		
 	},
@@ -457,7 +457,7 @@ let myFip = {
 		let list = this.deviceList;
 		let idx = this.currentIndex;
 		idx += inc;
-		if(idx < -1){  //this is done so that scrolling PREV through index zero is possible and will display the main status screen
+		if(idx < 0){  
 			idx += list.length;
 		}
 		idx = idx%list.length;

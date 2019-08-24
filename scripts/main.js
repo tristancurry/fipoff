@@ -343,8 +343,8 @@ let myFip = {
 			this.findNextOrPrev('isol');
 		} else {
 			//status normal. TODO - allow for scrolling through devices from this screen
-			this.findNextOrPrev('normal');
-			//this.displayMainStatus('normal');
+			//this.findNextOrPrev('normal');
+			this.displayMainStatus('normal');
 		}
 		
 	},

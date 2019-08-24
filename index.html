@@ -21,49 +21,53 @@
 				<div class='modal-content'>update ready!<button id='updateBtn'>Y A Y</button></div>
 			</div>
 			
-			<div class="panel">
-				<span class='panel-title'>FirePanel 3000</span>
-				<span class='closeBox'>&times</span>
-				<span class ='extBell unlit'>🔔</span>
-				<div class='panel-fff'>
-					<div class='panel-inner'>
-					<div class='panel-upper'>
-						<div class='panel-annunciators'>
-							<div class='annunciator'>ALARM<div class='lamp alarm unlit'></div></div>
-							<div class='annunciator'>ISOL<div class='lamp isol unlit'></div></div>
-							<div class='annunciator'>FAULT<div class='lamp fault unlit'></div></div>
-						</div>
-						<div class='panel-display-container'>
-							<div class='panel-display-bezel'>
-								<div class='panel-display'>
-									<div class='panel-display-content'>
-										<div class='display-line zero'><span class='left-info' >Detector 1</span><span class='right-info'>Smoke</span></div>
-										<div class='display-line one'>L1 S1 Z17 ALARM</div>
-										<div class='display-line two'>12/06/2019 22:24:31</div>
-										<div class='display-line three'>Sensor Alarms 1 of 5</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class='panel-lower'>
-						<div class='panel-controls'>
-							<button><div class='lamp ebIsol unlit'></div>External Bell Isolate</button>
-							<button><div class ='lamp wsIsol unlit'></div>Warning System Isolate</button>
-							<button>Prev</button>
-							<button>Next</button>
-							<button>Acknowledge</button>
-							<button>Reset</button>
-							<button>Isolate</button>
-						</div>
-					</div>
-				</div>
-				</div>
-			</div>
+			
 			
 			
 		</div>
 	</div>
+	
+	<template class="template-panel">
+		<div class="panel">
+			<span class='panel-title'>FirePanel 3000</span>
+			<span class='closeBox'>&times</span>
+			<span class ='extBell unlit'>🔔</span>
+			<div class='panel-fff'>
+				<div class='panel-inner'>
+						<div class='panel-upper'>
+							<div class='panel-annunciators'>
+								<div class='annunciator'>ALARM<div class='lamp alarm unlit'></div></div>
+								<div class='annunciator'>ISOL<div class='lamp isol unlit'></div></div>
+								<div class='annunciator'>FAULT<div class='lamp fault unlit'></div></div>
+							</div>
+							<div class='panel-display-container'>
+								<div class='panel-display-bezel'>
+									<div class='panel-display'>
+										<div class='panel-display-content'>
+											<div class='display-line zero'><span class='left-info' >Detector 1</span><span class='right-info'>Smoke</span></div>
+											<div class='display-line one'>L1 S1 Z17 ALARM</div>
+											<div class='display-line two'>12/06/2019 22:24:31</div>
+											<div class='display-line three'>Sensor Alarms 1 of 5</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class='panel-lower'>
+							<div class='panel-controls'>
+								<button><div class='lamp ebIsol unlit'></div>External Bell Isolate</button>
+								<button><div class ='lamp wsIsol unlit'></div>Warning System Isolate</button>
+								<button>Prev</button>
+								<button>Next</button>
+								<button>Acknowledge</button>
+								<button>Reset</button>
+								<button>Isolate</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	</template>
 	<script type='text/javascript' src='systems/system01/system01.js'></script>
 	<script type='text/javascript' src='scripts/main.js'></script>
 	<script type='text/javascript' src='scripts/interface.js'></script>	

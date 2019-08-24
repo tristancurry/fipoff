@@ -64,9 +64,9 @@ console.log(sysObjectsByType);
 
 
 function assembleDate(d){
-	let day =  d.getDay().toString();
-	if(d.getDay() < 10){day = addLeadingZero(day)};
-	let month =  d.getMonth().toString();
+	let day =  d.getDate().toString();
+	if(d.getDate() < 10){day = addLeadingZero(day)};
+	let month =  (d.getMonth() + 1).toString();
 	if(d.getMonth() < 10){month = addLeadingZero(month)};
 	let year =  d.getFullYear().toString();
 	
@@ -132,174 +132,32 @@ function buildFips() {
 			}
 		}
 		
+	//provide the FIP a representation in the DOM. NB this will not work in IE
+		let temp = document.getElementsByClassName('template-panel')[0];
+		let clone = temp.content.cloneNode(true);
+		viewport.appendChild(clone);
+		f.panel = document.getElementsByClassName('panel')[i]; //this will change when hardcoded panel is gone
+		
 	//give the FIP all of the functions it needs to survive as a fip.
 		f.status = 'normal';
+		f.alarmCount = 0;
+		f.ackedCount = 0;
+		f.isolCount = 0;
 	
+		f.currentIndex = 0;
 	
-	//work out whether it's the master fip or not (if not, the div representation will be hidden by default)
-	}
-}
+		f.alarmText = 'Alarm: ';
+		f.ackText = 'Acknowledged alarm: ';
+		f.isoText = 'Isolated: ';
+		f.statusStrings = {alarm: 'ALARM', acked: 'ALARM(Acknowledged)', isol: 'ISOLATED', normal: 'NORMAL'};
 
-
-function createSystemObjects(node, parent){
-	let o = {}; 
-	if(parent){o.parent = parent};
-	//establish identifiers
-	if(node.name){o.name = node.name;}
-	
-	if(parent && parent.shname){
-		if(node.shname){
-			o.shname = parent.shname + '_' + node.shname;
-		} else {
-			o.shname = parent.shname + '_' + node.name;
-		}
-	} else {
-		if(node.shname){
-			o.shname = node.shname;
-		} else {
-			o.shname = node.name;	
-		}
+		f.lastPressed =  'reset';
+		f.confirmState = 'none'; //options are: none, single, multi, isol
 		
-	}
+		f.ebActive = false;
+		f.ebIsol = false;
 	
-	if(node.loop){
-		o.loop = node.loop;
-	}
-	
-	if(node.type){
-		o.type = node.type;
-		//also add this object to the global list of similar objects
-		if(sysObjectsByType[o.type]){
-			sysObjectsByType[o.type].push(o);
-		}
-	}
-	
-	if(node.subtype){
-		o.subtype = node.subtype;
-	}
-	
-	if(node.zone){
-		//if parent exists and is an FIP, then zone = fip shname + 'zone' + zone number
-		//if parent object has a zone and is a circuit, then take same zone as parent
-		//if there's no parent, well, what can you do?
-		if(parent && parent.type == 'fip'){
-			//console.log(parent.type);
-			o.zone = parent.shname + '_zone_' + node.zone;
-			o.zoneNum = node.zone;
-		} 	
-	} else if (parent && parent.type == 'circuit' && parent.zone){
-		o.zone = parent.zone;
-		o.zoneNum = parent.zoneNum;
-		o.loop = parent.loop;
-	}	
-	
-	if(node.addressable){o.addressable = node.addressable;}
-	
-	//place in a list of objects and assign a reference id
-	o.sysObsId = sysObjects.length;
-	sysObjects.push(o);
-	
-	//if there are children on the node, create an empty list of children on the object
-	//then begin populating this list by recursion on this function with o as 'parent'
-	if(node.children){
-		o.children = [];
-	//do recursion
-		for(let i = 0, l = node.children.length; i < l; i++){
-			createSystemObjects(node.children[i], o);
-		}
-	}
-	
-	//also make sure that this ends up on its parent's list of children!
-	if(parent && parent.children){
-		parent.children.push(o);
-	}
-
-	
-	//TODO: place in list of objects of same type and assign a reference id
-	
-	//TESTING: create a div with name and shortname, and append to viewport
-	o.divrep = document.createElement('div');
-	o.divrep.className = 'test';
-	o.divrep.innerHTML = '<p>'+ o.name + '</p><p>' + o.shname + '</p><p>' + o.zone + '</p>';
-	o.divrep.style.padding = '5px';
-	viewport.appendChild(o.divrep);
-}
-
-
-//Gather all things of the same ZONE NAME and plop in a list
-//for each object in the systemObjects
-// - does it have a zone name?
-// - if so, has this zone name been encountered yet?
-// 		- if not, create an entry in a 'zones' list, ie zones.thiszonename: [];
-// 		- then add itself to this list
-//		-if so, then add itself to the list with that property name
-
-//NOTE: these might end up residing with the FIPs themselves (no need for global scope)
-//the only list of things available globally will be the list of FIPs
-
-function buildZoneLists(){
-	for(let i = 0, l = sysObjects.length; i < l; i++){
-		let o = sysObjects[i];
-		
-		if(o.zone){
-			if(zones[o.zone]){
-				zones[o.zone].push(o);
-			} else {
-				zones[o.zone] = [];
-				zones[o.zone].push(o);
-			}
-		}
-	}
-}
-
-
-
-//templates for building the various DOM representations of the alarm system components
-InnerHtmlInstructions = {
-	fip: '<div class="panel"></div>',
-	blockplan: '<div class="blockplan"></div>',
-	det: '<div class="det"><div class ="det-header"></div><div class="det-body"><div class="det-image"></div><div class="det-info"></div></div><div class="det-options"></div></div>'
-}
-
-//TESTING ALARM PANEL FUNCTIONS
-//(trying to establish a format for a FIP OBJECT)
-
-let myFip = {
-	
-	status:'normal',
-	
-	//this device list will be generated from the system description file
-	deviceList:	[{desc:'Me', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:1, zone:1, lastAlarmTime:'today'}, 
-	{desc:'You', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:2, zone:1, lastAlarmTime:'today'}, 
-	{desc:'Vlad', status:'alarm', type:'smoke', subtype:'pe', loop:1, num:3, zone:1, lastAlarmTime:'today'}, 
-	{desc:'Donald', status:'normal', type:'smoke', subtype:'pe', loop:2, num:1, zone:1, lastAlarmTime:'yesterday'}, 
-	{desc:'Jeeves', status:'alarm', type:'smoke', subtype:'pe', loop:2, num:2, zone:1, lastAlarmTime:'today'}, 
-	{desc:'Snow', status:'normal', type:'smoke', subtype:'pe', loop:2, num:3, zone:1, lastAlarmTime:'yesterday'}
-	],
-	
-	zones: [],
-	circuits: [],
-	
-	panel: document.getElementsByClassName('panel')[0], //for testing - this will be linked to the right panel dynamically
-	
-	alarmCount: 0,
-	ackedCount: 0,
-	isolCount: 0,
-	
-	currentIndex: 0,
-	
-	alarmText: 'Alarm: ',
-	ackText: 'Acknowledged alarm: ',
-	isoText: 'Isolated: ',
-	statusStrings : {alarm: 'ALARM', acked: 'ALARM(Acknowledged)', isol: 'ISOLATED', normal: 'NORMAL'},
-
-	lastPressed: 'reset',
-	confirmState: 'none', //options are: none, single, multi, isol
-	
-	ebActive: false,
-	ebIsol: false,
-	
-	assignStatusIds: function() {
+		f.assignStatusIds = function() {
 		let list = this.deviceList;
 		//go through list of devices.
 		//if in alarm, assign an alarmID
@@ -403,9 +261,9 @@ let myFip = {
 		}
 		
 		//TODO: refactor the conditional toggling of classes into a toggleClass function (args are the element, and the className)
-	},
+	};
 	
-	displayStatus: function() {
+	f.displayStatus = function() {
 		let list = this.deviceList;
 		//access the FIP's list
 		//work out if anything is still in alarm
@@ -424,18 +282,18 @@ let myFip = {
 			this.displayMainStatus('normal');
 		}
 		
-	},
+	};
 	
-	displayMainStatus: function(fipStatus){
+	f.displayMainStatus = function(fipStatus){
 			let d = new Date();
 			this.descLine.innerHTML = 'FirePanel 3000';
 			this.typeLine.innerHTML = assembleTime(d) + ' ' + assembleDate(d);
 			this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
 			this.displayLines[2].innerHTML = 'Ph: 0444 444444';
 			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
-	},
+	};
 	
-	findNext: function(status, loops){
+	f.findNext = function(status, loops){
 		let list = this.deviceList;
 		for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
 			if(loops > 5){console.log('overlooped'); break;}
@@ -453,9 +311,9 @@ let myFip = {
 				break;
 			}*/				
 		}
-	},
+	};
 	
-	findPrev: function(status, loops){
+	f.findPrev = function(status, loops){
 		let list = this.deviceList;
 		for(let i = this.currentIndex, l = list.length; i >= 0; i--){
 			if(loops > 5){console.log('overlooped'); break;}
@@ -474,18 +332,18 @@ let myFip = {
 			}*/
 		}
 		
-	},
+	};
 	
-	findNextOrPrev: function(status){
+	f.findNextOrPrev = function(status){
 		let loops = 0;
 		if(this.lastPressed == 'prev'){
 			this.findPrev(status, loops);
 		} else {
 			this.findNext(status, loops);
 		}
-	},
+	};
 	
-	displayAlarm: function(device){
+	f.displayAlarm = function(device){
 		//display this alarm
 		this.descLine.innerHTML = device.desc;
 		this.typeLine.innerHTML = device.type;
@@ -524,9 +382,9 @@ let myFip = {
 			
 		}
 
-	},
+	};
 	
-	incrementList: function(increment){
+	f.incrementList = function(increment){
 		//assumes increments won't be bigger than the deviceList's length
 		let inc = Math.round(increment);
 		let list = this.deviceList;
@@ -539,9 +397,9 @@ let myFip = {
 		this.currentIndex = idx;
 		
 		this.displayStatus();
-	},
+	};
 	
-	handleAcknowledged: function(){
+	f.handleAcknowledged = function(){
 		let list = this.deviceList;
 		let device = list[this.currentIndex]; //grab the currently viewed device
 		if(this.confirmState == 'none'){
@@ -587,9 +445,9 @@ let myFip = {
 			}
 			this.displayStatus();
 		}
-	},
+	};
 	
-	handleIsolate: function(){
+	f.handleIsolate = function(){
 		if(this.confirmState == 'none'){
 			//put system in state where it's waiting for the user to confirm the isolation.
 			this.confirmState = 'isol';
@@ -598,21 +456,21 @@ let myFip = {
 			this.confirmState = 'none';
 		}
 		this.displayStatus();
-	},
+	};
 	
-	isolateDevice: function(device){
+	f.isolateDevice = function(device){
 		device.status = 'isol';
-	},
+	};
 	
-	resetDevice: function(device){
+	f.resetDevice = function(device){
 		//try to remove alarm status from a device (i.e. set status to 'normal')
 		//this will fail if the device has 'stuck' set to true
 		if(!device.stuck && (device.status == 'alarm' || device.status == 'acked')){
 			device.status = 'normal';
 		}
-	},
+	};
 	
-	handleReset: function(){
+	f.handleReset = function(){
 		if(this.confirmState == 'none'){
 		
 			//if there are acknowledged alarms, attempt to reset these to normal
@@ -633,61 +491,189 @@ let myFip = {
 		//in either case, prompt user for acknowledgement...
 		
 		//also, successful reset should prevent additional alarms being sent upstream (i.e. Sub FIP --> Main FIP)
-	},
+	};
 	
-	handleEbIsol: function(){
+	f.handleEbIsol = function(){
 			this.ebIsol = !this.ebIsol;
 			this.ebIsolLamp.classList.toggle('unlit');
 			this.assignStatusIds();
 			this.displayStatus();//oooh clumsy forced update...
 
-	},
+	};
 	
-	handleWsIsol: function(){
+	f.handleWsIsol = function(){
 		this.wsIsolLamp.classList.toggle('unlit');
-	},
+	};
 	
+	f.display = f.panel.getElementsByClassName('panel-display-content')[0];
+	f.displayLines = f.display.getElementsByClassName('display-line');
+	f.descLine = f.displayLines[0].getElementsByClassName('left-info')[0];
+	f.typeLine = f.displayLines[0].getElementsByClassName('right-info')[0];
+	
+	f.panel_controls = f.panel.getElementsByClassName('panel-controls')[0];
+	f.ebIsolButton = f.panel_controls.getElementsByTagName('BUTTON')[0];
+	f.ebIsolLamp = f.ebIsolButton.getElementsByClassName('lamp')[0];
+	f.wsIsolButton = f.panel_controls.getElementsByTagName('BUTTON')[1];
+	f.wsIsolLamp = f.wsIsolButton.getElementsByClassName('lamp')[0];
+	f.prevButton = f.panel_controls.getElementsByTagName('BUTTON')[2];
+	f.nextButton = f.panel_controls.getElementsByTagName('BUTTON')[3];
+	f.ackButton = f.panel_controls.getElementsByTagName('BUTTON')[4];
+	f.resetButton = f.panel_controls.getElementsByTagName('BUTTON')[5];
+	f.isolButton = f.panel_controls.getElementsByTagName('BUTTON')[6];
+	
+	f.annuns = f.panel.getElementsByClassName('panel-annunciators')[0].getElementsByClassName('lamp');
+	f.annunAlarm = f.annuns[0];
+	f.annunIsol = f.annuns[1];
+	f.annunFault = f.annuns[2];
+	
+	f.extBell = f.panel.getElementsByClassName('extBell')[0];
+	
+	//EVENT LISTENERS - bundle these into the FIP as well?
+	f.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
+		let t = event.target;
+		if(t == f.ebIsolButton){f.handleEbIsol();}
+		if(t == f.wsIsolButton){f.handleWsIsol();}
+		if(t == f.prevButton && f.confirmState == 'none'){f.lastPressed = 'prev'; f.incrementList(-1);}
+		if(t == f.nextButton && f.confirmState == 'none'){f.lastPressed = 'next'; f.incrementList(1);}
+		if(t == f.ackButton){f.lastPressed = 'ack'; f.handleAcknowledged();}
+		if(t == f.resetButton){f.lastPressed = 'reset'; f.handleReset();}
+		if(t == f.isolButton){f.lastPressed = 'isol'; f.handleIsolate();}	
+	});
+	
+	f.deviceList[0].status = 'alarm';
+	let alarmTime = new Date();
+	f.deviceList[0].lastAlarmTime = assembleDate(alarmTime) + ' ' + assembleTime(alarmTime);
+	
+	//fire it up!
+	
+	f.assignStatusIds();
+	f.displayStatus();
+	
+	//work out whether it's the master fip or not (if not, the div representation will be hidden by default)
+	}
 }
 
 
-//TODO: bundle the following up into a method on the FIP itself.
-//or find a way to do this within object notation 
-	myFip.display = myFip.panel.getElementsByClassName('panel-display-content')[0];
-	myFip.displayLines = myFip.display.getElementsByClassName('display-line');
-	myFip.descLine = myFip.displayLines[0].getElementsByClassName('left-info')[0];
-	myFip.typeLine = myFip.displayLines[0].getElementsByClassName('right-info')[0];
+function createSystemObjects(node, parent){
+	let o = {}; 
+	if(parent){o.parent = parent};
+	//establish identifiers
+	if(node.name){o.name = node.name;}
 	
-	myFip.panel_controls = myFip.panel.getElementsByClassName('panel-controls')[0];
-	myFip.ebIsolButton = myFip.panel_controls.getElementsByTagName('BUTTON')[0];
-	myFip.ebIsolLamp = myFip.ebIsolButton.getElementsByClassName('lamp')[0];
-	myFip.wsIsolButton = myFip.panel_controls.getElementsByTagName('BUTTON')[1];
-	myFip.wsIsolLamp = myFip.wsIsolButton.getElementsByClassName('lamp')[0];
-	myFip.prevButton = myFip.panel_controls.getElementsByTagName('BUTTON')[2];
-	myFip.nextButton = myFip.panel_controls.getElementsByTagName('BUTTON')[3];
-	myFip.ackButton = myFip.panel_controls.getElementsByTagName('BUTTON')[4];
-	myFip.resetButton = myFip.panel_controls.getElementsByTagName('BUTTON')[5];
-	myFip.isolButton = myFip.panel_controls.getElementsByTagName('BUTTON')[6];
+	if(parent && parent.shname){
+		if(node.shname){
+			o.shname = parent.shname + '_' + node.shname;
+		} else {
+			o.shname = parent.shname + '_' + node.name;
+		}
+	} else {
+		if(node.shname){
+			o.shname = node.shname;
+		} else {
+			o.shname = node.name;	
+		}
+		
+	}
 	
-	myFip.annuns = myFip.panel.getElementsByClassName('panel-annunciators')[0].getElementsByClassName('lamp');
-	myFip.annunAlarm = myFip.annuns[0];
-	myFip.annunIsol = myFip.annuns[1];
-	myFip.annunFault = myFip.annuns[2];
+	if(node.loop){
+		o.loop = node.loop;
+	}
 	
-	myFip.extBell = myFip.panel.getElementsByClassName('extBell')[0];
+	if(node.type){
+		o.type = node.type;
+		//also add this object to the global list of similar objects
+		if(sysObjectsByType[o.type]){
+			sysObjectsByType[o.type].push(o);
+		}
+	}
 	
-	//EVENT LISTENERS - bundle these into the FIP as well?
-	myFip.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
-		let t = event.target;
-		if(t == myFip.ebIsolButton){myFip.handleEbIsol();}
-		if(t == myFip.wsIsolButton){myFip.handleWsIsol();}
-		if(t == myFip.prevButton && myFip.confirmState == 'none'){myFip.lastPressed = 'prev'; myFip.incrementList(-1);}
-		if(t == myFip.nextButton && myFip.confirmState == 'none'){myFip.lastPressed = 'next'; myFip.incrementList(1);}
-		if(t == myFip.ackButton){myFip.lastPressed = 'ack'; myFip.handleAcknowledged();}
-		if(t == myFip.resetButton){myFip.lastPressed = 'reset'; myFip.handleReset();}
-		if(t == myFip.isolButton){myFip.lastPressed = 'isol'; myFip.handleIsolate();}	
-	});
+	if(node.subtype){
+		o.subtype = node.subtype;
+	}
 	
-	//put the above into action
+	if(node.zone){
+		//if parent exists and is an FIP, then zone = fip shname + 'zone' + zone number
+		//if parent object has a zone and is a circuit, then take same zone as parent
+		//if there's no parent, well, what can you do?
+		if(parent && parent.type == 'fip'){
+			//console.log(parent.type);
+			o.zone = parent.shname + '_zone_' + node.zone;
+			o.zoneNum = node.zone;
+		} 	
+	} else if (parent && parent.type == 'circuit' && parent.zone){
+		o.zone = parent.zone;
+		o.zoneNum = parent.zoneNum;
+		o.loop = parent.loop;
+	}	
 	
-	myFip.assignStatusIds(); //i.e. go through device list and assign sequential IDs based on device status.
-	myFip.displayStatus();
+	if(node.addressable){o.addressable = node.addressable;}
+	
+	//place in a list of objects and assign a reference id
+	o.sysObsId = sysObjects.length;
+	sysObjects.push(o);
+	
+	//if there are children on the node, create an empty list of children on the object
+	//then begin populating this list by recursion on this function with o as 'parent'
+	if(node.children){
+		o.children = [];
+	//do recursion
+		for(let i = 0, l = node.children.length; i < l; i++){
+			createSystemObjects(node.children[i], o);
+		}
+	}
+	
+	//also make sure that this ends up on its parent's list of children!
+	if(parent && parent.children){
+		parent.children.push(o);
+	}
+
+	
+	//TODO: place in list of objects of same type and assign a reference id
+	
+	//TESTING: create a div with name and shortname, and append to viewport
+	/*o.divrep = document.createElement('div');
+	o.divrep.className = 'test';
+	o.divrep.innerHTML = '<p>'+ o.name + '</p><p>' + o.shname + '</p><p>' + o.zone + '</p>';
+	o.divrep.style.padding = '5px';
+	viewport.appendChild(o.divrep);*/
+}
+
+
+//Gather all things of the same ZONE NAME and plop in a list
+//for each object in the systemObjects
+// - does it have a zone name?
+// - if so, has this zone name been encountered yet?
+// 		- if not, create an entry in a 'zones' list, ie zones.thiszonename: [];
+// 		- then add itself to this list
+//		-if so, then add itself to the list with that property name
+
+//NOTE: these might end up residing with the FIPs themselves (no need for global scope)
+//the only list of things available globally will be the list of FIPs
+
+function buildZoneLists(){
+	for(let i = 0, l = sysObjects.length; i < l; i++){
+		let o = sysObjects[i];
+		
+		if(o.zone){
+			if(zones[o.zone]){
+				zones[o.zone].push(o);
+			} else {
+				zones[o.zone] = [];
+				zones[o.zone].push(o);
+			}
+		}
+	}
+}
+
+
+
+//templates for building the various DOM representations of the alarm system components...actually, instead, use HTML templates
+InnerHtmlInstructions = {
+	fip: '<div class="panel"></div>',
+	blockplan: '<div class="blockplan"></div>',
+	det: '<div class="det"><div class ="det-header"></div><div class="det-body"><div class="det-image"></div><div class="det-info"></div></div><div class="det-options"></div></div>'
+}
+
+//TESTING ALARM PANEL FUNCTIONS
+//(trying to establish a format for a FIP OBJECT)
+

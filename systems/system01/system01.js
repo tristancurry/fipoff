@@ -1,6 +1,7 @@
 system = {
 	name: 'System 01',
 	shname: 'sys01',
+	type: 'system',
 	children: [
 		{
 			name: 'Master FIP',
@@ -14,6 +15,7 @@ system = {
 					shname: 'l1',
 					type: 'circuit',
 					colour: 'purple',
+					loop: 1,
 					zone: 1,
 					page_number: 1,
 					children:[

@@ -18,6 +18,13 @@ const subtypes = {
 
 
 let sysObjects = [];
+let sysObjectsByType = {
+	fip: [],
+	circuit: [],
+	det: []
+};
+
+
 let fips = [];
 let circuits = [];
 let dets = [];
@@ -46,18 +53,14 @@ function constrain(n, min, max){
 buildSystem(system);
 buildZoneLists();
 console.log(sysObjects);
+console.log(sysObjectsByType);
 console.log(zones);
 
 
 
 
-function buildSystem (sys) {
-//expect to encounter system name first
-//then delve into the hierarchy
-	if(sys.children){
-		createSystemObjects(sys.children[0]);
-	}	
-}
+
+
 
 function assembleDate(d){
 	let day =  d.getDay().toString();
@@ -86,6 +89,33 @@ function addLeadingZero(str){
 	return(newStr);
 }
 
+function buildSystem (sys) {
+//expect to encounter system name first
+//then delve into the hierarchy
+	if(sys.children){
+		createSystemObjects(sys.children[0]);
+	}	
+}
+
+function buildFips() {
+	//for each fip in the list of fips...
+	
+	//create a deviceList by scouring its child circuits for details (desc, type, subtype, loop, zone)
+	//assign a num to each device, starting at 1
+	//assign a status of 'normal' to each device
+	//assign a lastAlarmDate of 'never' (or 0) to each device in the circuit (or an appropriate test date)
+	//stuck: false
+
+	
+	//give the FIP all of the functions it needs to survive as a fip.
+	
+	
+	
+	//work out whether it's the master fip or not (if not, the div representation will be hidden by default)
+	
+}
+
+
 function createSystemObjects(node, parent){
 	let o = {}; 
 	if(parent){o.parent = parent};
@@ -107,8 +137,22 @@ function createSystemObjects(node, parent){
 		
 	}
 	
-	if(node.type){o.type = node.type;}
-
+	if(node.loop){
+		o.loop = node.loop;
+	}
+	
+	if(node.type){
+		o.type = node.type;
+		//also add this object to the global list of similar objects
+		if(sysObjectsByType[o.type]){
+			sysObjectsByType[o.type].push(o);
+		}
+	}
+	
+	if(node.subtype){
+		o.subtype = node.subtype;
+	}
+	
 	if(node.zone){
 		//if parent exists and is an FIP, then zone = fip shname + 'zone' + zone number
 		//if parent object has a zone and is a circuit, then take same zone as parent
@@ -116,9 +160,12 @@ function createSystemObjects(node, parent){
 		if(parent && parent.type == 'fip'){
 			//console.log(parent.type);
 			o.zone = parent.shname + '_zone_' + node.zone;
+			o.zoneNum = node.zone;
 		} 	
 	} else if (parent && parent.type == 'circuit' && parent.zone){
 		o.zone = parent.zone;
+		o.zoneNum = parent.zoneNum;
+		o.loop = parent.loop;
 	}	
 	
 	if(node.addressable){o.addressable = node.addressable;}
@@ -181,11 +228,6 @@ function buildZoneLists(){
 }
 
 
-//take an object from the list that is of type 'fip', and give it some additional properties
-function buildFip(obj) {
-
-	
-}
 
 //templates for building the various DOM representations of the alarm system components
 InnerHtmlInstructions = {
@@ -624,15 +666,3 @@ let myFip = {
 	
 	myFip.assignStatusIds(); //i.e. go through device list and assign sequential IDs based on device status.
 	myFip.displayStatus();
-	
-
-
-
-
-
-
-
-
-	
-
-

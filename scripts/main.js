@@ -361,7 +361,6 @@ let myFip = {
 	findNext: function(status, loops){
 		let list = this.deviceList;
 		for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
-			console.log(this.currentIndex + ' ' + i + ' ' + l);
 			if(loops > 5){console.log('overlooped'); break;}
 			if(i < l){
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
@@ -382,7 +381,6 @@ let myFip = {
 	findPrev: function(status, loops){
 		let list = this.deviceList;
 		for(let i = this.currentIndex, l = list.length; i >= 0; i--){
-			//console.log(this.currentIndex + ' ' + i + ' ' + l);
 			if(loops > 5){console.log('overlooped'); break;}
 			if(i >= 0){
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){

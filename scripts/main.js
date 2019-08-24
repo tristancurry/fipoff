@@ -53,9 +53,10 @@ function constrain(n, min, max){
 buildSystem(system);
 buildZoneLists();
 console.log(sysObjects);
-console.log(sysObjectsByType);
-console.log(zones);
 
+console.log(zones);
+buildFips();
+console.log(sysObjectsByType);
 
 
 
@@ -99,20 +100,44 @@ function buildSystem (sys) {
 
 function buildFips() {
 	//for each fip in the list of fips...
-	
+	let fipList = sysObjectsByType['fip'];
+	for(let i = 0, l = fipList.length; i < l; i++){
+		let f = fipList[i];
 	//create a deviceList by scouring its child circuits for details (desc, type, subtype, loop, zone)
-	//assign a num to each device, starting at 1
-	//assign a status of 'normal' to each device
-	//assign a lastAlarmDate of 'never' (or 0) to each device in the circuit (or an appropriate test date)
-	//stuck: false
-
 	
+		f.deviceList = [];
+		for(let j = 0, m = f.children.length; j < m; j++){
+			let child = f.children[j];
+			if(child.type == 'circuit'){
+				//do some deeper digging. All devices should be on a circuit, not directly 'plugged into' the fip.
+				for(let k = 0, n = child.children.length; k < n; k++){
+					let c = child.children[k];
+					//assign a num to each device, starting at 1
+					//assign a status of 'normal' to each device
+					//assign a lastAlarmDate of 'never' (or 0) to each device in the circuit (or an appropriate test date)
+					//stuck: false
+					let device = {
+						desc: c.name,
+						type: c.type,
+						subtype: c.subtype,
+						zone: c.zoneNum,
+						loop: c.loop,
+						num: k,
+						status: 'normal',
+						stuck: false,
+						lastAlarmTime: 0
+					}
+				f.deviceList.push(device);	
+				}	
+			}
+		}
+		
 	//give the FIP all of the functions it needs to survive as a fip.
-	
+		f.status = 'normal';
 	
 	
 	//work out whether it's the master fip or not (if not, the div representation will be hidden by default)
-	
+	}
 }
 
 

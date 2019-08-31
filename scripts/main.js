@@ -18,7 +18,7 @@ const subtypes = {
 
 
 let sysObjects = [];
-let sysObjectsByType = {
+let sysObjectsByCategory = {
 	fip: [],
 	circuit: [],
 	det: []
@@ -56,7 +56,7 @@ console.log(sysObjects);
 
 console.log(zones);
 buildFips();
-console.log(sysObjectsByType);
+console.log(sysObjectsByCategory);
 
 
 
@@ -100,7 +100,7 @@ function buildSystem (sys) {
 
 function buildFips() {
 	//for each fip in the list of fips...
-	let fipList = sysObjectsByType['fip'];
+	let fipList = sysObjectsByCategory['fip'];
 	for(let i = 0, l = fipList.length; i < l; i++){
 		let f = fipList[i];
 	//create a deviceList by scouring its child circuits for details (desc, type, subtype, loop, zone)
@@ -108,7 +108,7 @@ function buildFips() {
 		f.deviceList = [];
 		for(let j = 0, m = f.children.length; j < m; j++){
 			let child = f.children[j];
-			if(child.type == 'circuit'){
+			if(child.category == 'circuit'){
 				//do some deeper digging. All devices should be on a circuit, not directly 'plugged into' the fip.
 				for(let k = 0, n = child.children.length; k < n; k++){
 					let c = child.children[k];
@@ -118,6 +118,7 @@ function buildFips() {
 					//stuck: false
 					let device = {
 						desc: c.name,
+						category: c.category,
 						type: c.type,
 						subtype: c.subtype,
 						zone: c.zoneNum,
@@ -579,28 +580,34 @@ function createSystemObjects(node, parent){
 		o.loop = node.loop;
 	}
 	
-	if(node.type){
-		o.type = node.type;
+	if(node.category){
+		o.category = node.category;
 		//also add this object to the global list of similar objects
-		if(sysObjectsByType[o.type]){
-			sysObjectsByType[o.type].push(o);
+		if(sysObjectsByCategory[o.category]){
+			sysObjectsByCategory[o.category].push(o);
 		}
 	}
 	
+	if(node.type){
+		o.type = node.type;
+	}	
+	
 	if(node.subtype){
 		o.subtype = node.subtype;
+	} else if(node.type){
+		o.subtype = node.type;
 	}
 	
 	if(node.zone){
 		//if parent exists and is an FIP, then zone = fip shname + 'zone' + zone number
 		//if parent object has a zone and is a circuit, then take same zone as parent
 		//if there's no parent, well, what can you do?
-		if(parent && parent.type == 'fip'){
-			//console.log(parent.type);
+		if(parent && parent.category == 'fip'){
+			//console.log(parent.category);
 			o.zone = parent.shname + '_zone_' + node.zone;
 			o.zoneNum = node.zone;
 		} 	
-	} else if (parent && parent.type == 'circuit' && parent.zone){
+	} else if (parent && parent.category == 'circuit' && parent.zone){
 		o.zone = parent.zone;
 		o.zoneNum = parent.zoneNum;
 		o.loop = parent.loop;

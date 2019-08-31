@@ -468,6 +468,8 @@ function buildFips() {
 		//this will fail if the device has 'stuck' set to true
 		if(!device.stuck && (device.status == 'alarm' || device.status == 'acked')){
 			device.status = 'normal';
+		} else if (device.stuck && (device.status == 'alarm' || device.status == 'acked')){
+			device.status = 'alarm';
 		}
 	};
 	
@@ -541,9 +543,18 @@ function buildFips() {
 		if(t == f.isolButton){f.lastPressed = 'isol'; f.handleIsolate();}	
 	});
 	
-	f.deviceList[0].status = 'alarm';
+	
+	let q = Math.floor(f.deviceList.length*Math.random());
+	if(q == f.deviceList.length){q = f.deviceList.length - 1;}
+	
+	let d = f.deviceList[q];
+	
+	d.status = 'alarm';
+	if(d.type == 'mcp'){
+		d.stuck = true;
+	}
 	let alarmTime = new Date();
-	f.deviceList[0].lastAlarmTime = assembleDate(alarmTime) + ' ' + assembleTime(alarmTime);
+	f.deviceList[q].lastAlarmTime = assembleDate(alarmTime) + ' ' + assembleTime(alarmTime);
 	
 	//fire it up!
 	

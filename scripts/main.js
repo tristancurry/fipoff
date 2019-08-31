@@ -1,5 +1,9 @@
 //main.js - main program code
 
+
+//TODO: build start screen interface around this - option to launch with random alarm
+//TODO: have some kind of 'end scenario' button where it checks the state of the system and what you looked at (e.g. did you open the block plan? did you inspect the nominated detector / zone?, did you leave the external bell and warning system isolated?)
+
 //GLOBALS
 
 const viewport = document.getElementsByClassName('viewport')[0];

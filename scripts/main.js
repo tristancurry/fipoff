@@ -276,9 +276,6 @@ function buildFips() {
 		//work out if anything is still in alarm
 		if(this.alarmCount > 0){  //alarms have priority for display
 			//find the first alarm from the specified index
-			//keep looping until found, or until max loops have been reached (prevent infinite looping)
-			//somehow include the ability to end up back on the main screen when the last alarm has been traveled through
-			//if no alarms at all are found, despite alarmCount > 0, then display an error code and put system into error status
 			this.findNextOrPrev('alarm');
 		} else if (this.isolCount > 0) { //if there are isolates
 		//somehow include the main screen in this selection i.e. if a loop occurs without finding anything?

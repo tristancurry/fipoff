@@ -128,7 +128,7 @@ function buildFips() {
 						zone: c.zoneNum,
 						loop: c.loop,
 						num: k,
-						status: 'normal',
+						status: 'alarm',
 						stuck: false,
 						lastAlarmTime: 0
 					}
@@ -283,7 +283,13 @@ function buildFips() {
 		} else if (this.isolCount > 0) { //if there are isolates
 		//somehow include the main screen in this selection i.e. if a loop occurs without finding anything?
 		//display should default to the main screen once last alarmed detector is isolated.
-			this.findNextOrPrev('isol');
+			if(this.mainStatus){
+				this.displayMainStatus('isol');
+			} else if(!this.isol_norm){
+				this.findNextOrPrev('isol');
+			} else {
+				this.findNextOrPrev('normal');
+			}
 		} else {
 			//status normal. TODO - allow for scrolling through devices from this screen
 			//this.findNextOrPrev('normal');
@@ -322,18 +328,27 @@ function buildFips() {
 					break;
 				} 
 			} else {
+				console.log('made it past idx l-1');
 				//we have scrolled past the last alarm. Set flag to display status screen instead.
-				this.currentIndex = 0;
+				//this.currentIndex = 0;
 				if(this.alarmCount == 0 && this.ackedCount == 0){
 					if(this.isolCount == 0 || (this.isolCount > 0 && this.isol_norm)){
 						this.mainStatus = true;
 						this.isol_norm = false;
 					} else if (this.isolCount > 0 && !this.isol_norm){
 						this.isol_norm = true;
+					}
+					this.currentIndex = 0;
+					this.displayStatus();
+					break;
 				} else {
 					i = 0;
-				}
-			} 			
+					this.currentIndex = 0;
+					console.log('back to deviceList start');
+					this.displayStatus();
+					break;
+				}			
+			}
 		}
 	};
 	
@@ -354,7 +369,6 @@ function buildFips() {
 	};
 	
 	f.findNextOrPrev = function(status){
-		if(this.mainStatus){this.mainStatus = false;}
 		if(this.lastPressed == 'prev'){
 			this.findPrev(status);
 		} else {
@@ -375,7 +389,7 @@ function buildFips() {
 				this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
 			} else if (this.alarmCount > 0){
 				this.displayLines[3].innerHTML = 'Sensor alarms ' + device.alarmID + ' of ' + this.alarmCount;
-			} else if (this.isolCount > 0){
+			} else if (this.isolCount > 0 && !this.isol_norm){
 				this.displayLines[3].innerHTML = 'Isolate ' + device.isolID + ' of ' + this.isolCount;
 			} else {
 				this.displayLines[3].innerHTML = 'Device ' + (this.currentIndex + 1) + ' of ' + this.deviceList.length;
@@ -410,9 +424,9 @@ function buildFips() {
 		let idx = this.currentIndex;
 		idx += inc;
 		if(idx < 0){  
-			idx += list.length;
+			idx += (list.length + 1);
 		}
-		idx = idx%list.length;
+		idx = idx%(list.length + 1);
 		this.currentIndex = idx;
 		
 		this.displayStatus();
@@ -555,7 +569,19 @@ function buildFips() {
 		if(t == f.ebIsolButton){f.handleEbIsol();}
 		if(t == f.wsIsolButton){f.handleWsIsol();}
 		if(t == f.prevButton && f.confirmState == 'none'){f.lastPressed = 'prev'; f.incrementList(-1);}
-		if(t == f.nextButton && f.confirmState == 'none'){f.lastPressed = 'next'; f.incrementList(1);}
+		if(t == f.nextButton && f.confirmState == 'none'){
+			f.lastPressed = 'next';
+			console.log(f.mainStatus);
+			if(f.mainStatus){
+				f.mainStatus = false;
+				f.isol_norm = false;
+				f.currentIndex = 0;
+				f.incrementList(0);
+				console.log('should be getting out of mainStatus');
+			} else {
+				f.incrementList(1);
+			}
+		}
 		if(t == f.ackButton){f.lastPressed = 'ack'; f.handleAcknowledged();}
 		if(t == f.resetButton){f.lastPressed = 'reset'; f.handleReset();}
 		if(t == f.isolButton){f.lastPressed = 'isol'; f.handleIsolate();}	
@@ -567,10 +593,7 @@ function buildFips() {
 	
 	let d = f.deviceList[q];
 	
-	d.status = 'alarm';
-	if(d.type == 'mcp'){
-		d.stuck = true;
-	}
+	d.status = 'normal';
 	let alarmTime = new Date();
 	f.deviceList[q].lastAlarmTime = assembleDate(alarmTime) + ' ' + assembleTime(alarmTime);
 	

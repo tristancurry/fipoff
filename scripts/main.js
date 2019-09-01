@@ -291,9 +291,11 @@ function buildFips() {
 				this.findNextOrPrev('normal');
 			}
 		} else {
-			//status normal. TODO - allow for scrolling through devices from this screen
-			//this.findNextOrPrev('normal');
-			this.displayMainStatus('normal');
+			if(this.mainStatus){
+				this.displayMainStatus('normal');
+			} else {
+				this.findNextOrPrev('normal');
+			}
 		}
 		
 	};
@@ -317,6 +319,7 @@ function buildFips() {
 	//do the reverse for the 'prev' function - if the top of the status of interest is reached, display the status screen. If 'prevving' from the status screen, display the last 'normal' in the list (unless there are alarms). Once the last normal has been reached, and we're 'prevving' through the start of the list, target the status of interest....
 	
 	f.findNext = function(status){
+		console.log(status);
 		let list = this.deviceList;
 		for(let i = this.currentIndex, l = list.length; i < l + 1; i++){
 			if(i < l){

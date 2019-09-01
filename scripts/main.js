@@ -158,6 +158,8 @@ function buildFips() {
 
 		f.lastPressed =  'reset';
 		f.confirmState = 'none'; //options are: none, single, multi, isol
+		f.mainStatus = 'true'; //display main status screen
+		f.isol_norm = 'false'; //scroll through 'normal' devices while there are 'isol' devices to display?
 		
 		f.ebActive = false;
 		f.ebIsol = false;
@@ -280,6 +282,7 @@ function buildFips() {
 			this.findNextOrPrev('alarm');
 		} else if (this.isolCount > 0) { //if there are isolates
 		//somehow include the main screen in this selection i.e. if a loop occurs without finding anything?
+		//display should default to the main screen once last alarmed detector is isolated.
 			this.findNextOrPrev('isol');
 		} else {
 			//status normal. TODO - allow for scrolling through devices from this screen
@@ -298,10 +301,18 @@ function buildFips() {
 			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
 	};
 	
-	f.findNext = function(status, loops){
+	//these two functions need to do the following (in addition to finding the next/prev applicable device:
+	//if attempting to loop through the end/beginning of the deviceList, put the fip in a 'status screen' state
+	//if already in the 'status screen' state, remove the status and find the next/prev device as normal.
+	
+	//also - at the end of scrolling through isolates, scroll through remaining 'normal' detectors
+	//so we need the function to
+	//first target the status of interest. If that comes up with nothing by the end of the list, scroll through devices with status 'normal' (unless there are devices that are alarmed). Once the end of THIS list has been reached, display the status screen.
+	//do the reverse for the 'prev' function - if the top of the status of interest is reached, display the status screen. If 'prevving' from the status screen, display the last 'normal' in the list (unless there are alarms). Once the last normal has been reached, and we're 'prevving' through the start of the list, target the status of interest....
+	
+	f.findNext = function(status){
 		let list = this.deviceList;
-		for(let i = this.currentIndex, l = list.length; i < l; i = (i+1)%l){
-			if(loops > 5){console.log('overlooped'); break;}
+		for(let i = this.currentIndex, l = list.length; i < l + 1; i++){
 			if(i < l){
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
 					let device = list[i];
@@ -309,19 +320,26 @@ function buildFips() {
 					this.displayAlarm(device);
 					this.currentIndex = i;
 					break;
+				} 
+			} else {
+				//we have scrolled past the last alarm. Set flag to display status screen instead.
+				this.currentIndex = 0;
+				if(this.alarmCount == 0 && this.ackedCount == 0){
+					if(this.isolCount == 0 || (this.isolCount > 0 && this.isol_norm)){
+						this.mainStatus = true;
+						this.isol_norm = false;
+					} else if (this.isolCount > 0 && !this.isol_norm){
+						this.isol_norm = true;
+				} else {
+					i = 0;
 				}
-			} /*else if(i == l){
-				this.displayMainStatus(status);
-				loops++;
-				break;
-			}*/				
+			} 			
 		}
 	};
 	
-	f.findPrev = function(status, loops){
+	f.findPrev = function(status){
 		let list = this.deviceList;
 		for(let i = this.currentIndex, l = list.length; i >= 0; i--){
-			if(loops > 5){console.log('overlooped'); break;}
 			if(i >= 0){
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
 					let device = list[i];
@@ -330,21 +348,17 @@ function buildFips() {
 					this.currentIndex = i;
 					break;
 				}
-			} /*else if(i < 0){
-				this.displayMainStatus(status);
-				loops++;
-				break;
-			}*/
+			} 
 		}
 		
 	};
 	
 	f.findNextOrPrev = function(status){
-		let loops = 0;
+		if(this.mainStatus){this.mainStatus = false;}
 		if(this.lastPressed == 'prev'){
-			this.findPrev(status, loops);
+			this.findPrev(status);
 		} else {
-			this.findNext(status, loops);
+			this.findNext(status);
 		}
 	};
 	
@@ -535,7 +549,7 @@ function buildFips() {
 	
 	f.extBell = f.panel.getElementsByClassName('extBell')[0];
 	
-	//EVENT LISTENERS - bundle these into the FIP as well?
+	//EVENT LISTENERS
 	f.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
 		let t = event.target;
 		if(t == f.ebIsolButton){f.handleEbIsol();}

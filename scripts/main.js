@@ -8,6 +8,11 @@
 
 const viewport = document.getElementsByClassName('viewport')[0];
 
+const types = {
+	smoke: 'Smoke';
+	
+}
+
 const subtypes = {
 	pe: 'Photoelectric Detector',
 	io: 'Ionisation Detector',
@@ -476,6 +481,9 @@ function buildFips() {
 					//list[i].lastAlarmTime = Date.now(); //refine this date (currently ms since 01.01.1970?)
 				}
 			}
+			if(this.alarmCount == 0 && this.ackedCount == 0){
+				this.mainStatus = true;
+			}
 			this.displayStatus();
 		}
 	};
@@ -733,6 +741,5 @@ InnerHtmlInstructions = {
 	det: '<div class="det"><div class ="det-header"></div><div class="det-body"><div class="det-image"></div><div class="det-info"></div></div><div class="det-options"></div></div>'
 }
 
-//TESTING ALARM PANEL FUNCTIONS
-//(trying to establish a format for a FIP OBJECT)
+
 

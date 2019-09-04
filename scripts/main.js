@@ -49,6 +49,39 @@ function constrain(n, min, max){
 }
 
 
+function assembleDate(d){
+	let day =  d.getDate().toString();
+	if(d.getDate() < 10){day = addLeadingZero(day)};
+	let month =  (d.getMonth() + 1).toString();
+	if(d.getMonth() < 10){month = addLeadingZero(month)};
+	let year =  d.getFullYear().toString();
+	
+	return(day +'/'+ month + '/' + year);
+	
+}
+
+function assembleTime(d){
+	let hours =  d.getHours().toString();
+	if(d.getHours() < 10){hours = addLeadingZero(hours)};
+	let minutes =  d.getMinutes().toString();
+	if(d.getMinutes() < 10){minutes = addLeadingZero(minutes)};
+	let seconds =  d.getSeconds().toString();
+	if(d.getSeconds() < 10){seconds = addLeadingZero(seconds)};
+	
+	return(hours +':'+ minutes + ':' + seconds);
+}
+
+function provideTimeString(d){
+	let t = assembleDate(d) + ' ' + assembleTime(d);
+	return(t);
+}
+
+function addLeadingZero(str){
+	let newStr = '0' + str;
+	return(newStr);
+}
+
+
 //System-specific stuff
 
 //build a system from the jsonny madness
@@ -73,32 +106,7 @@ console.log(sysObjectsByCategory);
 
 
 
-function assembleDate(d){
-	let day =  d.getDate().toString();
-	if(d.getDate() < 10){day = addLeadingZero(day)};
-	let month =  (d.getMonth() + 1).toString();
-	if(d.getMonth() < 10){month = addLeadingZero(month)};
-	let year =  d.getFullYear().toString();
-	
-	return(day +'/'+ month + '/' + year);
-	
-}
 
-function assembleTime(d){
-	let hours =  d.getHours().toString();
-	if(d.getHours() < 10){hours = addLeadingZero(hours)};
-	let minutes =  d.getMinutes().toString();
-	if(d.getMinutes() < 10){minutes = addLeadingZero(minutes)};
-	let seconds =  d.getSeconds().toString();
-	if(d.getSeconds() < 10){seconds = addLeadingZero(seconds)};
-	
-	return(hours +':'+ minutes + ':' + seconds);
-}
-
-function addLeadingZero(str){
-	let newStr = '0' + str;
-	return(newStr);
-}
 
 function buildSystem (sys) {
 //expect to encounter system name first
@@ -136,9 +144,11 @@ function buildFips() {
 						num: k,
 						status: 'alarm',
 						stuck: false,
-						lastAlarmTime: 0
 					}
-				f.deviceList.push(device);	
+					let d  = new Date(0);
+					device.lastAlarmTime = provideTimeString(d);
+					
+					f.deviceList.push(device);	
 				}	
 			}
 		}
@@ -279,7 +289,6 @@ function buildFips() {
 	};
 	
 	f.displayStatus = function() {
-		console.log(this.mainStatus + ' mainstatus');
 		let list = this.deviceList;
 		//access the FIP's list
 		//work out if anything is still in alarm
@@ -309,7 +318,7 @@ function buildFips() {
 	f.displayMainStatus = function(fipStatus){
 			let d = new Date();
 			this.descLine.innerHTML = 'FirePanel 3000';
-			this.typeLine.innerHTML = assembleTime(d) + ' ' + assembleDate(d);
+			this.typeLine.innerHTML = provideTimeString(d);
 			this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
 			this.displayLines[2].innerHTML = 'Ph: 0444 444444';
 			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
@@ -325,7 +334,6 @@ function buildFips() {
 	//do the reverse for the 'prev' function - if the top of the status of interest is reached, display the status screen. If 'prevving' from the status screen, display the last 'normal' in the list (unless there are alarms). Once the last normal has been reached, and we're 'prevving' through the start of the list, target the status of interest....
 	
 	f.findNext = function(status){
-		console.log(status);
 		let list = this.deviceList;
 		for(let i = this.currentIndex, l = list.length; i < l + 1; i++){
 			if(i < l){
@@ -337,7 +345,6 @@ function buildFips() {
 					break;
 				} 
 			} else {
-				console.log('made it past idx l-1');
 				//we have scrolled past the last alarm. Set flag to display status screen instead.
 				//this.currentIndex = 0;
 				if(this.alarmCount == 0 && this.ackedCount == 0){
@@ -353,7 +360,6 @@ function buildFips() {
 				} else {
 					i = 0;
 					this.currentIndex = 0;
-					console.log('back to deviceList start');
 					this.displayStatus();
 					break;
 				}			
@@ -373,9 +379,7 @@ function buildFips() {
 					break;
 				}
 			} else {
-				console.log('got into the previous mainScreening bit');
 				if(this.alarmCount == 0 && this.ackedCount == 0){
-					console.log('made it past idx 0 :-)');
 					//we have scrolled past the first device. Set flags to display status screen instead
 					if(this.isolCount == 0){
 						this.mainStatus = true;
@@ -392,7 +396,6 @@ function buildFips() {
 				} else {
 					i = l - 1;
 					this.currentIndex = l - 1;
-					console.log('through to deviceList end');
 					this.displayStatus();
 					break;
 				}
@@ -402,7 +405,6 @@ function buildFips() {
 	};
 	
 	f.findNextOrPrev = function(status){
-		console.log(this.currentIndex + ' cI');
 		if(this.lastPressed == 'prev'){
 			this.findPrev(status);
 		} else {
@@ -424,7 +426,7 @@ function buildFips() {
 		this.descLine.innerHTML = device.desc;
 		this.typeLine.innerHTML = types[device.type];
 		this.displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ' + this.statusStrings[device.status];
-		this.displayLines[2].innerHTML = device.lastAlarmTime;
+		this.displayLines[2].innerHTML = 'Last alarm: ' + device.lastAlarmTime;
 		if(this.confirmState == 'none'){
 			//display this alarm's number
 			//display how many other alarms there are, or, if some have been acknowledged, display this number
@@ -550,6 +552,8 @@ function buildFips() {
 			device.status = 'normal';
 		} else if (device.stuck && (device.status == 'alarm' || device.status == 'acked')){
 			device.status = 'alarm';
+			let alarmTime = new Date();
+			device.lastAlarmTime = provideTimeString(alarmTime);
 		}
 	};
 	
@@ -622,20 +626,17 @@ function buildFips() {
 				f.mainStatus = false;
 				f.isol_norm = true;
 				f.incrementList(0);
-				console.log('should have escaped mainStatus');
 			} else {
 				f.incrementList(-1);
 			}
 		}
 		if(t == f.nextButton && f.confirmState == 'none'){
 			f.lastPressed = 'next';
-			console.log(f.mainStatus);
 			if(f.mainStatus){
 				f.mainStatus = false;
 				f.isol_norm = false;
 				f.currentIndex = 0;
 				f.incrementList(0);
-				console.log('should be getting out of mainStatus');
 			} else {
 				f.incrementList(1);
 			}
@@ -645,12 +646,14 @@ function buildFips() {
 		if(t == f.isolButton){f.lastPressed = 'isol'; f.handleIsolate();}	
 	});
 	
+
+	
 	//TEMPORARY - initialise with some random alarms
 	f.triggerRandomAlarms = function(){
 		let tempAlarms = 2;
 		let tempAlarmCount = 0;
 		let q = 0;
-		for(let i = 0, l = deviceList.length; i < l; i ++){
+		for(let i = 0, l = this.deviceList.length; i < l; i ++){
 			let d = this.deviceList[i]; 
 			if(tempAlarmCount < tempAlarms){
 				let delta = (l - i) - (tempAlarms - tempAlarmCount);
@@ -659,23 +662,26 @@ function buildFips() {
 				} else {
 					q = Math.random();
 				}	
-			}
+			} else {q = 0;}
 			
 			if(q > 0.5){
 				d.status = 'alarm';
 				let alarmTime = new Date();
-				f.deviceList[q].lastAlarmTime = assembleDate(alarmTime) + ' ' + assembleTime(alarmTime);
+				d.lastAlarmTime = provideTimeString(alarmTime);
+				if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
+				tempAlarmCount++;
 				
+			} else {
+				d.status = 'normal';
 			}
 			
 		}
 		
-		d.status = 'normal';
-		let alarmTime = new Date();
-		f.deviceList[q].lastAlarmTime = assembleDate(alarmTime) + ' ' + assembleTime(alarmTime);
+		
+		
 	}
 	//fire it up!
-	
+	f.triggerRandomAlarms();
 	f.assignStatusIds();
 	f.displayStatus();
 	
@@ -732,7 +738,6 @@ function createSystemObjects(node, parent){
 		//if parent object has a zone and is a circuit, then take same zone as parent
 		//if there's no parent, well, what can you do?
 		if(parent && parent.category == 'fip'){
-			//console.log(parent.category);
 			o.zone = parent.shname + '_zone_' + node.zone;
 			o.zoneNum = node.zone;
 		} 	

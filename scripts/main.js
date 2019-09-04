@@ -466,9 +466,9 @@ function buildFips() {
 		let list = this.deviceList;
 		let idx = this.currentIndex;
 		idx += inc;
-		if(idx < 0){  
-			idx += (list.length);
-			idx = idx%(list.length);
+		if(idx < -1){  
+			idx += (list.length + 1);
+			idx = idx%(list.length + 1);
 		} else {
 			idx = idx%(list.length + 1);
 		}
@@ -621,7 +621,6 @@ function buildFips() {
 			if(f.mainStatus){
 				f.mainStatus = false;
 				f.isol_norm = true;
-				//f.currentIndex = l - 1;
 				f.incrementList(0);
 				console.log('should have escaped mainStatus');
 			} else {
@@ -634,7 +633,7 @@ function buildFips() {
 			if(f.mainStatus){
 				f.mainStatus = false;
 				f.isol_norm = false;
-				//f.currentIndex = 0;
+				f.currentIndex = 0;
 				f.incrementList(0);
 				console.log('should be getting out of mainStatus');
 			} else {
@@ -646,16 +645,35 @@ function buildFips() {
 		if(t == f.isolButton){f.lastPressed = 'isol'; f.handleIsolate();}	
 	});
 	
-	
-	let q = Math.floor(f.deviceList.length*Math.random());
-	if(q == f.deviceList.length){q = f.deviceList.length - 1;}
-	
-	let d = f.deviceList[q];
-	
-	d.status = 'normal';
-	let alarmTime = new Date();
-	f.deviceList[q].lastAlarmTime = assembleDate(alarmTime) + ' ' + assembleTime(alarmTime);
-	
+	//TEMPORARY - initialise with some random alarms
+	f.triggerRandomAlarms = function(){
+		let tempAlarms = 2;
+		let tempAlarmCount = 0;
+		let q = 0;
+		for(let i = 0, l = deviceList.length; i < l; i ++){
+			let d = this.deviceList[i]; 
+			if(tempAlarmCount < tempAlarms){
+				let delta = (l - i) - (tempAlarms - tempAlarmCount);
+				if(delta == 0){
+					q = 1;
+				} else {
+					q = Math.random();
+				}	
+			}
+			
+			if(q > 0.5){
+				d.status = 'alarm';
+				let alarmTime = new Date();
+				f.deviceList[q].lastAlarmTime = assembleDate(alarmTime) + ' ' + assembleTime(alarmTime);
+				
+			}
+			
+		}
+		
+		d.status = 'normal';
+		let alarmTime = new Date();
+		f.deviceList[q].lastAlarmTime = assembleDate(alarmTime) + ' ' + assembleTime(alarmTime);
+	}
 	//fire it up!
 	
 	f.assignStatusIds();

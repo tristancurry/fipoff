@@ -38,7 +38,7 @@ system = {
 						{
 							name: 'Kitchen',
 							category: 'det',
-							type: 'smoke',
+							type: 'thermal',
 							subtype: 'th',
 							addressable: true,
 							pos: {x:'50px', y:'100px'}

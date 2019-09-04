@@ -9,9 +9,10 @@
 const viewport = document.getElementsByClassName('viewport')[0];
 
 const types = {
-	smoke: 'Smoke';
-	
-}
+	smoke: 'Smoke',
+	thermal: 'Thermal',
+	mcp: 'MCP'	
+};
 
 const subtypes = {
 	pe: 'Photoelectric Detector',
@@ -22,7 +23,7 @@ const subtypes = {
 	flame: 'Flame Detector',
 	vesda: 'VESDA', //Very Early Smoke Detection Apparatus - has own interface/panel
 	ps: 'Pressure Switch'
-}
+};
 
 
 
@@ -215,9 +216,11 @@ function buildFips() {
 			if(this.alarmCount > 0){
 				this.status = 'alarm';
 				this.stuck = true;
+				this.mainStatus = false;
 			} else if(this.ackedCount > 0){
 				this.status = 'alarm';
 				this.stuck = true;
+				this.mainStatus = false;
 			} else {
 				this.status = 'normal';
 				this.stuck = false;
@@ -276,6 +279,7 @@ function buildFips() {
 	};
 	
 	f.displayStatus = function() {
+		console.log(this.mainStatus + ' mainstatus');
 		let list = this.deviceList;
 		//access the FIP's list
 		//work out if anything is still in alarm
@@ -359,7 +363,7 @@ function buildFips() {
 	
 	f.findPrev = function(status){
 		let list = this.deviceList;
-		for(let i = this.currentIndex, l = list.length; i >= 0; i--){
+		for(let i = this.currentIndex, l = list.length; i >= -1; i--){
 			if(i >= 0){
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
 					let device = list[i];
@@ -368,12 +372,37 @@ function buildFips() {
 					this.currentIndex = i;
 					break;
 				}
-			} 
+			} else {
+				console.log('got into the previous mainScreening bit');
+				if(this.alarmCount == 0 && this.ackedCount == 0){
+					console.log('made it past idx 0 :-)');
+					//we have scrolled past the first device. Set flags to display status screen instead
+					if(this.isolCount == 0){
+						this.mainStatus = true;
+						this.isol_norm = false;
+					} else if (this.isolCount > 0 && !this.isol_norm){
+						this.mainStatus = true;
+						this.isol_norm = true;
+					} else if (this.isolCount > 0 && this.isol_norm){
+						this.isol_norm = false;
+					}
+					this.currentIndex = l - 1;
+					this.displayStatus();
+					break;
+				} else {
+					i = l - 1;
+					this.currentIndex = l - 1;
+					console.log('through to deviceList end');
+					this.displayStatus();
+					break;
+				}
+			}
 		}
 		
 	};
 	
 	f.findNextOrPrev = function(status){
+		console.log(this.currentIndex + ' cI');
 		if(this.lastPressed == 'prev'){
 			this.findPrev(status);
 		} else {
@@ -381,10 +410,19 @@ function buildFips() {
 		}
 	};
 	
+	f.switchIsolNormal = function(){
+		if(this.isolCount == 0 || (this.isolCount > 0 && this.isol_norm)){
+						this.mainStatus = true;
+						this.isol_norm = false;
+					} else if (this.isolCount > 0 && !this.isol_norm){
+						this.isol_norm = true;
+					}
+	}
+	
 	f.displayAlarm = function(device){
 		//display this alarm
 		this.descLine.innerHTML = device.desc;
-		this.typeLine.innerHTML = device.type;
+		this.typeLine.innerHTML = types[device.type];
 		this.displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ' + this.statusStrings[device.status];
 		this.displayLines[2].innerHTML = device.lastAlarmTime;
 		if(this.confirmState == 'none'){
@@ -429,9 +467,11 @@ function buildFips() {
 		let idx = this.currentIndex;
 		idx += inc;
 		if(idx < 0){  
-			idx += (list.length + 1);
+			idx += (list.length);
+			idx = idx%(list.length);
+		} else {
+			idx = idx%(list.length + 1);
 		}
-		idx = idx%(list.length + 1);
 		this.currentIndex = idx;
 		
 		this.displayStatus();
@@ -576,14 +616,25 @@ function buildFips() {
 		let t = event.target;
 		if(t == f.ebIsolButton){f.handleEbIsol();}
 		if(t == f.wsIsolButton){f.handleWsIsol();}
-		if(t == f.prevButton && f.confirmState == 'none'){f.lastPressed = 'prev'; f.incrementList(-1);}
+		if(t == f.prevButton && f.confirmState == 'none'){
+			f.lastPressed = 'prev';
+			if(f.mainStatus){
+				f.mainStatus = false;
+				f.isol_norm = true;
+				//f.currentIndex = l - 1;
+				f.incrementList(0);
+				console.log('should have escaped mainStatus');
+			} else {
+				f.incrementList(-1);
+			}
+		}
 		if(t == f.nextButton && f.confirmState == 'none'){
 			f.lastPressed = 'next';
 			console.log(f.mainStatus);
 			if(f.mainStatus){
 				f.mainStatus = false;
 				f.isol_norm = false;
-				f.currentIndex = 0;
+				//f.currentIndex = 0;
 				f.incrementList(0);
 				console.log('should be getting out of mainStatus');
 			} else {

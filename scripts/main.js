@@ -244,7 +244,6 @@ function buildFips() {
 			
 			
 			//alarms exist that haven't been acknowledged. Flash the ALARM annunciator
-			//TODO: invoke a CSS class that flashes a div's background-color off and on
 		} else if(this.alarmCount > 0 && this.ackedCount == this.alarmCount){
 			if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
 			if(this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
@@ -292,12 +291,9 @@ function buildFips() {
 		let list = this.deviceList;
 		//access the FIP's list
 		//work out if anything is still in alarm
-		if(this.alarmCount > 0){  //alarms have priority for display
-			//find the first alarm from the specified index
+		if(this.alarmCount > 0){  
 			this.findNextOrPrev('alarm');
-		} else if (this.isolCount > 0) { //if there are isolates
-		//somehow include the main screen in this selection i.e. if a loop occurs without finding anything?
-		//display should default to the main screen once last alarmed detector is isolated.
+		} else if (this.isolCount > 0) { 
 			if(this.mainStatus){
 				this.displayMainStatus('isol');
 			} else if(!this.isol_norm){
@@ -324,15 +320,6 @@ function buildFips() {
 			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
 	};
 	
-	//these two functions need to do the following (in addition to finding the next/prev applicable device:
-	//if attempting to loop through the end/beginning of the deviceList, put the fip in a 'status screen' state
-	//if already in the 'status screen' state, remove the status and find the next/prev device as normal.
-	
-	//also - at the end of scrolling through isolates, scroll through remaining 'normal' detectors
-	//so we need the function to
-	//first target the status of interest. If that comes up with nothing by the end of the list, scroll through devices with status 'normal' (unless there are devices that are alarmed). Once the end of THIS list has been reached, display the status screen.
-	//do the reverse for the 'prev' function - if the top of the status of interest is reached, display the status screen. If 'prevving' from the status screen, display the last 'normal' in the list (unless there are alarms). Once the last normal has been reached, and we're 'prevving' through the start of the list, target the status of interest....
-	
 	f.findNext = function(status){
 		let list = this.deviceList;
 		for(let i = this.currentIndex, l = list.length; i < l + 1; i++){
@@ -346,7 +333,6 @@ function buildFips() {
 				} 
 			} else {
 				//we have scrolled past the last alarm. Set flag to display status screen instead.
-				//this.currentIndex = 0;
 				if(this.alarmCount == 0 && this.ackedCount == 0){
 					if(this.isolCount == 0 || (this.isolCount > 0 && this.isol_norm)){
 						this.mainStatus = true;
@@ -480,53 +466,55 @@ function buildFips() {
 	};
 	
 	f.handleAcknowledged = function(){
-		let list = this.deviceList;
-		let device = list[this.currentIndex]; //grab the currently viewed device
-		if(this.confirmState == 'none'){
-			//if the device is alarmed, and not already acknowledged, then do some stuff that moves only an active alarm to the acknowledged list
-			if(device.status == 'alarm'){
-				//change status to 'acknowledged' 
-				device.status ='acked';
-				this.assignStatusIds();
-				this.displayStatus();
-				//once we have acknowledged the last alarm, set the ALARM light to solid, rather than flashing
-			}
-		} else {
-		//otherwise, check if we're in a state where the system is waiting for the user to acknowledge something (e.g. reset instruction)
-		//then, execute whatever thing it is that the user is trying to do.
-			switch(this.confirmState){
-				case 'single':
-					//attempt to reset the device, and then the FIP. Failure will only happen if the device is flagged 'stuck' for some reason
-					this.resetDevice(device);
-					break;
-					
-				case 'multi':
-					//attempt to reset all acknowledged devices, and then the FIP.
-					for(let i = 0, l = list.length; i < l; i++){
-						if(list[i].status == 'acked'){
-							this.resetDevice(list[i]);
-						}
-					}
-					break;
-					
-				case 'isol':
-					//isolate the device
-					this.isolateDevice(device);
-			}
-			//return confirmState to 'none'
-			this.confirmState = 'none';
-			//return system to normal and see what happens
-			this.assignStatusIds();
-			//anything still in alarm gets its 'last alarm' date updated
-			for(let i = 0, l = list.length; i < l; i++){
-				if(list[i].status == 'alarm'){
-					//list[i].lastAlarmTime = Date.now(); //refine this date (currently ms since 01.01.1970?)
+		if(!this.mainStatus){
+			let list = this.deviceList;
+			let device = list[this.currentIndex]; //grab the currently viewed device
+			if(this.confirmState == 'none'){
+				//if the device is alarmed, and not already acknowledged, then do some stuff that moves only an active alarm to the acknowledged list
+				if(device.status == 'alarm'){
+					//change status to 'acknowledged' 
+					device.status ='acked';
+					this.assignStatusIds();
+					this.displayStatus();
+					//once we have acknowledged the last alarm, set the ALARM light to solid, rather than flashing
 				}
+			} else {
+			//otherwise, check if we're in a state where the system is waiting for the user to acknowledge something (e.g. reset instruction)
+			//then, execute whatever thing it is that the user is trying to do.
+				switch(this.confirmState){
+					case 'single':
+						//attempt to reset the device, and then the FIP. Failure will only happen if the device is flagged 'stuck' for some reason
+						this.resetDevice(device);
+						break;
+						
+					case 'multi':
+						//attempt to reset all acknowledged devices, and then the FIP.
+						for(let i = 0, l = list.length; i < l; i++){
+							if(list[i].status == 'acked'){
+								this.resetDevice(list[i]);
+							}
+						}
+						break;
+						
+					case 'isol':
+						//isolate the device
+						this.isolateDevice(device);
+				}
+				//return confirmState to 'none'
+				this.confirmState = 'none';
+				//return system to normal and see what happens
+				this.assignStatusIds();
+				//anything still in alarm gets its 'last alarm' date updated
+				for(let i = 0, l = list.length; i < l; i++){
+					if(list[i].status == 'alarm'){
+						//list[i].lastAlarmTime = Date.now(); //refine this date (currently ms since 01.01.1970?)
+					}
+				}
+				if(this.alarmCount == 0 && this.ackedCount == 0){
+					this.mainStatus = true;
+				}
+				this.displayStatus();
 			}
-			if(this.alarmCount == 0 && this.ackedCount == 0){
-				this.mainStatus = true;
-			}
-			this.displayStatus();
 		}
 	};
 	
@@ -709,6 +697,23 @@ function createSystemObjects(node, parent){
 			o.shname = node.name;	
 		}
 		
+	}
+	
+	if(node.blockplan){
+		//bring in the block plan with all of its details
+		//blockplan needs...
+		// - dimensions
+		// - number of pages
+		// - images for each page (could just be one humongous image, positioned to the relevant page with CSS
+		// - contents page?
+		// - svg/spritesheet for all detector types
+		
+		//devices is sysfile then need...
+		// - their page number
+		// - their on-page coords
+		
+		//blockplan will open in a div somewhat adjacent to the FIP onscreen
+		// - closing the blockplan will also close any child elements (e.g. sub fips and their blockplans, detector infocards)
 	}
 	
 	if(node.loop){

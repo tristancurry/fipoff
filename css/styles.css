@@ -226,19 +226,56 @@ div {
 	background-color: #FF0000;
 }
 
+.blockplan {
+	position: absolute;
+	width: 1000px; //will be set by blockplan background image dimensions
+	border: 2px solid orange;
+}
+
+.blockplan-header, .blockplan-footer {
+	position: relative;
+	width: 100%;
+	height: 50px;
+	background-color: pink;
+}
+
+.blockplan-content {
+	height: 500px; //will be set by blockplan background image dimensions
+}
+
 /* control styles */
 
-.closeBox {
+
+
+.interface-button {
 	position:absolute;
-	top: -15px;
-	right: -15px;
 	width: 30px;
-	height:30px;
+	height: 30px;
 	border: 2px solid orange;
 	border-radius: 15px;
 	font-size: 24px;
 	text-align: center;
+	color: orange;
 }
+
+.closeBox {
+	top: -15px;
+	right: -15px;
+}
+
+.blockplan-next, .blockplan-prev {
+	background: none;
+	top: 50%;
+}
+
+.blockplan-prev {
+	left: -15px;
+}
+
+.blockplan-next {
+	right: -15px;
+}
+
 
 .update {
 	display:none;

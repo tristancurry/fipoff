@@ -700,13 +700,15 @@ function createSystemObjects(node, parent){
 	}
 	
 	if(node.blockplan){
+		
+		//blockplan should obscure the FIP - make user remember details?
 		//bring in the block plan with all of its details
 		//blockplan needs...
-		// - dimensions
+		// - dimensions for each page
 		// - number of pages
-		// - images for each page (could just be one humongous image, positioned to the relevant page with CSS
-		// - contents page?
-		// - svg/spritesheet for all detector types
+		// - images for each page
+		// - contents page
+		// - svg/spritesheet for all detector types - actually use a universal sprite sheet for now
 		
 		//devices is sysfile then need...
 		// - their page number

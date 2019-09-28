@@ -16,9 +16,9 @@
    id="svg2"
    height="1052.3622047"
    width="744.09448819"
-   inkscape:export-filename="C:\Users\Tristan\Documents\GitHub\fipoff\blockplanA.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="C:\Users\Tristan\Documents\GitHub\fipoff\blockplanA_addr.png"
+   inkscape:export-xdpi="180"
+   inkscape:export-ydpi="180">
   <sodipodi:namedview
      id="base"
      pagecolor="#000000"
@@ -26,11 +26,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.5"
-     inkscape:cx="318.06242"
-     inkscape:cy="412.69629"
+     inkscape:zoom="0.39912863"
+     inkscape:cx="243.25681"
+     inkscape:cy="131.51572"
      inkscape:document-units="px"
-     inkscape:current-layer="layer16"
+     inkscape:current-layer="layer14"
      showgrid="false"
      showguides="true"
      inkscape:guide-bbox="true"
@@ -43,10 +43,10 @@
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:snap-bbox="false"
+     inkscape:snap-bbox="true"
      inkscape:snap-bbox-midpoints="true"
      inkscape:bbox-paths="false"
-     inkscape:bbox-nodes="true"
+     inkscape:bbox-nodes="false"
      inkscape:snap-nodes="false"
      inkscape:snap-bbox-edge-midpoints="true" />
   <defs
@@ -59,7 +59,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -292,7 +292,10 @@
      inkscape:label="Floor plan"
      sodipodi:insensitive="true">
     <g
-       id="g4077">
+       id="g4077"
+       inkscape:export-filename="C:\Users\Tristan\Documents\GitHub\fipoff\blockplanA_conv.png"
+       inkscape:export-xdpi="180"
+       inkscape:export-ydpi="180">
       <g
          id="g4013"
          transform="translate(0.89572671,-0.13444339)">
@@ -817,42 +820,18 @@
              y="882.86249"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffa500;fill-opacity:1;font-family:OCR A Std;-inkscape-font-specification:OCR A Std">FIP</tspan></text>
       </g>
-      <g
-         id="g5159-1-7-9"
-         style="display:inline"
-         transform="translate(103.87199,371.51324)">
-        <rect
-           style="fill:none;stroke:#ffa500;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-           id="rect5153-6-6-8"
-           width="27.903114"
-           height="12.844291"
-           x="240.49826"
-           y="872.54211" />
-        <text
-           xml:space="preserve"
-           style="font-size:10.01645184px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ffa500;fill-opacity:1;stroke:none;font-family:Autumn in November;-inkscape-font-specification:Autumn in November"
-           x="243.62505"
-           y="882.85797"
-           id="text5155-8-1-6"
-           sodipodi:linespacing="125%"><tspan
-             sodipodi:role="line"
-             id="tspan5157-5-8-5"
-             x="243.62505"
-             y="882.85797"
-             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffa500;fill-opacity:1;font-family:OCR A Std;-inkscape-font-specification:OCR A Std">ELD</tspan></text>
-      </g>
       <path
          sodipodi:nodetypes="ccccccccc"
          inkscape:connector-curvature="0"
-         d="m 365.06046,1344.5501 7.2129,-4.2963 0,15.0186 -7.2129,-4.2964 m 0,-10.4259 0,14.4259 -8.8775,0 0,-14.4259 z"
+         d="m 365.06046,1312.5501 7.2129,-4.2963 0,15.0186 -7.2129,-4.2964 m 0,-10.4259 0,14.4259 -8.8775,0 0,-14.4259 z"
          style="fill:none;stroke:#ffa500;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;display:inline"
          id="rect3647-5-0" />
       <g
          id="use5151-4-2"
-         transform="matrix(0.70710678,0.70710678,-0.70710678,0.70710678,429.69158,334.26562)"
+         transform="matrix(0.70710678,0.70710678,-0.70710678,0.70710678,429.69158,302.26562)"
          style="stroke:#ffa500;display:inline">
         <path
-           d="m 632.91346,717.96771 c 0,5.13682 -4.16421,9.30104 -9.30103,9.30104 -5.13682,0 -9.30104,-4.16422 -9.30104,-9.30104 0,-5.13682 4.16422,-9.30104 9.30104,-9.30104 5.13682,0 9.30103,4.16422 9.30103,9.30104 z"
+           d="m 632.91346,717.96771 a 9.3010378,9.3010378 0 1 1 -18.60207,0 9.3010378,9.3010378 0 1 1 18.60207,0 z"
            sodipodi:ry="9.3010378"
            sodipodi:rx="9.3010378"
            sodipodi:cy="717.96771"
@@ -874,7 +853,7 @@
       <path
          sodipodi:nodetypes="csccccccc"
          inkscape:connector-curvature="0"
-         d="m 362.81543,1303.4245 c 6.5777,0 11.91,5.3323 11.91,11.9101 0,6.5777 -5.3323,11.9101 -11.91,11.9101 l 0,0 -0.1401,-5.6048 -9.5555,0 0,-11.77 9.5555,0 z"
+         d="m 362.81543,1271.4245 c 6.5777,0 11.91,5.3323 11.91,11.9101 0,6.5777 -5.3323,11.9101 -11.91,11.9101 l 0,0 -0.1401,-5.6048 -9.5555,0 0,-11.77 9.5555,0 z"
          style="fill:none;stroke:#ffa500;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;display:inline"
          id="rect4072-3-2" />
       <text
@@ -941,50 +920,38 @@
          xml:space="preserve"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:OCR A Std;-inkscape-font-specification:OCR A Std"
          x="383.69138"
-         y="1255.9197"
-         id="text5406-4-6"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan5408-8-1"
-           x="383.69138"
-           y="1255.9197"
-           style="fill:#ffa500">End of line device</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:OCR A Std;-inkscape-font-specification:OCR A Std"
-         x="383.69138"
-         y="1288.3483"
+         y="1256.3483"
          id="text5406-3"
          sodipodi:linespacing="125%"><tspan
            sodipodi:role="line"
            id="tspan5408-89"
            x="383.69138"
-           y="1288.3483"
+           y="1256.3483"
            style="fill:#ffa500">Strobe</tspan></text>
       <text
          xml:space="preserve"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:OCR A Std;-inkscape-font-specification:OCR A Std"
          x="383.69138"
-         y="1320.7767"
+         y="1288.7767"
          id="text5406-4-3"
          sodipodi:linespacing="125%"><tspan
            sodipodi:role="line"
            id="tspan5408-8-4"
            x="383.69138"
-           y="1320.7767"
+           y="1288.7767"
            style="fill:#ffa500">Bell</tspan></text>
       <text
          xml:space="preserve"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:OCR A Std;-inkscape-font-specification:OCR A Std"
          x="383.69138"
-         y="1353.2053"
+         y="1321.2053"
          id="text5406-46"
          sodipodi:linespacing="125%"><tspan
            sodipodi:role="line"
            id="tspan5408-06"
            x="383.69138"
-           y="1353.2053"
-           style="fill:#ffa500">Speaker</tspan></text>
+           y="1321.2053"
+           style="fill:#ffa500">Horn speaker</tspan></text>
       <text
          xml:space="preserve"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:OCR A Std;-inkscape-font-specification:OCR A Std"
@@ -998,12 +965,56 @@
            y="1059.7428"
            style="fill:#ffa500">LEGEND</tspan></text>
     </g>
+    <g
+       inkscape:groupmode="layer"
+       id="layer24"
+       inkscape:label="non-addressable"
+       style="display:none"
+       sodipodi:insensitive="true">
+      <g
+         id="g5159-1-7-9"
+         style="display:inline"
+         transform="translate(497.07714,137.26025)">
+        <rect
+           style="fill:none;stroke:#ffa500;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           id="rect5153-6-6-8"
+           width="27.903114"
+           height="12.844291"
+           x="240.49826"
+           y="872.54211" />
+        <text
+           xml:space="preserve"
+           style="font-size:10.01645184px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ffa500;fill-opacity:1;stroke:none;font-family:Autumn in November;-inkscape-font-specification:Autumn in November"
+           x="243.62505"
+           y="882.85797"
+           id="text5155-8-1-6"
+           sodipodi:linespacing="125%"><tspan
+             sodipodi:role="line"
+             id="tspan5157-5-8-5"
+             x="243.62505"
+             y="882.85797"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffa500;fill-opacity:1;font-family:OCR A Std;-inkscape-font-specification:OCR A Std">ELD</tspan></text>
+      </g>
+      <text
+         transform="translate(393.20515,-332.25299)"
+         xml:space="preserve"
+         style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:OCR A Std;-inkscape-font-specification:OCR A Std"
+         x="383.69138"
+         y="1353.9197"
+         id="text5406-4-6"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan5408-8-1"
+           x="383.69138"
+           y="1353.9197"
+           style="fill:#ffa500">End of line device</tspan></text>
+    </g>
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer19"
      inkscape:label="zoneBoundaryZ1"
-     style="display:none"
+     style="display:inline"
      sodipodi:insensitive="true">
     <path
        style="fill:none;stroke:#ff00ff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:0"
@@ -1043,7 +1054,7 @@
      id="layer20"
      inkscape:label="zoneBoundaryZ2"
      sodipodi:insensitive="true"
-     style="display:none">
+     style="display:inline">
     <path
        style="fill:none;stroke:#00ffff;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:0"
        d="m 176.56684,587.95952 -178.7862076,0 0,-301.27915 171.5009876,0 0,38.28409 200.74233,0 0,325.26107 -193.45711,0 z"
@@ -1082,7 +1093,7 @@
      id="layer21"
      inkscape:label="zoneBoundaryZ3"
      sodipodi:insensitive="true"
-     style="display:none">
+     style="display:inline">
     <path
        style="fill:none;stroke:#00ff00;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:0"
        d="m 378,299.36219 227,0 0,605.49999 -226.75,0 0,-32 -25.75,0 0,-26 25.75,0 0,-74 -49.75,0 0,-115 49.5,0 z"
@@ -1136,7 +1147,7 @@
      id="layer22"
      inkscape:label="zoneBoundaryZ4"
      sodipodi:insensitive="true"
-     style="display:none">
+     style="display:inline">
     <path
        style="fill:none;stroke:#ff0000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2, 2;stroke-dashoffset:0"
        d="m 613.23835,873.81772 81.84761,0 -0.58579,-264.45793 122.20816,-310.77344 -203.46998,0 z"
@@ -1169,7 +1180,7 @@
          id="flowPara9496-08"
          style="font-size:18px;fill:#ff0000">Zone 4</flowPara></flowRoot>  </g>
   <g
-     style="display:inline"
+     style="display:none"
      inkscape:label="deviceLinesZ1"
      id="layer5"
      inkscape:groupmode="layer"
@@ -1235,7 +1246,7 @@
     </g>
   </g>
   <g
-     style="display:inline"
+     style="display:none"
      inkscape:label="deviceLinesZ2"
      id="layer8"
      inkscape:groupmode="layer"
@@ -1302,7 +1313,7 @@
      inkscape:groupmode="layer"
      id="layer10"
      inkscape:label="deviceLinesZ3"
-     style="display:inline">
+     style="display:none">
     <g
        id="g4284"
        transform="translate(93.618974,29.218708)">
@@ -1361,7 +1372,7 @@
     </g>
   </g>
   <g
-     style="display:inline"
+     style="display:none"
      sodipodi:insensitive="true"
      inkscape:groupmode="layer"
      id="layer12"
@@ -1936,7 +1947,7 @@
        x="0" />
   </g>
   <g
-     style="display:none"
+     style="display:inline"
      inkscape:groupmode="layer"
      id="layer13"
      inkscape:label="deviceNumsZ1"
@@ -2126,8 +2137,8 @@
      inkscape:groupmode="layer"
      id="layer14"
      inkscape:label="deviceNumsZ2"
-     sodipodi:insensitive="true"
-     style="display:none">
+     style="display:inline"
+     sodipodi:insensitive="true">
     <text
        xml:space="preserve"
        style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ff00ff;fill-opacity:1;stroke:none;font-family:Autumn in November;-inkscape-font-specification:Autumn in November"
@@ -2143,14 +2154,14 @@
     <text
        xml:space="preserve"
        style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ff00ff;fill-opacity:1;stroke:none;font-family:Autumn in November;-inkscape-font-specification:Autumn in November"
-       x="205.80927"
-       y="532.03546"
+       x="241.88351"
+       y="532.03656"
        id="text3653-1-8-5-1-7-1-2-8-7"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3655-7-8-5-7-6-4-3-5-6"
-         x="205.80927"
-         y="532.03546"
+         x="241.88351"
+         y="532.03656"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ffff;font-family:OCR A Std;-inkscape-font-specification:OCR A Std">2</tspan></text>
     <text
        xml:space="preserve"
@@ -2168,49 +2179,49 @@
        xml:space="preserve"
        style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ff00ff;fill-opacity:1;stroke:none;font-family:Autumn in November;-inkscape-font-specification:Autumn in November"
        x="133.64813"
-       y="534.87451"
+       y="574.91986"
        id="text3653-1-8-5-1-7-1-2-8-1-9"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3655-7-8-5-7-6-4-3-5-8-2"
          x="133.64813"
-         y="534.87451"
+         y="574.91986"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ffff;font-family:OCR A Std;-inkscape-font-specification:OCR A Std">4</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ff00ff;fill-opacity:1;stroke:none;font-family:Autumn in November;-inkscape-font-specification:Autumn in November"
        x="73.99025"
-       y="534.36487"
+       y="574.4234"
        id="text3653-1-8-5-1-7-1-2-8-1-9-7"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3655-7-8-5-7-6-4-3-5-8-2-9"
          x="73.99025"
-         y="534.36487"
+         y="574.4234"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ffff;font-family:OCR A Std;-inkscape-font-specification:OCR A Std">5</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ff00ff;fill-opacity:1;stroke:none;font-family:Autumn in November;-inkscape-font-specification:Autumn in November"
-       x="-2.0492859"
-       y="555.89417"
+       x="15.992654"
+       y="575.91986"
        id="text3653-1-8-5-1-7-1-2-8-1-9-7-5"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3655-7-8-5-7-6-4-3-5-8-2-9-4"
-         x="-2.0492859"
-         y="555.89417"
+         x="15.992654"
+         y="575.91986"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ffff;font-family:OCR A Std;-inkscape-font-specification:OCR A Std">6</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ff00ff;fill-opacity:1;stroke:none;font-family:Autumn in November;-inkscape-font-specification:Autumn in November"
-       x="68.962006"
-       y="486.36795"
+       x="68.960251"
+       y="486.37756"
        id="text3653-1-8-5-1-7-1-2-8-1-9-7-3"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3655-7-8-5-7-6-4-3-5-8-2-9-1"
-         x="68.962006"
-         y="486.36795"
+         x="68.960251"
+         y="486.37756"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ffff;font-family:OCR A Std;-inkscape-font-specification:OCR A Std">7</tspan></text>
     <text
        xml:space="preserve"
@@ -2287,26 +2298,26 @@
     <text
        xml:space="preserve"
        style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ff00ff;fill-opacity:1;stroke:none;font-family:Autumn in November;-inkscape-font-specification:Autumn in November"
-       x="85.414551"
-       y="392.45706"
+       x="85.200554"
+       y="394.5769"
        id="text3653-1-8-5-1-7-1-2-8-1-9-7-2-3-1-3-7-7"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3655-7-8-5-7-6-4-3-5-8-2-9-3-4-1-8-4-9"
-         x="85.414551"
-         y="392.45706"
+         x="85.200554"
+         y="394.5769"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ffff;font-family:OCR A Std;-inkscape-font-specification:OCR A Std">13</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:72px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ff00ff;fill-opacity:1;stroke:none;font-family:Autumn in November;-inkscape-font-specification:Autumn in November"
-       x="127.81694"
-       y="402.39014"
+       x="127.82175"
+       y="402.38797"
        id="text3653-1-8-5-1-7-1-2-8-1-9-7-2-3-1-3-7-3"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3655-7-8-5-7-6-4-3-5-8-2-9-3-4-1-8-4-1"
-         x="127.81694"
-         y="402.39014"
+         x="127.82175"
+         y="402.38797"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#00ffff;font-family:OCR A Std;-inkscape-font-specification:OCR A Std">14</tspan></text>
     <text
        xml:space="preserve"
@@ -2362,7 +2373,7 @@
      inkscape:label="deviceNumsZ3"
      id="layer15"
      inkscape:groupmode="layer"
-     style="display:none">
+     style="display:inline">
     <text
        sodipodi:linespacing="125%"
        id="text4996"
@@ -2461,7 +2472,7 @@
          sodipodi:role="line">8</tspan></text>
   </g>
   <g
-     style="display:none"
+     style="display:inline"
      sodipodi:insensitive="true"
      inkscape:label="deviceNumsZ4"
      id="layer16"

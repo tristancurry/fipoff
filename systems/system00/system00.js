@@ -24,7 +24,7 @@ system = {
 							type: 'thermal',
 							subtype: 'th',
 							addressable: true,
-							pos: {x:'50px', y: '300px'},
+							pos: {x:'443px', y: '675px'},
 						},
 						{
 							name: 'Engine bay outer, SW corner',

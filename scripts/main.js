@@ -101,7 +101,20 @@ console.log(zones);
 buildFips();
 console.log(sysObjectsByCategory);
 
+//TEMPORARY - attaching event listeners to test blockplan
+let myBlockplan = viewport.getElementsByClassName('blockplan')[0];
+myBlockplan.addEventListener('click', function(event){
+let t = event.target;
+if(t.className == 'device-detector'){
+	let thisFip = parseInt(myBlockplan.getAttribute('data-index'));
+	let id = parseInt(t.getAttribute('data-index'));
+	let thisDet = sysObjectsByCategory['fip'][thisFip].deviceList[id];
+	alert('clicked device ' + thisDet.desc + ' (device ' + thisDet.num + ')');
+	
+	
+}
 
+});
 
 
 
@@ -141,9 +154,10 @@ function buildFips() {
 						subtype: c.subtype,
 						zone: c.zoneNum,
 						loop: c.loop,
-						num: k,
+						num: k + 1,
 						status: 'alarm',
 						stuck: false,
+						//this is also the time to add a div to the blockplan with a pointer back to this device.
 					}
 					let d  = new Date(0);
 					device.lastAlarmTime = provideTimeString(d);

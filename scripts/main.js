@@ -638,7 +638,7 @@ function buildFips() {
 	
 	//TEMPORARY - initialise with some random alarms
 	f.triggerRandomAlarms = function(){
-		let tempAlarms = 2;
+		let tempAlarms = 5;
 		let tempAlarmCount = 0;
 		let q = 0;
 		for(let i = 0, l = this.deviceList.length; i < l; i ++){

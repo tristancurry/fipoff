@@ -666,7 +666,7 @@ function buildFips() {
 				}	
 			} else {q = 0;}
 			
-			if(q > 0.5){
+			if(q > 0.8){
 				d.status = 'alarm';
 				let alarmTime = new Date();
 				d.lastAlarmTime = provideTimeString(alarmTime);

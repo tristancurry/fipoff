@@ -18,7 +18,7 @@
 		<div class='viewport'>
 			<div class='blockplan' data-index=0>
 				<span class='interface-button closeBox'>&times</span>
-				<div class='blockplan-header'>will contain title of system</div>
+				<div class='blockplan-header'>System 00</div>
 				<div class='blockplan-content'>
 					<div class='blockplan-page' value='0' style='background-image: url(blockplanA_addr.png)'>
 						<div class='device-detector' data-index=0 style='left: 443px; top: 125px;'></div>
@@ -26,7 +26,19 @@
 						<div class='device-detector' data-index=2 style='left: 443px; top: 397px;'></div>
 					</div>
 				</div>
-				<div class='device-card-container'> will display info (and controls) of selected device</div>
+				<div class='device-container'>
+					<div class ='device-header'>Device Type (e.g. Smoke, thermal, FIP)</div>
+					<div class='device-body'>
+						<div class='device-image' title='image of device type sourced from a library of images'></div>
+						<div class='device-info'>
+							<div class='device-info-desc'>Description: <span></span></div>
+							<div class='device-info-zone'>Zone: <span></span><br>Device: <span></span></div>
+							<div class='device-info-status'>Status: <span></span></div>
+							<div class="device-options">controls go here (e.g. MCP reset, view FIP)</div>
+						</div>
+					</div>
+					
+				</div>
 				<div class='interface-button blockplan-prev'>◀</div>
 				<div class='interface-button blockplan-next'>▶</div>
 				<div class='blockplan-footer'>will contain page number</div>

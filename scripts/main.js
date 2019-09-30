@@ -11,7 +11,8 @@ const viewport = document.getElementsByClassName('viewport')[0];
 const types = {
 	smoke: 'Smoke',
 	thermal: 'Thermal',
-	mcp: 'MCP'	
+	mcp: 'MCP',
+	fip: 'FIP'
 };
 
 const subtypes = {
@@ -22,7 +23,13 @@ const subtypes = {
 	multi: 'Smoke/Heat Detector',
 	flame: 'Flame Detector',
 	vesda: 'VESDA', //Very Early Smoke Detection Apparatus - has own interface/panel
-	ps: 'Pressure Switch'
+	ps: 'Pressure Switch',
+	fip: 'Fire Indicator Panel'
+};
+
+const deviceStatusStrings = {
+	active: 'Activated',
+	normal: 'Normal'
 };
 
 
@@ -103,15 +110,78 @@ console.log(sysObjectsByCategory);
 
 //TEMPORARY - attaching event listeners to test blockplan
 let myBlockplan = viewport.getElementsByClassName('blockplan')[0];
+let myCard = myBlockplan.getElementsByClassName('device-container')[0];
+let myCardHeader = myCard.getElementsByClassName('device-header')[0];
+let myCardContent = myCard.getElementsByClassName('device-info')[0];
+let myCardImage = myCard.getElementsByClassName('device-image')[0];
+let myCardDesc = myCardContent.getElementsByClassName('device-info-desc')[0].getElementsByTagName('span')[0];
+let myCardZone = myCardContent.getElementsByClassName('device-info-zone')[0].getElementsByTagName('span')[0];
+let myCardNum = myCardContent.getElementsByClassName('device-info-zone')[0].getElementsByTagName('span')[1];
+let myCardStatus = myCardContent.getElementsByClassName('device-info-status')[0].getElementsByTagName('span')[0];
+//put in a couple of spans in here that can be targeted, instead of the entire info div
+
 myBlockplan.addEventListener('click', function(event){
 let t = event.target;
 if(t.className == 'device-detector'){
 	let thisFip = parseInt(myBlockplan.getAttribute('data-index'));
 	let id = parseInt(t.getAttribute('data-index'));
 	let thisDet = sysObjectsByCategory['fip'][thisFip].deviceList[id];
-	alert('clicked device ' + thisDet.desc + ' (device ' + thisDet.num + ')');
+	//TODO: populate 'detector card/info box' with relevant details of the detector
 	
 	
+	if(!myCard.classList.contains('show-flash')){
+		myCard.classList.toggle('show-flash');		
+	} else if(myCard.classList.contains('show-flash')){
+
+		if(myCardDesc.innerHTML == thisDet.desc){
+			myCard.classList.remove('show-flash');
+		} else {
+			myCard.classList.remove('show-flash');
+			void myCard.offsetWidth;
+			myCard.classList.add('show-flash');
+			
+		}
+		
+	}
+	
+	
+	if(thisDet.status_internal == 'active'){
+		myCardImage.style.backgroundImage = 'url(images/pe_01_A.png)';
+	} else {
+		myCardImage.style.backgroundImage = 'url(images/pe_01_N.png)';
+	}
+	
+	
+	
+	let titleString = '';
+	if(thisDet.subtype){
+		titleString = subtypes[thisDet.subtype];
+	} else if(thisDet.type){
+		titleString = types[thisDet.type];
+		if(thisDet.category == 'det'){
+			titleString += ' Detector';
+		}
+	}
+	
+	
+	
+	myCardHeader.innerHTML = titleString;
+	
+	if(thisDet.desc){
+		myCardDesc.innerHTML = thisDet.desc;
+	}
+	
+	if(thisDet.zone){
+		myCardZone.innerHTML = thisDet.zone;
+	}
+	if(thisDet.num){
+		myCardNum.innerHTML = thisDet.num;
+	}
+	if(thisDet.status_internal){
+		myCardStatus.innerHTML = deviceStatusStrings[thisDet.status_internal];
+	} else {
+		myCardStatus.innerHTML = 'Unknown';
+	}
 }
 
 });
@@ -155,7 +225,8 @@ function buildFips() {
 						zone: c.zoneNum,
 						loop: c.loop,
 						num: k + 1,
-						status: 'alarm',
+						status_internal: 'normal',
+						status: 'normal',
 						stuck: false,
 						//this is also the time to add a div to the blockplan with a pointer back to this device.
 					}
@@ -552,8 +623,10 @@ function buildFips() {
 		//this will fail if the device has 'stuck' set to true
 		if(!device.stuck && (device.status == 'alarm' || device.status == 'acked')){
 			device.status = 'normal';
+			device.status_internal = 'normal';
 		} else if (device.stuck && (device.status == 'alarm' || device.status == 'acked')){
 			device.status = 'alarm';
+			device.status_internal = 'active';
 			let alarmTime = new Date();
 			device.lastAlarmTime = provideTimeString(alarmTime);
 		}
@@ -668,6 +741,7 @@ function buildFips() {
 			
 			if(q > 0.8){
 				d.status = 'alarm';
+				d.status_internal = 'active';
 				let alarmTime = new Date();
 				d.lastAlarmTime = provideTimeString(alarmTime);
 				if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
@@ -675,6 +749,7 @@ function buildFips() {
 				
 			} else {
 				d.status = 'normal';
+				d.status_internal = 'normal';
 			}
 			
 		}
@@ -829,12 +904,7 @@ function buildZoneLists(){
 
 
 
-//templates for building the various DOM representations of the alarm system components...actually, instead, use HTML templates
-InnerHtmlInstructions = {
-	fip: '<div class="panel"></div>',
-	blockplan: '<div class="blockplan"></div>',
-	det: '<div class="det"><div class ="det-header"></div><div class="det-body"><div class="det-image"></div><div class="det-info"></div></div><div class="det-options"></div></div>'
-}
+
 
 
 

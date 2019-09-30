@@ -228,6 +228,7 @@ div {
 
 .blockplan {
 	position: absolute;
+	margin-left:20px;
 	top: 400px;
 	width: 1100px; /*will be set by blockplan background image dimensions*/
 	border: 2px solid orange;
@@ -246,6 +247,10 @@ div {
 	width: 100%;
 	height: 50px;
 	background-color: pink;
+}
+
+.blockplan-header {
+	font-size: 30px;
 }
 
 .blockplan-content {
@@ -272,15 +277,49 @@ div {
 	background-color: rgba(255,100,0,0.5);
 }
 
-.device-card-container {
+.device-container {
 	position: absolute;
 	right: 0px;
 	top: 0px;
 	width: 240px;
 	height: 320px;
 	border: 2px solid orange;
-	background-color: yellow;
+	background-color: rgba(255,255,0,0.2);
+	color: black;
+	opacity:0;
+	transition: opacity 0.25s;
 }
+
+.device-image {
+	margin:auto;
+	margin-top:5px;
+	width:200px;
+	height:150px;
+	background-color:white;
+}
+
+.device-body {
+	width:95%;
+	padding:5px;
+	margin:auto;
+	border: 2px solid orange;
+}
+
+.device-info {
+	width:210px;
+	margin:auto;
+	margin-top:5px;
+	background-color:snow;
+}
+
+.device-options {
+	width:210px;
+	margin:auto;
+	margin-top:5px;
+	background-color:gray;
+}
+
+
 
 /* control styles */
 
@@ -407,6 +446,23 @@ div {
 
 .show {
 	display:block;
+}
+
+.show-flash {
+	animation: flashon 0.25s 1;
+		opacity: 1;
+}
+
+@keyframes flashon {
+	from {
+		opacity: 0;
+	}
+	
+	to {
+		opacity: 1;
+	}
+	
+
 }
 
 /*Mobile-portrait style */

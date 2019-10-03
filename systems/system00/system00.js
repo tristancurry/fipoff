@@ -8,12 +8,13 @@ system = {
 			shname: 'masterFIP',
 			category: 'fip',
 			//blockplan:
+			//blockplan - detector dimensions
 			children: [
 			{
 					name: 'Loop 3',
 					shname: 'l3',
 					category: 'circuit',
-					colour: 'purple',
+					colour: 'green',
 					loop: 3,
 					zone: 3,
 					page_number: 1,
@@ -24,7 +25,7 @@ system = {
 							type: 'thermal',
 							subtype: 'th',
 							addressable: true,
-							pos: {x:'443px', y: '675px'},
+							pos: {x:'443px', y: '125px'},
 						},
 						{
 							name: 'Engine bay outer, SW corner',
@@ -32,7 +33,7 @@ system = {
 							type: 'thermal',
 							subtype: 'th',
 							addressable: true,
-							pos: {x:'50px', y: '300px'},
+							pos: {x:'443px', y: '260px'},
 						},
 						{
 							name: 'Engine bay inner, NW corner',
@@ -40,7 +41,7 @@ system = {
 							type: 'thermal',
 							subtype: 'th',
 							addressable: true,
-							pos: {x:'50px', y: '300px'},
+							pos: {x:'443px', y: '397px'},
 						},
 						{
 							name: 'Engine bay inner, SW corner',
@@ -48,7 +49,7 @@ system = {
 							type: 'thermal',
 							subtype: 'th',
 							addressable: true,
-							pos: {x:'50px', y: '300px'},
+							pos: {x:'436px', y: '545px'},
 						},						
 						{
 							name: 'Engine bay outer, SE corner',
@@ -56,7 +57,7 @@ system = {
 							type: 'thermal',
 							subtype: 'th',
 							addressable: true,
-							pos: {x:'50px', y: '300px'},
+							pos: {x:'546px', y: '257px'},
 						},
 						{
 							name: 'Engine bay outer, NE corner',
@@ -64,7 +65,7 @@ system = {
 							type: 'thermal',
 							subtype: 'th',
 							addressable: true,
-							pos: {x:'50px', y: '300px'},
+							pos: {x:'546px', y: '120px'},
 						},
 						{
 							name: 'Engine bay inner, NE corner',
@@ -72,7 +73,7 @@ system = {
 							type: 'thermal',
 							subtype: 'th',
 							addressable: true,
-							pos: {x:'50px', y: '300px'},
+							pos: {x:'546px', y: '397px'},
 						},
 						{
 							name: 'Engine bay inner, SE corner',
@@ -80,7 +81,7 @@ system = {
 							type: 'thermal',
 							subtype: 'th',
 							addressable: true,
-							pos: {x:'50px', y: '300px'},
+							pos: {x:'545px', y: '548px'},
 						},						
 					]
 				},
@@ -89,7 +90,7 @@ system = {
 					name: 'Loop 4',
 					shname: 'l4',
 					category: 'circuit',
-					colour: 'purple',
+					colour: 'red',
 					loop: 4,
 					zone: 4,
 					page_number: 1,
@@ -100,7 +101,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'50px', y: '300px'},
+							pos: {x:'668px', y: '606px'},
 							concealed: true
 						},
 						{
@@ -109,7 +110,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'50px', y:'200px'}
+							pos: {x:'663px', y:'545px'}
 						},
 						{
 							name: 'Community room north (ceiling)',
@@ -117,7 +118,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'50px', y:'100px'},
+							pos: {x:'663px', y:'420px'},
 							concealed: true
 						},
 						
@@ -127,7 +128,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'50px', y: '300px'}
+							pos: {x:'662px', y: '391px'}
 						},
 						{
 							name: 'Community room kitchen',
@@ -135,7 +136,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'50px', y:'200px'}
+							pos: {x:'663px', y:'272px'}
 						},
 						{
 							name: 'Community room toilet',
@@ -143,7 +144,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'50px', y:'100px'}
+							pos: {x:'716px', y:'273px'}
 						},
 						{
 							name: 'Gym south (ceiling)',
@@ -151,7 +152,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'50px', y: '300px'},
+							pos: {x:'689px', y: '175px'},
 							concealed: true
 						},
 						{
@@ -160,7 +161,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'50px', y:'200px'},
+							pos: {x:'696px', y:'121px'},
 							concealed: true
 						},
 						{
@@ -169,7 +170,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'50px', y:'100px'}
+							pos: {x:'757px', y:'88px'}
 						},
 						
 					]

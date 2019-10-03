@@ -50,7 +50,7 @@ let zones = {};
 
 //General Utility Functions
 //modify a value if it exceeds limits
-function constrain(n, min, max){
+function fipoff_constrain(n, min, max){
 	if(n > max){n = max;} else if(n < min){n = min;}
 	return n;	
 }
@@ -58,9 +58,9 @@ function constrain(n, min, max){
 
 function assembleDate(d){
 	let day =  d.getDate().toString();
-	if(d.getDate() < 10){day = addLeadingZero(day)};
+	if(parseInt(day) < 10){day = addLeadingZero(day)};
 	let month =  (d.getMonth() + 1).toString();
-	if(d.getMonth() < 10){month = addLeadingZero(month)};
+	if(parseInt(month) < 10){month = addLeadingZero(month)};
 	let year =  d.getFullYear().toString();
 	
 	return(day +'/'+ month + '/' + year);
@@ -724,41 +724,32 @@ function buildFips() {
 
 	
 	//TEMPORARY - initialise with some random alarms
-	f.triggerRandomAlarms = function(){
-		let tempAlarms = 5;
-		let tempAlarmCount = 0;
-		let q = 0;
-		for(let i = 0, l = this.deviceList.length; i < l; i ++){
-			let d = this.deviceList[i]; 
-			if(tempAlarmCount < tempAlarms){
-				let delta = (l - i) - (tempAlarms - tempAlarmCount);
-				if(delta == 0){
-					q = 1;
-				} else {
-					q = Math.random();
-				}	
-			} else {q = 0;}
-			
-			if(q > 0.8){
-				d.status = 'alarm';
-				d.status_internal = 'active';
-				let alarmTime = new Date();
-				d.lastAlarmTime = provideTimeString(alarmTime);
-				if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
-				tempAlarmCount++;
-				
-			} else {
-				d.status = 'normal';
-				d.status_internal = 'normal';
+	f.triggerRandomAlarms = function(_numAlarms){
+		let numAlarms = _numAlarms;
+		let list = f.deviceList;
+		numAlarms = fipoff_constrain(numAlarms, 0, list.length);
+		let chosenDevices = [];
+		
+		while(chosenDevices.length < numAlarms){
+			let idx = Math.floor(Math.random()*list.length);
+			if(!chosenDevices.includes(idx)){
+				chosenDevices.push(idx);
 			}
-			
 		}
 		
+		//the alarm activation needs to be bundled into a function, which also adds the activation date...
 		
-		
+		for(let i = 0; i < numAlarms; i++){
+			let d = list[chosenDevices[i]];
+			d.status = 'alarm';
+			d.status_internal = 'active';
+			let alarmTime = new Date();
+			d.lastAlarmTime = provideTimeString(alarmTime);
+			if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
+		}
 	}
 	//fire it up!
-	f.triggerRandomAlarms();
+	f.triggerRandomAlarms(7);
 	f.assignStatusIds();
 	f.displayStatus();
 	

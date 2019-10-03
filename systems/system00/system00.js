@@ -22,8 +22,8 @@ system = {
 						{
 							name: 'Engine bay outer, NW corner',
 							category: 'det',
-							type: 'thermal',
-							subtype: 'th',
+							type: 'mcp',
+							subtype: 'mcp',
 							addressable: true,
 							pos: {x:'443px', y: '125px'},
 						},

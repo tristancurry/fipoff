@@ -319,6 +319,10 @@ div {
 	background-color:gray;
 }
 
+.device-options-mcp {
+	display:none;
+}
+
 
 
 /* control styles */

@@ -27,6 +27,18 @@ const subtypes = {
 	fip: 'Fire Indicator Panel'
 };
 
+//new devices will be assigned an image appropriate to their type from these arrays...
+
+const imageDir = 'images/';
+
+
+const deviceImages = {
+	smoke: [['pe_01_N.png','pe_01_A.png']],
+	thermal: [['pe_01_N.png','pe_01_A.png']],
+	mcp: [['mcp_01_N.png', 'mcp_01_A.png','mcp_01_AS.png']],
+	conc: [['conc_01_N.png','conc_01_A.png']]
+};
+
 const deviceStatusStrings = {
 	active: 'Activated',
 	normal: 'Normal'
@@ -118,22 +130,29 @@ let myCardDesc = myCardContent.getElementsByClassName('device-info-desc')[0].get
 let myCardZone = myCardContent.getElementsByClassName('device-info-zone')[0].getElementsByTagName('span')[0];
 let myCardNum = myCardContent.getElementsByClassName('device-info-zone')[0].getElementsByTagName('span')[1];
 let myCardStatus = myCardContent.getElementsByClassName('device-info-status')[0].getElementsByTagName('span')[0];
-//put in a couple of spans in here that can be targeted, instead of the entire info div
+let myCardOptions = myCard.getElementsByClassName('device-options')[0];
+let myCardMCPOptions = myCard.getElementsByClassName('device-options-mcp')[0];
 
 myBlockplan.addEventListener('click', function(event){
 let t = event.target;
 if(t.className == 'device-detector'){
 	let thisFip = parseInt(myBlockplan.getAttribute('data-index'));
 	let id = parseInt(t.getAttribute('data-index'));
-	let thisDet = sysObjectsByCategory['fip'][thisFip].deviceList[id];
-	//TODO: populate 'detector card/info box' with relevant details of the detector
+	let thisDevice = sysObjectsByCategory['fip'][thisFip].deviceList[id];
 	
+	if(thisDevice.type == 'mcp'){
+		myCardMCPOptions.classList.add('show');
+		myCardOptions.setAttribute('data-fip-index', thisFip);
+		myCardOptions.setAttribute('data-device-index', id);
+	} else {
+		myCardMCPOptions.classList.remove('show');
+	}
 	
 	if(!myCard.classList.contains('show-flash')){
 		myCard.classList.toggle('show-flash');		
 	} else if(myCard.classList.contains('show-flash')){
 
-		if(myCardDesc.innerHTML == thisDet.desc){
+		if(myCardDesc.innerHTML == thisDevice.desc){
 			myCard.classList.remove('show-flash');
 		} else {
 			myCard.classList.remove('show-flash');
@@ -144,21 +163,38 @@ if(t.className == 'device-detector'){
 		
 	}
 	
+	//these image paths should be specified at creation of the detector - for now I'm prototyping it so it's OK how it is...
 	
-	if(thisDet.status_internal == 'active'){
-		myCardImage.style.backgroundImage = 'url(images/pe_01_A.png)';
+	let deviceImageArray = [];
+	let deviceImagePath = '';
+	
+	if(thisDevice.conc){
+		deviceImageArray = deviceImages['conc'][0];
 	} else {
-		myCardImage.style.backgroundImage = 'url(images/pe_01_N.png)';
+		deviceImageArray = deviceImages[thisDevice.type][0];
 	}
 	
 	
+	if(thisDevice.status_internal == 'active'){
+		if(thisDevice.type == 'mcp' && thisDevice.stuck && deviceImageArray.length == 3){
+			deviceImagePath = imageDir + deviceImageArray[2];
+		} else {
+			deviceImagePath = imageDir + deviceImageArray[1];
+		}
+	} else {
+		deviceImagePath =  imageDir + deviceImageArray[0];
+	}
+	console.log(deviceImagePath);
+	
+	myCardImage.style.backgroundImage = 'url(' + deviceImagePath + ')';
+	
 	
 	let titleString = '';
-	if(thisDet.subtype){
-		titleString = subtypes[thisDet.subtype];
-	} else if(thisDet.type){
-		titleString = types[thisDet.type];
-		if(thisDet.category == 'det'){
+	if(thisDevice.subtype){
+		titleString = subtypes[thisDevice.subtype];
+	} else if(thisDevice.type){
+		titleString = types[thisDevice.type];
+		if(thisDevice.category == 'det'){
 			titleString += ' Detector';
 		}
 	}
@@ -167,18 +203,18 @@ if(t.className == 'device-detector'){
 	
 	myCardHeader.innerHTML = titleString;
 	
-	if(thisDet.desc){
-		myCardDesc.innerHTML = thisDet.desc;
+	if(thisDevice.desc){
+		myCardDesc.innerHTML = thisDevice.desc;
 	}
 	
-	if(thisDet.zone){
-		myCardZone.innerHTML = thisDet.zone;
+	if(thisDevice.zone){
+		myCardZone.innerHTML = thisDevice.zone;
 	}
-	if(thisDet.num){
-		myCardNum.innerHTML = thisDet.num;
+	if(thisDevice.num){
+		myCardNum.innerHTML = thisDevice.num;
 	}
-	if(thisDet.status_internal){
-		myCardStatus.innerHTML = deviceStatusStrings[thisDet.status_internal];
+	if(thisDevice.status_internal){
+		myCardStatus.innerHTML = deviceStatusStrings[thisDevice.status_internal];
 	} else {
 		myCardStatus.innerHTML = 'Unknown';
 	}
@@ -186,7 +222,19 @@ if(t.className == 'device-detector'){
 
 });
 
-
+myCardOptions.addEventListener('click', function(event){
+	let t = event.target;
+	
+	if(t.tagName == 'BUTTON'){
+		if(myCardOptions.getAttribute('data-fip-index') && myCardOptions.getAttribute('data-device-index')){
+			thisDevice = sysObjectsByCategory['fip'][parseInt(myCardOptions.getAttribute('data-fip-index'))].deviceList[myCardOptions.getAttribute('data-device-index')];
+			if(thisDevice.type == 'mcp'){
+				thisDevice.stuck = false;
+			}
+		}
+		
+	}
+});
 
 
 

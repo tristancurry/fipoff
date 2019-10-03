@@ -163,7 +163,7 @@ if(t.className == 'device-detector'){
 		
 	}
 	
-	//these image paths should be specified at creation of the detector - for now I'm prototyping it so it's OK how it is...
+	//these image paths should be specified at creation of the detector
 	
 	let deviceImageArray = [];
 	let deviceImagePath = '';
@@ -173,6 +173,18 @@ if(t.className == 'device-detector'){
 	} else {
 		deviceImageArray = deviceImages[thisDevice.type][0];
 	}
+	
+	//this image update should be done whenever there's user input to the system, or just as part of the (eventual) main program cycle (how to do this efficiently? setInterval, with a 0.5s interval? we can hitch other updates to this as well...just don't want the main cycle thrashing along unnecessary checking 'is it time to update yet, is it time to update yet?'
+	/*
+	actually, while I'm on that point...
+	THINGS THAT NEED UPDATING REGULARLY
+		- the clock displayed on various FIPs
+		
+	THINGS THAT ONLY NEED UPDATING WHEN THE USER DOES SOMETHING (maybe use event propagation to trigger an update if there's a click anywhere?)
+		- images in the device info card
+		- alarm/activation status of devices
+		- propagation of alarm signals through the system
+	*/
 	
 	
 	if(thisDevice.status_internal == 'active'){
@@ -785,7 +797,7 @@ function buildFips() {
 			}
 		}
 		
-		//the alarm activation needs to be bundled into a function, which also adds the activation date...
+		//this alarm activation needs to be bundled into a function, which also adds the activation date...
 		
 		for(let i = 0; i < numAlarms; i++){
 			let d = list[chosenDevices[i]];
@@ -797,7 +809,7 @@ function buildFips() {
 		}
 	}
 	//fire it up!
-	f.triggerRandomAlarms(7);
+	f.triggerRandomAlarms(3);
 	f.assignStatusIds();
 	f.displayStatus();
 	

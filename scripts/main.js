@@ -36,7 +36,7 @@ const deviceImages = {
 	smoke: [['pe_01_N.png','pe_01_A.png']],
 	thermal: [['pe_01_N.png','pe_01_A.png']],
 	mcp: [['mcp_01_N.png', 'mcp_01_A.png','mcp_01_AS.png']],
-	conc: [['conc_01_N.png','conc_01_A.png']]
+	concealed: [['conc_01_N.png','conc_01_A.png']]
 };
 
 const deviceStatusStrings = {
@@ -111,15 +111,6 @@ function addLeadingZero(str){
 //also produce a separate list of zones (administrative, as opposed to circuitry)
 
 
-
-buildSystem(system);
-buildZoneLists();
-console.log(sysObjects);
-
-console.log(zones);
-buildFips();
-console.log(sysObjectsByCategory);
-
 //TEMPORARY - attaching event listeners to test blockplan
 let myBlockplan = viewport.getElementsByClassName('blockplan')[0];
 let myCard = myBlockplan.getElementsByClassName('device-container')[0];
@@ -133,16 +124,33 @@ let myCardStatus = myCardContent.getElementsByClassName('device-info-status')[0]
 let myCardOptions = myCard.getElementsByClassName('device-options')[0];
 let myCardMCPOptions = myCard.getElementsByClassName('device-options-mcp')[0];
 
+
+
+//OK, on with the show...
+
+buildSystem(system);
+buildZoneLists();
+console.log(sysObjects);
+
+console.log(zones);
+buildFips();
+console.log(sysObjectsByCategory);
+
+
+
+
 myBlockplan.addEventListener('click', function(event){
 let t = event.target;
 if(t.className == 'device-detector'){
-	let thisFip = parseInt(myBlockplan.getAttribute('data-index'));
+	let thisFipIndex = parseInt(myBlockplan.getAttribute('data-index'));
+	let thisFip = sysObjectsByCategory['fip'][thisFipIndex];
 	let id = parseInt(t.getAttribute('data-index'));
-	let thisDevice = sysObjectsByCategory['fip'][thisFip].deviceList[id];
+	let thisDevice = thisFip.deviceList[id];
+	thisFip.updateDeviceImagePath(thisDevice);
 	
 	if(thisDevice.type == 'mcp'){
 		myCardMCPOptions.classList.add('show');
-		myCardOptions.setAttribute('data-fip-index', thisFip);
+		myCardOptions.setAttribute('data-fip-index', thisFipIndex);
 		myCardOptions.setAttribute('data-device-index', id);
 	} else {
 		myCardMCPOptions.classList.remove('show');
@@ -163,42 +171,6 @@ if(t.className == 'device-detector'){
 		
 	}
 	
-	//these image paths should be specified at creation of the detector
-	
-	let deviceImageArray = [];
-	let deviceImagePath = '';
-	
-	if(thisDevice.conc){
-		deviceImageArray = deviceImages['conc'][0];
-	} else {
-		deviceImageArray = deviceImages[thisDevice.type][0];
-	}
-	
-	//this image update should be done whenever there's user input to the system, or just as part of the (eventual) main program cycle (how to do this efficiently? setInterval, with a 0.5s interval? we can hitch other updates to this as well...just don't want the main cycle thrashing along unnecessary checking 'is it time to update yet, is it time to update yet?'
-	/*
-	actually, while I'm on that point...
-	THINGS THAT NEED UPDATING REGULARLY
-		- the clock displayed on various FIPs
-		
-	THINGS THAT ONLY NEED UPDATING WHEN THE USER DOES SOMETHING (maybe use event propagation to trigger an update if there's a click anywhere?)
-		- images in the device info card
-		- alarm/activation status of devices
-		- propagation of alarm signals through the system
-	*/
-	
-	
-	if(thisDevice.status_internal == 'active'){
-		if(thisDevice.type == 'mcp' && thisDevice.stuck && deviceImageArray.length == 3){
-			deviceImagePath = imageDir + deviceImageArray[2];
-		} else {
-			deviceImagePath = imageDir + deviceImageArray[1];
-		}
-	} else {
-		deviceImagePath =  imageDir + deviceImageArray[0];
-	}
-	console.log(deviceImagePath);
-	
-	myCardImage.style.backgroundImage = 'url(' + deviceImagePath + ')';
 	
 	
 	let titleString = '';
@@ -212,7 +184,6 @@ if(t.className == 'device-detector'){
 	}
 	
 	
-	
 	myCardHeader.innerHTML = titleString;
 	
 	if(thisDevice.desc){
@@ -222,9 +193,11 @@ if(t.className == 'device-detector'){
 	if(thisDevice.zone){
 		myCardZone.innerHTML = thisDevice.zone;
 	}
+	
 	if(thisDevice.num){
 		myCardNum.innerHTML = thisDevice.num;
 	}
+	
 	if(thisDevice.status_internal){
 		myCardStatus.innerHTML = deviceStatusStrings[thisDevice.status_internal];
 	} else {
@@ -246,6 +219,7 @@ myCardOptions.addEventListener('click', function(event){
 		}
 		
 	}
+
 });
 
 
@@ -290,10 +264,23 @@ function buildFips() {
 						stuck: false,
 						//this is also the time to add a div to the blockplan with a pointer back to this device.
 					}
+					
+					if(c.concealed){device.concealed = c.concealed;}
 					let d  = new Date(0);
 					device.lastAlarmTime = provideTimeString(d);
 					
-					f.deviceList.push(device);	
+					
+					device.imageArray = [];
+					device.imagePath = '';
+	
+					if(device.concealed){
+						device.imageArray = deviceImages['concealed'][0];
+					} else {
+						device.imageArray = deviceImages[device.type][0];
+					}
+					
+					
+					f.deviceList.push(device);
 				}	
 			}
 		}
@@ -727,6 +714,24 @@ function buildFips() {
 		this.wsIsolLamp.classList.toggle('unlit');
 	};
 	
+	f.updateDeviceImagePath = function(device){
+		
+		if(device.status_internal == 'active'){
+		if(device.type == 'mcp' && device.stuck && device.imageArray.length == 3){
+			device.imagePath = imageDir + device.imageArray[2];
+		} else {
+			device.imagePath = imageDir + device.imageArray[1];
+		}
+	} else {
+		device.imagePath =  imageDir + device.imageArray[0];
+	}
+	console.log(device.imagePath);
+	
+	myCardImage.style.backgroundImage = 'url(' + device.imagePath + ')';
+		
+		
+	};
+	
 	f.display = f.panel.getElementsByClassName('panel-display-content')[0];
 	f.displayLines = f.display.getElementsByClassName('display-line');
 	f.descLine = f.displayLines[0].getElementsByClassName('left-info')[0];
@@ -812,6 +817,9 @@ function buildFips() {
 	f.triggerRandomAlarms(3);
 	f.assignStatusIds();
 	f.displayStatus();
+	for(i = 0, l = f.deviceList.length; i < l; i++){
+		f.updateDeviceImagePath(f.deviceList[i]);
+	}
 	
 	//work out whether it's the master fip or not (if not, the div representation will be hidden by default)
 	}

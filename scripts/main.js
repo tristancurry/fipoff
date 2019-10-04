@@ -241,16 +241,14 @@ function buildFips() {
 	//create a deviceList by scouring its child circuits for details (desc, type, subtype, loop, zone)
 	
 		f.deviceList = [];
+		let currentDeviceIndex = 0;
 		for(let j = 0, m = f.children.length; j < m; j++){
 			let child = f.children[j];
 			if(child.category == 'circuit'){
 				//do some deeper digging. All devices should be on a circuit, not directly 'plugged into' the fip.
 				for(let k = 0, n = child.children.length; k < n; k++){
 					let c = child.children[k];
-					//assign a num to each device, starting at 1
-					//assign a status of 'normal' to each device
-					//assign a lastAlarmDate of 'never' (or 0) to each device in the circuit (or an appropriate test date)
-					//stuck: false
+					//transcribe some of the information to the deviceList for this FIP
 					let device = {
 						desc: c.name,
 						category: c.category,
@@ -262,10 +260,27 @@ function buildFips() {
 						status_internal: 'normal',
 						status: 'normal',
 						stuck: false,
-						//this is also the time to add a div to the blockplan with a pointer back to this device.
+						pos: c.pos,
+						concealed: c.concealed,
 					}
 					
-					if(c.concealed){device.concealed = c.concealed;}
+					
+					
+					//provide the device with a representation in the DOM - in this case, a button/div in the blockplan
+					let temp = document.createElement('div');
+					temp.classList.add('device-detector'); //TODO: add conditional here, to handle FIPs on the blockplan
+					//needs data-index - this is the same as the device's position in the FIP's deviceList
+					temp.setAttribute('data-index', currentDeviceIndex);
+					currentDeviceIndex++;
+					//needs position
+					temp.style.left = device.pos.x;
+					temp.style.top = device.pos.y;
+					
+					//TODO - find the right page - currently just going to the only page
+					let page = myBlockplan.getElementsByClassName('blockplan-page')[0];
+					page.appendChild(temp);
+					
+					
 					let d  = new Date(0);
 					device.lastAlarmTime = provideTimeString(d);
 					
@@ -279,7 +294,6 @@ function buildFips() {
 						device.imageArray = deviceImages[device.type][0];
 					}
 					
-					
 					f.deviceList.push(device);
 				}	
 			}
@@ -289,7 +303,7 @@ function buildFips() {
 		let temp = document.getElementsByClassName('template-panel')[0];
 		let clone = temp.content.cloneNode(true);
 		viewport.appendChild(clone);
-		f.panel = document.getElementsByClassName('panel')[i]; //this will change when hardcoded panel is gone
+		f.panel = document.getElementsByClassName('panel')[i]; 
 		
 	//give the FIP all of the functions it needs to survive as a fip.
 		f.status = 'normal';
@@ -717,19 +731,16 @@ function buildFips() {
 	f.updateDeviceImagePath = function(device){
 		
 		if(device.status_internal == 'active'){
-		if(device.type == 'mcp' && device.stuck && device.imageArray.length == 3){
-			device.imagePath = imageDir + device.imageArray[2];
+			if(device.type == 'mcp' && device.stuck && device.imageArray.length == 3){
+				device.imagePath = imageDir + device.imageArray[2];
+			} else {
+				device.imagePath = imageDir + device.imageArray[1];
+			}
 		} else {
-			device.imagePath = imageDir + device.imageArray[1];
+			device.imagePath =  imageDir + device.imageArray[0];
 		}
-	} else {
-		device.imagePath =  imageDir + device.imageArray[0];
-	}
-	console.log(device.imagePath);
 	
-	myCardImage.style.backgroundImage = 'url(' + device.imagePath + ')';
-		
-		
+		myCardImage.style.backgroundImage = 'url(' + device.imagePath + ')';
 	};
 	
 	f.display = f.panel.getElementsByClassName('panel-display-content')[0];
@@ -847,6 +858,7 @@ function createSystemObjects(node, parent){
 		
 	}
 	
+	
 	if(node.blockplan){
 		
 		//blockplan should obscure the FIP - make user remember details?
@@ -903,6 +915,8 @@ function createSystemObjects(node, parent){
 	}	
 	
 	if(node.addressable){o.addressable = node.addressable;}
+	if(node.pos){o.pos = node.pos;}
+	if(node.concealed){o.concealed = true;} else {o.concealed = false;}
 	
 	//place in a list of objects and assign a reference id
 	o.sysObsId = sysObjects.length;

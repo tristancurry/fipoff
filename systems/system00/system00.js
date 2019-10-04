@@ -10,7 +10,102 @@ system = {
 			//blockplan:
 			//blockplan - detector dimensions
 			children: [
-			{
+				{
+					name: 'Loop 2',
+					shname: 'l2',
+					category: 'circuit',
+					colour: 'cyan',
+					loop: 2,
+					zone: 2,
+					page_number: 1,
+					children:[
+						{
+							name: 'Drying room',
+							category: 'det',
+							type: 'smoke',
+							subtype: 'pe',
+							addressable: true,
+							pos: {x: '349px', y:'326px'}
+						},
+						{
+							name: 'Recreation room (ceiling)',
+							category: 'det',
+							type: 'smoke',
+							subtype: 'pe',
+							addressable: true,
+							pos: {x: '243px', y:'276px'},
+							concealed: true
+						},
+						{
+							name: 'Recreation room',
+							category: 'det',
+							type: 'smoke',
+							subtype: 'pe',
+							addressable: true,
+							pos: {x: '243px', y:'309px'}
+						},
+						{
+							name: 'Crew quarters south 1',
+							category: 'det',
+							type: 'smoke',
+							subtype: 'pe',
+							addressable: true,
+							pos: {x: '153px', y:'300px'}
+						},
+						{
+							name: 'Crew quarters south 2',
+							category: 'det',
+							type: 'smoke',
+							subtype: 'pe',
+							addressable: true,
+							pos: {x: '93px', y:'298px'}
+						},
+						{
+							name: 'Crew quarters south 3',
+							category: 'det',
+							type: 'smoke',
+							subtype: 'pe',
+							addressable: true,
+							pos: {x: '35px', y:'300px'}
+						},
+						{
+							name: 'Crew quarters south hallway',
+							category: 'det',
+							type: 'smoke',
+							subtype: 'pe',
+							addressable: true,
+							pos: {x: '88px', y:'250px'}
+						},
+						{
+							name: 'Crew quarters south hallway (ceiling)',
+							category: 'det',
+							type: 'smoke',
+							subtype: 'pe',
+							addressable: true,
+							pos: {x: '141px', y:'251px'},
+							concealed: true
+						},
+						{
+							name: 'Crew quarters bathroom west',
+							category: 'det',
+							type: 'thermal',
+							subtype: 'th',
+							addressable: true,
+							pos: {x: '65px', y:'189px'},
+						},
+{
+							name: 'Crew quarters bathroom east',
+							category: 'det',
+							type: 'thermal',
+							subtype: 'th',
+							addressable: true,
+							pos: {x: '135px', y:'189px'},
+						},						
+					]
+					
+				},
+			
+				{
 					name: 'Loop 3',
 					shname: 'l3',
 					category: 'circuit',
@@ -24,7 +119,7 @@ system = {
 							category: 'det',
 							type: 'mcp',
 							subtype: 'mcp',
-							addressable: true,
+							addressable:true,
 							pos: {x:'443px', y: '125px'},
 						},
 						{
@@ -110,7 +205,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'663px', y:'545px'}
+							pos: {x:'663px', y:'555px'}
 						},
 						{
 							name: 'Community room north (ceiling)',

@@ -31,7 +31,7 @@ const subtypes = {
 
 const imageDir = 'images/';
 
-
+//consider doing these as a spritesheet!
 const deviceImages = {
 	smoke: [['pe_01_N.png','pe_01_A.png']],
 	thermal: [['pe_01_N.png','pe_01_A.png']],
@@ -111,22 +111,7 @@ function addLeadingZero(str){
 //also produce a separate list of zones (administrative, as opposed to circuitry)
 
 
-//TEMPORARY - attaching event listeners to test blockplan
-let myBlockplan = viewport.getElementsByClassName('blockplan')[0];
-let myCard = myBlockplan.getElementsByClassName('device-container')[0];
-let myCardHeader = myCard.getElementsByClassName('device-header')[0];
-let myCardContent = myCard.getElementsByClassName('device-info')[0];
-let myCardImage = myCard.getElementsByClassName('device-image')[0];
-let myCardDesc = myCardContent.getElementsByClassName('device-info-desc')[0].getElementsByTagName('span')[0];
-let myCardZone = myCardContent.getElementsByClassName('device-info-zone')[0].getElementsByTagName('span')[0];
-let myCardNum = myCardContent.getElementsByClassName('device-info-zone')[0].getElementsByTagName('span')[1];
-let myCardStatus = myCardContent.getElementsByClassName('device-info-status')[0].getElementsByTagName('span')[0];
-let myCardOptions = myCard.getElementsByClassName('device-options')[0];
-let myCardMCPOptions = myCard.getElementsByClassName('device-options-mcp')[0];
 
-
-
-//OK, on with the show...
 
 buildSystem(system);
 buildZoneLists();
@@ -135,95 +120,6 @@ console.log(sysObjects);
 console.log(zones);
 buildFips();
 console.log(sysObjectsByCategory);
-
-
-
-
-myBlockplan.addEventListener('click', function(event){
-let t = event.target;
-if(t.className == 'device-detector'){
-	let thisFipIndex = parseInt(myBlockplan.getAttribute('data-index'));
-	let thisFip = sysObjectsByCategory['fip'][thisFipIndex];
-	let id = parseInt(t.getAttribute('data-index'));
-	let thisDevice = thisFip.deviceList[id];
-	thisFip.updateDeviceImagePath(thisDevice);
-	
-	if(thisDevice.type == 'mcp'){
-		myCardMCPOptions.classList.add('show');
-		myCardOptions.setAttribute('data-fip-index', thisFipIndex);
-		myCardOptions.setAttribute('data-device-index', id);
-	} else {
-		myCardMCPOptions.classList.remove('show');
-	}
-	
-	if(!myCard.classList.contains('show-flash')){
-		myCard.classList.toggle('show-flash');		
-	} else if(myCard.classList.contains('show-flash')){
-
-		if(myCardDesc.innerHTML == thisDevice.desc){
-			myCard.classList.remove('show-flash');
-		} else {
-			myCard.classList.remove('show-flash');
-			void myCard.offsetWidth;
-			myCard.classList.add('show-flash');
-			
-		}
-		
-	}
-	
-	
-	
-	let titleString = '';
-	if(thisDevice.subtype){
-		titleString = subtypes[thisDevice.subtype];
-	} else if(thisDevice.type){
-		titleString = types[thisDevice.type];
-		if(thisDevice.category == 'det'){
-			titleString += ' Detector';
-		}
-	}
-	
-	
-	myCardHeader.innerHTML = titleString;
-	
-	if(thisDevice.desc){
-		myCardDesc.innerHTML = thisDevice.desc;
-	}
-	
-	if(thisDevice.zone){
-		myCardZone.innerHTML = thisDevice.zone;
-	}
-	
-	if(thisDevice.num){
-		myCardNum.innerHTML = thisDevice.num;
-	}
-	
-	if(thisDevice.status_internal){
-		myCardStatus.innerHTML = deviceStatusStrings[thisDevice.status_internal];
-	} else {
-		myCardStatus.innerHTML = 'Unknown';
-	}
-}
-
-});
-
-myCardOptions.addEventListener('click', function(event){
-	let t = event.target;
-	
-	if(t.tagName == 'BUTTON'){
-		if(myCardOptions.getAttribute('data-fip-index') && myCardOptions.getAttribute('data-device-index')){
-			thisDevice = sysObjectsByCategory['fip'][parseInt(myCardOptions.getAttribute('data-fip-index'))].deviceList[myCardOptions.getAttribute('data-device-index')];
-			if(thisDevice.type == 'mcp'){
-				thisDevice.stuck = false;
-			}
-		}
-		
-	}
-
-});
-
-
-
 
 function buildSystem (sys) {
 //expect to encounter system name first
@@ -238,6 +134,112 @@ function buildFips() {
 	let fipList = sysObjectsByCategory['fip'];
 	for(let i = 0, l = fipList.length; i < l; i++){
 		let f = fipList[i];
+		
+		
+		//provide the FIP a representation in the DOM. NB this will not work in IE
+		let temp = document.getElementsByClassName('template-panel')[0];
+		let clone = temp.content.cloneNode(true);
+		viewport.appendChild(clone);
+		f.panel = document.getElementsByClassName('panel')[i]; 
+		
+		
+	//create the associated blockplan
+		temp = document.getElementsByClassName('template-blockplan')[0];
+		clone = temp.content.cloneNode(true);
+		f.panel.appendChild(clone);
+		f.blockplan = document.getElementsByClassName('blockplan')[i];
+		f.blockplan.setAttribute('data-index', i);
+		
+		//now we have a blockplan in the DOM, we can do the other blockplanny stuff, based on the blockplan_details stored with the FIP
+		//add device buttons
+		//add event listeners
+		f.blockplan_card = f.blockplan.getElementsByClassName('device-container')[0];
+		//TODO: find a way to make this stick to the window (and appear at a fixed position within the visible window)
+		f.blockplan_card_elements = {
+			header:	f.blockplan_card.getElementsByClassName('device-header')[0],
+			info : f.blockplan_card.getElementsByClassName('device-info')[0],
+			image : f.blockplan_card.getElementsByClassName('device-image')[0],
+			desc : f.blockplan_card.getElementsByClassName('device-info-desc')[0].getElementsByTagName('span')[0],
+			zone : f.blockplan_card.getElementsByClassName('device-info-zone')[0].getElementsByTagName('span')[0],
+			num : f.blockplan_card.getElementsByClassName('device-info-zone')[0].getElementsByTagName('span')[1],
+			status : f.blockplan_card.getElementsByClassName('device-info-status')[0].getElementsByTagName('span')[0],
+			options : f.blockplan_card.getElementsByClassName('device-options')[0],
+			MCPOptions : f.blockplan_card.getElementsByClassName('device-options-mcp')[0],
+			
+		}
+		
+		f.blockplan.addEventListener('click', function(event){
+			let t = event.target;
+
+			if(t.className == 'device-detector'){
+				let fipIndex = parseInt(f.blockplan.getAttribute('data-index'));
+				let id = parseInt(t.getAttribute('data-index'));
+				let device = f.deviceList[id];
+				f.updateDeviceImagePath(device);
+				
+				if(device.type == 'mcp'){
+					f.blockplan_card_elements['MCPOptions'].classList.add('show');
+					f.blockplan_card_elements['options'].setAttribute('data-fip-index', fipIndex);
+					f.blockplan_card_elements['options'].setAttribute('data-device-index', id);
+				} else {
+					f.blockplan_card_elements['MCPOptions'].classList.remove('show');
+				}
+				
+				if(!f.blockplan_card.classList.contains('show-flash')){
+					f.blockplan_card.classList.toggle('show-flash');		
+				} else if(f.blockplan_card.classList.contains('show-flash')){
+
+					if(f.blockplan_card_elements['desc'].innerHTML == device.desc){
+						f.blockplan_card.classList.remove('show-flash');
+					} else {
+						f.blockplan_card.classList.remove('show-flash');
+						void f.blockplan_card.offsetWidth;
+						f.blockplan_card.classList.add('show-flash');	
+					}	
+				}
+				
+				let titleString = '';
+				if(device.subtype){
+					titleString = subtypes[device.subtype];
+				} else if(device.type){
+					titleString = types[device.type];
+					if(device.category == 'det'){
+						titleString += ' Detector';
+					}
+				}
+				
+				f.blockplan_card_elements['header'].innerHTML = titleString;
+				if(device.desc){
+					f.blockplan_card_elements['desc'].innerHTML = device.desc;
+				}
+				if(device.zone){
+					f.blockplan_card_elements['zone'].innerHTML = device.zone;
+				}
+				if(device.num){
+					f.blockplan_card_elements['num'].innerHTML = device.num;
+				}
+				if(device.status_internal){
+					f.blockplan_card_elements['status'].innerHTML = deviceStatusStrings[device.status_internal];
+				} else {
+					f.blockplan_card_elements['status'].innerHTML = 'Unknown';
+				}
+			}
+
+		});
+
+		f.blockplan_card_elements['options'].addEventListener('click', function(event){
+			let t = event.target;
+			
+			if(t.tagName == 'BUTTON'){
+				if(f.blockplan_card_elements['options'].getAttribute('data-fip-index') && f.blockplan_card_elements['options'].getAttribute('data-device-index')){
+					let device = sysObjectsByCategory['fip'][parseInt(f.blockplan_card_elements['options'].getAttribute('data-fip-index'))].deviceList[f.blockplan_card_elements['options'].getAttribute('data-device-index')];
+					if(device.type == 'mcp'){
+						device.stuck = false;
+					}
+				}	
+			}
+		});
+		
 	//create a deviceList by scouring its child circuits for details (desc, type, subtype, loop, zone)
 	
 		f.deviceList = [];
@@ -277,7 +279,7 @@ function buildFips() {
 					temp.style.top = device.pos.y;
 					
 					//TODO - find the right page - currently just going to the only page
-					let page = myBlockplan.getElementsByClassName('blockplan-page')[0];
+					let page = f.blockplan.getElementsByClassName('blockplan-page')[0];
 					page.appendChild(temp);
 					
 					
@@ -299,11 +301,9 @@ function buildFips() {
 			}
 		}
 		
-	//provide the FIP a representation in the DOM. NB this will not work in IE
-		let temp = document.getElementsByClassName('template-panel')[0];
-		let clone = temp.content.cloneNode(true);
-		viewport.appendChild(clone);
-		f.panel = document.getElementsByClassName('panel')[i]; 
+
+		
+		
 		
 	//give the FIP all of the functions it needs to survive as a fip.
 		f.status = 'normal';
@@ -740,7 +740,7 @@ function buildFips() {
 			device.imagePath =  imageDir + device.imageArray[0];
 		}
 	
-		myCardImage.style.backgroundImage = 'url(' + device.imagePath + ')';
+		f.blockplan_card_elements['image'].style.backgroundImage = 'url(' + device.imagePath + ')';
 	};
 	
 	f.display = f.panel.getElementsByClassName('panel-display-content')[0];
@@ -861,21 +861,11 @@ function createSystemObjects(node, parent){
 	
 	if(node.blockplan){
 		
-		//blockplan should obscure the FIP - make user remember details?
-		//bring in the block plan with all of its details
-		//blockplan needs...
-		// - dimensions for each page
-		// - number of pages
-		// - images for each page
-		// - contents page
-		// - svg/spritesheet for all detector types - actually use a universal sprite sheet for now
+		//this is the bit where we gather the blockplan details and dump them in the object.
+		//it may suffice just to plop the blockplan entry from the sysfile here
 		
-		//devices is sysfile then need...
-		// - their page number
-		// - their on-page coords
+		o.blockplan_details = node.blockplan_details;
 		
-		//blockplan will open in a div somewhat adjacent to the FIP onscreen
-		// - closing the blockplan will also close any child elements (e.g. sub fips and their blockplans, detector infocards)
 	}
 	
 	if(node.loop){

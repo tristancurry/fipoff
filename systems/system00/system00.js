@@ -7,8 +7,15 @@ system = {
 			name: 'Master FIP',
 			shname: 'masterFIP',
 			category: 'fip',
-			//blockplan:
-			//blockplan - detector dimensions
+			blockplan_details: {
+				pages: ['blockplanA.png'],
+				dimensions: {x:'1100px',y:'800px'},
+				detector_dimensions: {x:'20px', y:'20px'},
+				fip_dimensions: {x:'30px', y: '20px'},
+				
+				
+			},
+
 			children: [
 				{
 					name: 'Loop 1',

@@ -149,10 +149,23 @@ function buildFips() {
 		f.panel.appendChild(clone);
 		f.blockplan = document.getElementsByClassName('blockplan')[i];
 		f.blockplan.setAttribute('data-index', i);
+		f.blockplan.style.width = f.blockplan_details['dimensions'].x;
+		f.blockplan.getElementsByClassName('blockplan-content')[0].style.height = f.blockplan_details['dimensions'].y;
+		
 		
 		//now we have a blockplan in the DOM, we can do the other blockplanny stuff, based on the blockplan_details stored with the FIP
-		//add device buttons
-		//add event listeners
+		//create blockplan pages
+		//1.create div for each blockplan page
+		let blockplan_pages = f.blockplan_details['pages'];
+		for(let i = 0, l = blockplan_pages.length; i < l; i++){
+			let temp_page = document.createElement('div');
+			temp_page.className = 'blockplan-page';
+			temp_page.style.backgroundImage = 'url(' + f.blockplan_details['pages'][i] + ')';
+			f.blockplan.getElementsByClassName('blockplan-content')[0].appendChild(temp_page);
+		
+			//3.set dimensions of page
+			//4.set background image for page
+		}
 		f.blockplan_card = f.blockplan.getElementsByClassName('device-container')[0];
 		//TODO: find a way to make this stick to the window (and appear at a fixed position within the visible window)
 		f.blockplan_card_elements = {
@@ -170,6 +183,7 @@ function buildFips() {
 		
 		f.blockplan.addEventListener('click', function(event){
 			let t = event.target;
+			console.log(t);
 
 			if(t.className == 'device-detector'){
 				let fipIndex = parseInt(f.blockplan.getAttribute('data-index'));
@@ -252,18 +266,19 @@ function buildFips() {
 					let c = child.children[k];
 					//transcribe some of the information to the deviceList for this FIP
 					let device = {
+						page: child.page,
+						pos: c.pos,
 						desc: c.name,
 						category: c.category,
 						type: c.type,
 						subtype: c.subtype,
+						concealed: c.concealed,
 						zone: c.zoneNum,
 						loop: c.loop,
 						num: k + 1,
 						status_internal: 'normal',
 						status: 'normal',
 						stuck: false,
-						pos: c.pos,
-						concealed: c.concealed,
 					}
 					
 					
@@ -277,9 +292,11 @@ function buildFips() {
 					//needs position
 					temp.style.left = device.pos.x;
 					temp.style.top = device.pos.y;
+					temp.style.width = f.blockplan_details['detector_dimensions'].x;
+					temp.style.height = f.blockplan_details['detector_dimensions'].y;
 					
 					//TODO - find the right page - currently just going to the only page
-					let page = f.blockplan.getElementsByClassName('blockplan-page')[0];
+					let page = f.blockplan.getElementsByClassName('blockplan-page')[device.page - 1];
 					page.appendChild(temp);
 					
 					
@@ -859,8 +876,7 @@ function createSystemObjects(node, parent){
 	}
 	
 	
-	if(node.blockplan){
-		
+	if(node.blockplan_details){
 		//this is the bit where we gather the blockplan details and dump them in the object.
 		//it may suffice just to plop the blockplan entry from the sysfile here
 		
@@ -907,6 +923,8 @@ function createSystemObjects(node, parent){
 	if(node.addressable){o.addressable = node.addressable;}
 	if(node.pos){o.pos = node.pos;}
 	if(node.concealed){o.concealed = true;} else {o.concealed = false;}
+	if(node.page_number){o.page = node.page_number;}
+	
 	
 	//place in a list of objects and assign a reference id
 	o.sysObsId = sysObjects.length;

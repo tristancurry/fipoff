@@ -230,7 +230,6 @@ div {
 	position: absolute;
 	margin-left:20px;
 	top: 400px;
-	width: 1100px; /*will be set by blockplan background image dimensions*/
 	border: 2px solid orange;
 }
 
@@ -254,7 +253,7 @@ div {
 }
 
 .blockplan-content {
-	height: 800px; /*will be set by blockplan background image dimensions*/
+
 }
 
 .blockplan-next, .blockplan-prev {
@@ -272,8 +271,6 @@ div {
 
 .device-detector {
 	position:absolute;
-	width: 20px;
-	height: 20px; /*dimensions to be set by blockplan */
 	background-color: rgba(255,100,0,0.5);
 }
 

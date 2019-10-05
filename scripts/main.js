@@ -140,10 +140,12 @@ function buildFips() {
 		let temp = document.getElementsByClassName('template-panel')[0];
 		let clone = temp.content.cloneNode(true);
 		viewport.appendChild(clone);
+		
 		f.panel = document.getElementsByClassName('panel')[i]; 
 		
 		
-	//create the associated blockplan
+		//create the associated blockplan
+		//TODO- might be worth creating this as a separate object within the FIP, with own methods etc.
 		temp = document.getElementsByClassName('template-blockplan')[0];
 		clone = temp.content.cloneNode(true);
 		f.panel.appendChild(clone);
@@ -154,17 +156,38 @@ function buildFips() {
 		
 		
 		//now we have a blockplan in the DOM, we can do the other blockplanny stuff, based on the blockplan_details stored with the FIP
-		//create blockplan pages
-		//1.create div for each blockplan page
+		
+		
+		f.currentPage = 0;
+		
+		f.incrementPage = function(inc){
+			//if increment is possible...
+			if(f.currentPage + inc < f.blockplan_details['pages'].length && f.currentPage + inc >= 0){ 
+				//hide current page
+				f.blockplan.getElementsByClassName('blockplan-page')[f.currentPage].classList.remove('show');
+				//show new page
+				f.blockplan.getElementsByClassName('blockplan-page')[f.currentPage + inc].classList.add('show');
+				//update currentPage.
+				f.currentPage += inc;
+				//refresh page number in blockplan footer
+				//if we are at a boundary, disable relevant button
+				if(f.currentPage == 0){
+					//disable previous button
+				} else if(f.currentpage == f.blockplan_details['pages'].length - 1){
+					//disable next button
+				} else {
+				//if we are not at a boundary, enable relevant buttons
+				}
+			}	
+			//if increment not possible, do nothing!
+		}
 		let blockplan_pages = f.blockplan_details['pages'];
 		for(let i = 0, l = blockplan_pages.length; i < l; i++){
 			let temp_page = document.createElement('div');
 			temp_page.className = 'blockplan-page';
 			temp_page.style.backgroundImage = 'url(' + f.blockplan_details['pages'][i] + ')';
+			if(i == 0){temp_page.classList.add('show');}
 			f.blockplan.getElementsByClassName('blockplan-content')[0].appendChild(temp_page);
-		
-			//3.set dimensions of page
-			//4.set background image for page
 		}
 		f.blockplan_card = f.blockplan.getElementsByClassName('device-container')[0];
 		//TODO: find a way to make this stick to the window (and appear at a fixed position within the visible window)
@@ -183,7 +206,6 @@ function buildFips() {
 		
 		f.blockplan.addEventListener('click', function(event){
 			let t = event.target;
-			console.log(t);
 
 			if(t.className == 'device-detector'){
 				let fipIndex = parseInt(f.blockplan.getAttribute('data-index'));
@@ -236,6 +258,14 @@ function buildFips() {
 					f.blockplan_card_elements['status'].innerHTML = deviceStatusStrings[device.status_internal];
 				} else {
 					f.blockplan_card_elements['status'].innerHTML = 'Unknown';
+				}
+			}
+			
+			if(t.classList.contains('interface-button')){
+				if(t.classList.contains('blockplan-next')){
+					f.incrementPage(1);
+				} else if(t.classList.contains('blockplan-prev')){
+					f.incrementPage(-1);
 				}
 			}
 
@@ -982,10 +1012,3 @@ function buildZoneLists(){
 		}
 	}
 }
-
-
-
-
-
-
-

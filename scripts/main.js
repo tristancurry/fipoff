@@ -160,27 +160,7 @@ function buildFips() {
 		
 		f.currentPage = 0;
 		
-		f.incrementPage = function(inc){
-			//if increment is possible...
-			if(f.currentPage + inc < f.blockplan_details['pages'].length && f.currentPage + inc >= 0){ 
-				//hide current page
-				f.blockplan.getElementsByClassName('blockplan-page')[f.currentPage].classList.remove('show');
-				//show new page
-				f.blockplan.getElementsByClassName('blockplan-page')[f.currentPage + inc].classList.add('show');
-				//update currentPage.
-				f.currentPage += inc;
-				//refresh page number in blockplan footer
-				//if we are at a boundary, disable relevant button
-				if(f.currentPage == 0){
-					//disable previous button
-				} else if(f.currentpage == f.blockplan_details['pages'].length - 1){
-					//disable next button
-				} else {
-				//if we are not at a boundary, enable relevant buttons
-				}
-			}	
-			//if increment not possible, do nothing!
-		}
+
 		let blockplan_pages = f.blockplan_details['pages'];
 		for(let i = 0, l = blockplan_pages.length; i < l; i++){
 			let temp_page = document.createElement('div');
@@ -203,6 +183,58 @@ function buildFips() {
 			MCPOptions : f.blockplan_card.getElementsByClassName('device-options-mcp')[0],
 			
 		}
+		
+		f.incrementPage = function(inc){
+			let prevButton = f.blockplan.getElementsByClassName('blockplan-prev')[0];
+			let nextButton = f.blockplan.getElementsByClassName('blockplan-next')[0];
+			console.log(prevButton);
+			
+			//if increment is possible...
+			if(f.currentPage + inc < f.blockplan_details['pages'].length && f.currentPage + inc >= 0){ 
+				//hide current page
+				f.blockplan.getElementsByClassName('blockplan-page')[f.currentPage].classList.remove('show');
+				//show new page
+				f.blockplan.getElementsByClassName('blockplan-page')[f.currentPage + inc].classList.add('show');
+				//update currentPage.
+				f.currentPage += inc;
+				//refresh page number in blockplan footer/page title in header
+				f.blockplan.getElementsByClassName('blockplan-footer')[0].innerHTML = 'Page ' + (f.currentPage + 1) + ' of ' + f.blockplan_details['pages'].length;
+				
+				//hide device card, if shown
+				if(f.blockplan_card.classList.contains('show-flash')){
+					f.blockplan_card.classList.toggle('show-flash');
+				}
+				
+				//if we are at a boundary, disable relevant button
+				if(f.currentPage == 0){
+					//disable 'prev' button
+					prevButton.setAttribute('disabled', 'disabled');
+					//if there are more pages, enable the 'next' button
+					if(f.blockplan_details['pages'].length > 1){
+						nextButton.removeAttribute('disabled');
+					} else {
+						nextButton.setAttribute('disabled', 'disabled');
+					}
+				}
+				else if(f.currentPage == f.blockplan_details['pages'].length - 1){
+					//disable next button
+					nextButton.setAttribute('disabled', 'disabled');
+					//if there are other pages, enable 'prev' button
+					if(f.blockplan_details['pages'].length > 1){
+						prevButton.removeAttribute('disabled');
+					} else {
+						nextButton.setAttribute('disabled', 'disabled');
+					}
+				} else {
+				//if we are not at a boundary, enable both buttons
+					nextButton.removeAttribute('disabled');
+					nextButton.removeAttribute('disabled');
+				}
+			}	
+			//if increment not possible, do nothing!
+		}
+		
+		f.incrementPage(0);
 		
 		f.blockplan.addEventListener('click', function(event){
 			let t = event.target;

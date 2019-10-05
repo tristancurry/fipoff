@@ -339,6 +339,11 @@ div {
 	user-select: none;
 }
 
+.interface-button[disabled] {
+	border-color: gray;
+	color: gray;
+}
+
 .closeBox {
 	top: -15px;
 	right: -15px;

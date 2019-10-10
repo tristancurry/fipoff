@@ -325,23 +325,18 @@ function buildFips() {
 			if(child.category == 'circuit'){
 				//do some deeper digging. All devices should be on a circuit, not directly 'plugged into' the fip.
 				for(let k = 0, n = child.children.length; k < n; k++){
-					let c = child.children[k];
+					let device = child.children[k];
 					//transcribe some of the information to the deviceList for this FIP
-					let device = {
-						page: child.page,
-						pos: c.pos,
-						desc: c.name,
-						category: c.category,
-						type: c.type,
-						subtype: c.subtype,
-						concealed: c.concealed,
-						zone: c.zoneNum,
-						loop: c.loop,
-						num: k + 1,
-						status_internal: 'normal',
-						status: 'normal',
-						stuck: false,
-					}
+						
+						device.zone = device.zoneNum;
+						device.page = child.page;
+						
+						device.num = k + 1;
+						device.status_internal = 'normal';
+						device.status = 'normal';
+						device.stuck = false;
+						device.desc = device.name;
+					
 					
 					
 					
@@ -380,7 +375,19 @@ function buildFips() {
 			}
 		}
 		
-
+	//create the addressableDeviceList - the ones accessible via the FIP
+		f.addressableDeviceList = [];
+		
+		for(let i = 0, l = f.deviceList.length; i < l; i++){
+			//get device i
+			let device = f.deviceList[i];
+			//determine if the circuit it's on is addressable
+			
+			////if so, push device i to this list
+			////if not, work out if the relevant circuit is already on the list
+			//////if not, add the circuit to the list (complete with whatever properties are needed)
+			
+		}
 		
 		
 		
@@ -404,6 +411,7 @@ function buildFips() {
 		
 		f.ebActive = false;
 		f.ebIsol = false;
+		
 	
 		f.assignStatusIds = function() {
 		let list = this.deviceList;

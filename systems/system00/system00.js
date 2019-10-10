@@ -22,6 +22,7 @@ system = {
 					shname: 'l1',
 					category: 'circuit',
 					colour: 'magenta',
+					addressable: true,
 					loop: 1,
 					zone: 1,
 					page_number: 1,

@@ -187,7 +187,6 @@ function buildFips() {
 		f.incrementPage = function(inc){
 			let prevButton = f.blockplan.getElementsByClassName('blockplan-prev')[0];
 			let nextButton = f.blockplan.getElementsByClassName('blockplan-next')[0];
-			console.log(prevButton);
 			
 			//if increment is possible...
 			if(f.currentPage + inc < f.blockplan_details['pages'].length && f.currentPage + inc >= 0){ 
@@ -382,12 +381,30 @@ function buildFips() {
 			//get device i
 			let device = f.deviceList[i];
 			//determine if the circuit it's on is addressable
-			
+			if(device.parent.addressable){
 			////if so, push device i to this list
 			////if not, work out if the relevant circuit is already on the list
 			//////if not, add the circuit to the list (complete with whatever properties are needed)
+				f.addressableDeviceList.push(device);
+			} else {
+				//could have used .includes(device.parent), but IE11...
+				let checkIfPresent = function(circuit){
+					if(circuit == device.parent){
+						return circuit;
+					}	
+				};
+				let check = f.addressableDeviceList.filter(checkIfPresent);
+				if(check.length == 0){
+					f.addressableDeviceList.push(device.parent);
+				}
+			}
+			
 			
 		}
+		console.log('All devices on FIP:');
+		console.log(f.deviceList);
+		console.log('Addressable devices on FIP:');
+		console.log(f.addressableDeviceList);
 		
 		
 		
@@ -420,9 +437,12 @@ function buildFips() {
 		//if in alarm, but acknowledged, assign an ackID
 		//if isolated, assign isoID
 		//count how many are in alarm, how many acked, how many isolated
+		//...if not addressable, each zone counts as a single device
 		this.alarmCount = 0;
 		this.ackedCount = 0;
 		this.isolCount = 0;
+		
+		//need to do this on the addressableDeviceList (instead? or as well?)
 		
 		for(let i = 0, l = list.length; i < l; i++){
 			let device = list[i];
@@ -887,6 +907,7 @@ function buildFips() {
 
 	
 	//TEMPORARY - initialise with some random alarms
+	//TODO - make this more sophisticated -> multiple alarms are triggered by proximity (e.g. find the nearest alarms to the last one activated?)
 	f.triggerRandomAlarms = function(_numAlarms){
 		let numAlarms = _numAlarms;
 		let list = f.deviceList;
@@ -895,7 +916,8 @@ function buildFips() {
 		
 		while(chosenDevices.length < numAlarms){
 			let idx = Math.floor(Math.random()*list.length);
-			if(!chosenDevices.includes(idx)){
+			//could have used .includes(idx), but IE11...
+			if(chosenDevices.indexOf(idx) == -1){
 				chosenDevices.push(idx);
 			}
 		}

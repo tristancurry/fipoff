@@ -19,6 +19,7 @@ system = {
 			children: [
 				{
 					name: 'Loop 1',
+					desc: 'Station front rooms',
 					shname: 'l1',
 					category: 'circuit',
 					colour: 'magenta',
@@ -154,6 +155,7 @@ system = {
 				
 				{
 					name: 'Loop 2',
+					desc: 'Quarters/storage/recreation room',
 					shname: 'l2',
 					category: 'circuit',
 					colour: 'cyan',
@@ -323,6 +325,7 @@ system = {
 			
 				{
 					name: 'Loop 3',
+					desc: 'Engine bay',
 					shname: 'l3',
 					category: 'circuit',
 					colour: 'green',
@@ -399,6 +402,7 @@ system = {
 			
 				{
 					name: 'Loop 4',
+					desc: 'Community room/Gym',
 					shname: 'l4',
 					category: 'circuit',
 					colour: 'red',

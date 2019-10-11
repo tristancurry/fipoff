@@ -460,10 +460,15 @@ function buildFips() {
 				let device = list[i];
 				//check to see if the device is a circuit (non-addressable) and not already in alarm, acked or isolated, check to see if any of its children are alarmed
 				if(device.category == 'circuit' && device.children && device.status == 'normal'){
+					device.status_internal = 'normal';
 					for(let j = 0, m = device.children.length; j < m; j++){
 						if(device.children[j].status_internal == 'active'){
 							device.status = 'alarm';
-						}
+							device.status_internal = 'active';
+							let alarmTime = new Date();
+							device.lastAlarmTime = provideTimeString(alarmTime);
+							break;
+						} 
 					}
 				}
 				switch(device.status){
@@ -813,6 +818,14 @@ function buildFips() {
 	f.resetDevice = function(device){
 		//try to remove alarm status from a device (i.e. set status to 'normal')
 		//this will fail if the device has 'stuck' set to true
+		//TODO - if the device is a circuit, loop through its children and recurse into this function to attempt reset on each.
+		
+		if(device.category == 'circuit'){
+			for(let i = 0, l = device.children.length; i < l; i++){
+				f.resetDevice(device.children[i]);
+			}
+		}
+
 		if(!device.stuck && (device.status == 'alarm' || device.status == 'acked')){
 			device.status = 'normal';
 			device.status_internal = 'normal';

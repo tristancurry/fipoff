@@ -322,6 +322,8 @@ function buildFips() {
 		for(let j = 0, m = f.children.length; j < m; j++){
 			let child = f.children[j];
 			if(child.category == 'circuit'){
+				child.status = 'normal';
+				child.status_internal = 'normal';
 				//do some deeper digging. All devices should be on a circuit, not directly 'plugged into' the fip.
 				for(let k = 0, n = child.children.length; k < n; k++){
 					let device = child.children[k];
@@ -431,117 +433,138 @@ function buildFips() {
 		
 	
 		f.assignStatusIds = function() {
-		let list = this.deviceList;
-		//go through list of devices.
-		//if in alarm, assign an alarmID
-		//if in alarm, but acknowledged, assign an ackID
-		//if isolated, assign isoID
-		//count how many are in alarm, how many acked, how many isolated
-		//...if not addressable, each zone counts as a single device
-		this.alarmCount = 0;
-		this.ackedCount = 0;
-		this.isolCount = 0;
-		
-		//need to do this on the addressableDeviceList (instead? or as well?)
-		
-		for(let i = 0, l = list.length; i < l; i++){
-			let device = list[i];
-			switch(device.status){
-				case 'alarm':
-					this.alarmCount ++;
-					device.alarmID = this.alarmCount;
+			let list = this.addressableDeviceList;
+			//go through list of devices.
+			//if in alarm, assign an alarmID
+			//if in alarm, but acknowledged, assign an ackID
+			//if isolated, assign isoID
+			//count how many are in alarm, how many acked, how many isolated
+			//...if not addressable, each zone counts as a single device?
+			//..the circuit must also have a status, which is only visible at the FIP if the circuit is not addressable
+			//..if the device is a circuit, it's not addressable by virtue of the fact this is the only way a circuit can make it on to the list of addressable devices.
+			//..if a circuit (i.e. category is circuit) and has children (all circuits should) and is not already in alarm, acked, or isol
+			// --- loop through devices on the circuit until an alarm is found or there are no more devices
+			// --- if an alarm is found, set the 'device' (circuit) status to alarm. 
+			// --- if no alarm is found, set the 'device' (circuit) status to normal.
+			// --- for now, don't bother handling situations where single devices on such a circuit are isolated - this isn't usually possible
+			// --- there may be a case for it if a sub-fip has isolates on its network -> it may pass this to the main FIP somehow
+			
+			this.alarmCount = 0;
+			this.ackedCount = 0;
+			this.isolCount = 0;
+			
+			
+			
+			
+			for(let i = 0, l = list.length; i < l; i++){
+				let device = list[i];
+				//check to see if the device is a circuit (non-addressable) and not already in alarm, acked or isolated, check to see if any of its children are alarmed
+				if(device.category == 'circuit' && device.children && device.status == 'normal'){
+					for(let j = 0, m = device.children.length; j < m; j++){
+						if(device.children[j].status_internal == 'active'){
+							device.status = 'alarm';
+						}
+					}
+				}
+				switch(device.status){
+					case 'alarm':
+						this.alarmCount ++;
+						device.alarmID = this.alarmCount;
+						break;
+					
+					case 'acked':
+						this.alarmCount ++;
+						this.ackedCount ++;
+						device.alarmID = this.alarmCount;
+						device.ackedID = this.ackedCount;
+						break;
+						
+					case 'isol':
+						this.isolCount ++;
+						device.isolID = this.isolCount;
+						device.alarmID = -1;
+						device.ackedID = -1;
+						break;
+						
+					default:
+						device.alarmID = -1;
+						device.ackedID = -1;
+						device.isolID = -1;
 					break;
+				}
+			}
+			
+			console.log('assigned statuses:');
+			console.log(list);
+			
+			//handling statuses: this.status is what's checked by any upstream FIPs
+			if(this.status != 'isol'){
+				if(this.alarmCount > 0){
+					this.status = 'alarm';
+					this.stuck = true;
+					this.mainStatus = false;
+				} else if(this.ackedCount > 0){
+					this.status = 'alarm';
+					this.stuck = true;
+					this.mainStatus = false;
+				} else {
+					this.status = 'normal';
+					this.stuck = false;
+				}
+			}
+			
+			//handling states of annunciators:
+			if(this.alarmCount > 0 && this.alarmCount > this.ackedCount){
+				if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
+				if(!this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
 				
-				case 'acked':
-					this.alarmCount ++;
-					this.ackedCount ++;
-					device.alarmID = this.alarmCount;
-					device.ackedID = this.ackedCount;
-					break;
-					
-				case 'isol':
-					this.isolCount ++;
-					device.isolID = this.isolCount;
-					device.alarmID = -1;
-					device.ackedID = -1;
-					break;
-					
-				default:
-					device.alarmID = -1;
-					device.ackedID = -1;
-					device.isolID = -1;
-				break;
+				
+				//alarms exist that haven't been acknowledged. Flash the ALARM annunciator
+			} else if(this.alarmCount > 0 && this.ackedCount == this.alarmCount){
+				if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
+				if(this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
+				//all alarms have been acknowledged. Make the ALARM annunciator solid
+			} else if(this.alarmCount == 0) {
+				if(!this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
+				if(this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
+				//no alarms are active. Turn ALARM annunciator off
 			}
-		}
-		
-		//handling statuses: this.status is what's checked by any upstream FIPs
-		if(this.status != 'isol'){
+			
+			if(this.isolCount > 0){
+				if(this.annunIsol.classList.contains('unlit')){this.annunIsol.classList.toggle('unlit')};
+				//isolates exist. Turn the ISOLATION annunciator on
+			} else {
+				if(!this.annunIsol.classList.contains('unlit')){this.annunIsol.classList.toggle('unlit')};
+				//no isolates exist. Turn the ISOLATION annunciator off
+			}
+			
 			if(this.alarmCount > 0){
-				this.status = 'alarm';
-				this.stuck = true;
-				this.mainStatus = false;
-			} else if(this.ackedCount > 0){
-				this.status = 'alarm';
-				this.stuck = true;
-				this.mainStatus = false;
+				if(!this.ebActive){
+					this.ebActive = true;
+				}
+				
+				if(!this.ebIsol){
+					//remove unlit class from extBell span, add flashing class
+					if(this.extBell.classList.contains('unlit')){this.extBell.classList.toggle('unlit')};
+					if(!this.extBell.classList.contains('flashing')){this.extBell.classList.toggle('flashing')};
+						
+				} else {
+					//if not already unlit, add this class and remove flashing class
+					if(!this.extBell.classList.contains('unlit')){this.extBell.classList.toggle('unlit')};
+					if(this.extBell.classList.contains('flashing')){this.extBell.classList.toggle('flashing')};
+				}
+				
 			} else {
-				this.status = 'normal';
-				this.stuck = false;
-			}
-		}
-		
-		//handling states of annunciators:
-		if(this.alarmCount > 0 && this.alarmCount > this.ackedCount){
-			if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
-			if(!this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
-			
-			
-			//alarms exist that haven't been acknowledged. Flash the ALARM annunciator
-		} else if(this.alarmCount > 0 && this.ackedCount == this.alarmCount){
-			if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
-			if(this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
-			//all alarms have been acknowledged. Make the ALARM annunciator solid
-		} else if(this.alarmCount == 0) {
-			if(!this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
-			if(this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
-			//no alarms are active. Turn ALARM annunciator off
-		}
-		
-		if(this.isolCount > 0){
-			if(this.annunIsol.classList.contains('unlit')){this.annunIsol.classList.toggle('unlit')};
-			//isolates exist. Turn the ISOLATION annunciator on
-		} else {
-			if(!this.annunIsol.classList.contains('unlit')){this.annunIsol.classList.toggle('unlit')};
-			//no isolates exist. Turn the ISOLATION annunciator off
-		}
-		
-		if(this.alarmCount > 0){
-			if(!this.ebActive){
-				this.ebActive = true;
-			}
-			
-			if(!this.ebIsol){
-				//remove unlit class from extBell span, add flashing class
-				if(this.extBell.classList.contains('unlit')){this.extBell.classList.toggle('unlit')};
-				if(!this.extBell.classList.contains('flashing')){this.extBell.classList.toggle('flashing')};
-					
-			} else {
-				//if not already unlit, add this class and remove flashing class
+				this.ebActive = false;
 				if(!this.extBell.classList.contains('unlit')){this.extBell.classList.toggle('unlit')};
 				if(this.extBell.classList.contains('flashing')){this.extBell.classList.toggle('flashing')};
 			}
 			
-		} else {
-			this.ebActive = false;
-			if(!this.extBell.classList.contains('unlit')){this.extBell.classList.toggle('unlit')};
-			if(this.extBell.classList.contains('flashing')){this.extBell.classList.toggle('flashing')};
-		}
-		
-		//TODO: refactor the conditional toggling of classes into a toggleClass function (args are the element, and the className)
-	};
+			//TODO: refactor the conditional toggling of classes into a toggleClass function (args are the element, and the className)
+		};
 	
 	f.displayStatus = function() {
-		let list = this.deviceList;
+		let list = this.addressableDeviceList;
 		//access the FIP's list
 		//work out if anything is still in alarm
 		if(this.alarmCount > 0){  
@@ -574,7 +597,7 @@ function buildFips() {
 	};
 	
 	f.findNext = function(status){
-		let list = this.deviceList;
+		let list = this.addressableDeviceList;
 		for(let i = this.currentIndex, l = list.length; i < l + 1; i++){
 			if(i < l){
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
@@ -607,7 +630,7 @@ function buildFips() {
 	};
 	
 	f.findPrev = function(status){
-		let list = this.deviceList;
+		let list = this.addressableDeviceList;
 		for(let i = this.currentIndex, l = list.length; i >= -1; i--){
 			if(i >= 0){
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
@@ -672,11 +695,11 @@ function buildFips() {
 			if(this.ackedCount > 0){
 				this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
 			} else if (this.alarmCount > 0){
-				this.displayLines[3].innerHTML = 'Sensor alarms ' + device.alarmID + ' of ' + this.alarmCount;
+				this.displayLines[3].innerHTML = 'Alarms ' + device.alarmID + ' of ' + this.alarmCount;
 			} else if (this.isolCount > 0 && !this.isol_norm){
 				this.displayLines[3].innerHTML = 'Isolate ' + device.isolID + ' of ' + this.isolCount;
 			} else {
-				this.displayLines[3].innerHTML = 'Device ' + (this.currentIndex + 1) + ' of ' + this.deviceList.length;
+				this.displayLines[3].innerHTML = 'Device ' + (this.currentIndex + 1) + ' of ' + this.addressableDeviceList.length;
 			}
 		} else {
 			switch(this.confirmState){
@@ -692,7 +715,8 @@ function buildFips() {
 					break;
 					
 				case 'isol' :
-					this.displayLines[3].innerHTML = 'Press ACKNOWLEDGE to confirm isolation of this device :-)';
+					this.displayLines[3].innerHTML = 'Press ACKNOWLEDGE to confirm isolation of this ';
+					if(device.category == 'circuit'){this.displayLines[3].innerHTML += 'circuit :-)';} else {this.displayLines[3].innerHTML += 'device :-)';}
 					break;
 					
 			}
@@ -704,7 +728,7 @@ function buildFips() {
 	f.incrementList = function(increment){
 		//assumes increments won't be bigger than the deviceList's length
 		let inc = Math.round(increment);
-		let list = this.deviceList;
+		let list = this.addressableDeviceList;
 		let idx = this.currentIndex;
 		idx += inc;
 		if(idx < -1){  
@@ -720,7 +744,7 @@ function buildFips() {
 	
 	f.handleAcknowledged = function(){
 		if(!this.mainStatus){
-			let list = this.deviceList;
+			let list = this.addressableDeviceList;
 			let device = list[this.currentIndex]; //grab the currently viewed device
 			if(this.confirmState == 'none'){
 				//if the device is alarmed, and not already acknowledged, then do some stuff that moves only an active alarm to the acknowledged list
@@ -808,7 +832,7 @@ function buildFips() {
 				this.confirmState = 'multi';
 			}
 			
-			else if(this.deviceList[this.currentIndex].status == 'alarm'){
+			else if(this.addressableDeviceList[this.currentIndex].status == 'alarm'){
 				this.confirmState = 'single';
 			}
 			
@@ -921,11 +945,11 @@ function buildFips() {
 				chosenDevices.push(idx);
 			}
 		}
-		
 		//this alarm activation needs to be bundled into a function, which also adds the activation date...
 		
 		for(let i = 0; i < numAlarms; i++){
 			let d = list[chosenDevices[i]];
+			console.log(d);
 			d.status = 'alarm';
 			d.status_internal = 'active';
 			let alarmTime = new Date();

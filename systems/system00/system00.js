@@ -1,11 +1,9 @@
 system = {
 	name: 'System 00',
-	shname: 'sys00',
 	category: 'system',
 	children: [
 		{
 			name: 'Master FIP',
-			shname: 'masterFIP',
 			category: 'fip',
 			blockplan_details: {
 				pages: ['blockplanA_addr.png', 'blockplanA_conv.png'],
@@ -19,7 +17,6 @@ system = {
 			children: [
 				{
 					name: 'Loop 1',
-					shname: 'l1',
 					category: 'circuit',
 					colour: 'magenta',
 					addressable: true,
@@ -156,7 +153,6 @@ system = {
 				
 				{
 					name: 'Loop 2',
-					shname: 'l2',
 					category: 'circuit',
 					addressable: true,
 					colour: 'cyan',
@@ -326,7 +322,6 @@ system = {
 			
 				{
 					name: 'Loop 3',
-					shname: 'l3',
 					category: 'circuit',
 					addressable: true,
 					colour: 'green',
@@ -403,7 +398,6 @@ system = {
 			
 				{
 					name: 'Loop 4',
-					shname: 'l4',
 					category: 'circuit',
 					addressable: true,
 					colour: 'red',

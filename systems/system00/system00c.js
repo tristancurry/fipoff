@@ -1,11 +1,9 @@
 system = {
 	name: 'System 00c',
-	shname: 'sys00',
 	category: 'system',
 	children: [
 		{
 			name: 'Master FIP',
-			shname: 'masterFIP',
 			category: 'fip',
 			blockplan_details: {
 				pages: ['blockplanA_conv.png'],
@@ -18,9 +16,7 @@ system = {
 
 			children: [
 				{
-					name: 'Loop 1',
-					desc: 'Station front rooms',
-					shname: 'l1',
+					name: 'Zone 1',
 					category: 'circuit',
 					colour: 'magenta',
 					loop: 1,
@@ -154,9 +150,7 @@ system = {
 				},
 				
 				{
-					name: 'Loop 2',
-					desc: 'Quarters/storage/recreation room',
-					shname: 'l2',
+					name: 'Zone 2',
 					category: 'circuit',
 					colour: 'cyan',
 					loop: 2,
@@ -324,9 +318,7 @@ system = {
 				},
 			
 				{
-					name: 'Loop 3',
-					desc: 'Engine bay',
-					shname: 'l3',
+					name: 'Zone 3',
 					category: 'circuit',
 					colour: 'green',
 					loop: 3,
@@ -401,9 +393,7 @@ system = {
 				},
 			
 				{
-					name: 'Loop 4',
-					desc: 'Community room/Gym',
-					shname: 'l4',
+					name: 'Zone 4',
 					category: 'circuit',
 					colour: 'red',
 					loop: 4,

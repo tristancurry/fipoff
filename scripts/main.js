@@ -256,7 +256,7 @@ function buildFips() {
 					f.blockplan_card.classList.toggle('show-flash');		
 				} else if(f.blockplan_card.classList.contains('show-flash')){
 
-					if(f.blockplan_card_elements['desc'].innerHTML == device.desc){
+					if(f.blockplan_card_elements['desc'].innerHTML == device.name){
 						f.blockplan_card.classList.remove('show-flash');
 					} else {
 						f.blockplan_card.classList.remove('show-flash');
@@ -276,8 +276,8 @@ function buildFips() {
 				}
 				
 				f.blockplan_card_elements['header'].innerHTML = titleString;
-				if(device.desc){
-					f.blockplan_card_elements['desc'].innerHTML = device.desc;
+				if(device.name){
+					f.blockplan_card_elements['desc'].innerHTML = device.name;
 				}
 				if(device.zone){
 					f.blockplan_card_elements['zone'].innerHTML = device.zone;
@@ -329,16 +329,15 @@ function buildFips() {
 					let device = child.children[k];
 					//transcribe some of the information to the deviceList for this FIP
 						
-						device.zone = device.zoneNum;
 						device.page = child.page;
 						
 						device.num = k + 1;
 						device.status_internal = 'normal';
 						device.status = 'normal';
 						device.stuck = false;
-						device.desc = device.name;
 					
-					
+						let d  = new Date(0);
+						device.lastAlarmTime = provideTimeString(d);
 					
 					
 					//provide the device with a representation in the DOM - in this case, a button/div in the blockplan
@@ -353,13 +352,8 @@ function buildFips() {
 					temp.style.width = f.blockplan_details['detector_dimensions'].x;
 					temp.style.height = f.blockplan_details['detector_dimensions'].y;
 					
-					//TODO - find the right page - currently just going to the only page
 					let page = f.blockplan.getElementsByClassName('blockplan-page')[device.page - 1];
 					page.appendChild(temp);
-					
-					
-					let d  = new Date(0);
-					device.lastAlarmTime = provideTimeString(d);
 					
 					
 					device.imageArray = [];
@@ -399,10 +393,24 @@ function buildFips() {
 				if(check.length == 0){
 					f.addressableDeviceList.push(device.parent);
 				}
-			}
-			
-			
+			}	
 		}
+		
+		//work out if all of the devices on the addressableDeviceList are circuits, regular devices, or some kombo
+		let circuitCount = 0;
+		for(let i = 0, l = f.addressableDeviceList.length; i < l; i++){
+			if(f.addressableDeviceList[i].category == 'circuit'){
+				circuitCount++;
+			}
+		}
+		if(circuitCount == f.addressableDeviceList.length){
+			f.conventional = true;
+		} else if(circuitCount == 0){
+			f.conventional = false;
+		} else {
+			f.conventional = 'mixed';
+		}
+		
 		console.log('All devices on FIP:');
 		console.log(f.deviceList);
 		console.log('Addressable devices on FIP:');
@@ -454,7 +462,10 @@ function buildFips() {
 			this.isolCount = 0;
 			
 			
-			
+			//TODO - have to make better use of lastAlarmTimes
+			// -- alarms should display in chronological order of activation (starting with first alarm)
+			// -- zone alarm should always capture the oldest of these alarms as its 'last Alarm Time' until a reset is attempted - then pick up the oldest of the reactivated alarms (will likely be in list order at this point).
+			// -- all other display order should be in list order though
 			
 			for(let i = 0, l = list.length; i < l; i++){
 				let device = list[i];
@@ -463,14 +474,15 @@ function buildFips() {
 					device.status_internal = 'normal';
 					for(let j = 0, m = device.children.length; j < m; j++){
 						if(device.children[j].status_internal == 'active'){
-							device.status = 'alarm';
-							device.status_internal = 'active';
 							let alarmTime = new Date();
 							device.lastAlarmTime = provideTimeString(alarmTime);
+							device.status = 'alarm';
+							device.status_internal = 'active';
 							break;
 						} 
 					}
 				}
+				
 				switch(device.status){
 					case 'alarm':
 						this.alarmCount ++;
@@ -689,10 +701,21 @@ function buildFips() {
 	}
 	
 	f.displayAlarm = function(device){
+		//clear display
+		this.descLine.innerHTML = '';
+		this.typeLine.innerHTML = '';
+		for(let i = 1, l = this.displayLines.length; i < l; i++){
+			this.displayLines[i].innerHTML = '';
+		}
+		
+		
 		//display this alarm
-		this.descLine.innerHTML = device.desc;
-		this.typeLine.innerHTML = types[device.type];
-		this.displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone + ' Status: ' + this.statusStrings[device.status];
+		this.descLine.innerHTML += device.name;
+		if(device.category != 'circuit'){
+			this.typeLine.innerHTML += types[device.type];
+			this.displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone;
+		}
+		this.displayLines[1].innerHTML +=' Status: ' + this.statusStrings[device.status];
 		this.displayLines[2].innerHTML = 'Last alarm: ' + device.lastAlarmTime;
 		if(this.confirmState == 'none'){
 			//display this alarm's number
@@ -700,11 +723,38 @@ function buildFips() {
 			if(this.ackedCount > 0){
 				this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
 			} else if (this.alarmCount > 0){
-				this.displayLines[3].innerHTML = 'Alarms ' + device.alarmID + ' of ' + this.alarmCount;
+				switch(this.conventional){
+					case true :
+						this.displayLines[3].innerHTML = 'Zone alarm ';
+						break;
+						
+					case false :
+						this.displayLines[3].innerHTML = 'Sensor alarm ';
+						break;
+						
+					default :
+						this.displayLines[3].innerHTML = 'Alarm ';
+						break;
+				}
+				
+				this.displayLines[3].innerHTML += device.alarmID + ' of ' + this.alarmCount;
 			} else if (this.isolCount > 0 && !this.isol_norm){
 				this.displayLines[3].innerHTML = 'Isolate ' + device.isolID + ' of ' + this.isolCount;
 			} else {
-				this.displayLines[3].innerHTML = 'Device ' + (this.currentIndex + 1) + ' of ' + this.addressableDeviceList.length;
+				switch(this.conventional){
+					case true :
+						this.displayLines[3].innerHTML = 'Zone ';
+						break;
+						
+					case false :
+						this.displayLines[3].innerHTML = 'Device ';
+						break;
+						
+					default :
+						this.displayLines[3].innerHTML = 'Input ';
+						break;
+				}
+				this.displayLines[3].innerHTML += (this.currentIndex + 1) + ' of ' + this.addressableDeviceList.length;
 			}
 		} else {
 			switch(this.confirmState){
@@ -818,7 +868,6 @@ function buildFips() {
 	f.resetDevice = function(device){
 		//try to remove alarm status from a device (i.e. set status to 'normal')
 		//this will fail if the device has 'stuck' set to true
-		//TODO - if the device is a circuit, loop through its children and recurse into this function to attempt reset on each.
 		
 		if(device.category == 'circuit'){
 			for(let i = 0, l = device.children.length; i < l; i++){
@@ -989,20 +1038,7 @@ function createSystemObjects(node, parent){
 	//establish identifiers
 	if(node.name){o.name = node.name;}
 	
-	if(parent && parent.shname){
-		if(node.shname){
-			o.shname = parent.shname + '_' + node.shname;
-		} else {
-			o.shname = parent.shname + '_' + node.name;
-		}
-	} else {
-		if(node.shname){
-			o.shname = node.shname;
-		} else {
-			o.shname = node.name;	
-		}
-		
-	}
+	
 	
 	
 	if(node.blockplan_details){
@@ -1036,16 +1072,13 @@ function createSystemObjects(node, parent){
 	}
 	
 	if(node.zone){
-		//if parent exists and is an FIP, then zone = fip shname + 'zone' + zone number
 		//if parent object has a zone and is a circuit, then take same zone as parent
 		//if there's no parent, well, what can you do?
 		if(parent && parent.category == 'fip'){
-			o.zone = parent.shname + '_zone_' + node.zone;
-			o.zoneNum = node.zone;
+			o.zone = node.zone;
 		} 	
 	} else if (parent && parent.category == 'circuit' && parent.zone){
 		o.zone = parent.zone;
-		o.zoneNum = parent.zoneNum;
 		o.loop = parent.loop;
 	}	
 	
@@ -1075,14 +1108,7 @@ function createSystemObjects(node, parent){
 	}
 
 	
-	//TODO: place in list of objects of same type and assign a reference id
 	
-	//TESTING: create a div with name and shortname, and append to viewport
-	/*o.divrep = document.createElement('div');
-	o.divrep.className = 'test';
-	o.divrep.innerHTML = '<p>'+ o.name + '</p><p>' + o.shname + '</p><p>' + o.zone + '</p>';
-	o.divrep.style.padding = '5px';
-	viewport.appendChild(o.divrep);*/
 }
 
 

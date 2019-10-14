@@ -226,6 +226,19 @@ div {
 	background-color: #FF0000;
 }
 
+.warnSys {
+	position:absolute;
+	right: -80px;
+	top: 70px;
+	width:50px;
+	height: 50px;
+	text-align: center;
+	font-size: 30px;
+	border: 2px solid orange;
+	border-radius:25px;
+	background-color: #FF0000;
+}
+
 .blockplan {
 	position: absolute;
 	margin-left:20px;

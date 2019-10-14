@@ -143,6 +143,18 @@ function buildFips() {
 		
 		f.panel = document.getElementsByClassName('panel')[i]; 
 		
+		f.getAlarmTime = function(n){
+			let alarmTime = new Date();
+			
+			if(n){
+				alarmTime = new Date(n);
+			}
+			console.log(alarmTime);
+			let alarmString = provideTimeString(alarmTime);
+		return [alarmTime, alarmString];
+	}
+		
+		
 		
 		//create the associated blockplan
 		//TODO- might be worth creating this as a separate object within the FIP, with own methods etc.
@@ -336,8 +348,7 @@ function buildFips() {
 						device.status = 'normal';
 						device.stuck = false;
 					
-						let d  = new Date(0);
-						device.lastAlarmTime = provideTimeString(d);
+						device.lastAlarmTime = f.getAlarmTime(0);
 					
 					
 					//provide the device with a representation in the DOM - in this case, a button/div in the blockplan
@@ -438,7 +449,10 @@ function buildFips() {
 		
 		f.ebActive = false;
 		f.ebIsol = false;
+		f.wsActive = false;
+		f.wsIsol = false;
 		
+
 	
 		f.assignStatusIds = function() {
 			let list = this.addressableDeviceList;
@@ -474,8 +488,7 @@ function buildFips() {
 					device.status_internal = 'normal';
 					for(let j = 0, m = device.children.length; j < m; j++){
 						if(device.children[j].status_internal == 'active'){
-							let alarmTime = new Date();
-							device.lastAlarmTime = provideTimeString(alarmTime);
+							device.lastAlarmTime = f.getAlarmTime();
 							device.status = 'alarm';
 							device.status_internal = 'active';
 							break;
@@ -535,7 +548,7 @@ function buildFips() {
 				if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
 				if(!this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
 				
-				
+			//TODO - incorporate a 'multiple alarms' light in between PREV and NEXT buttons	
 				//alarms exist that haven't been acknowledged. Flash the ALARM annunciator
 			} else if(this.alarmCount > 0 && this.ackedCount == this.alarmCount){
 				if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
@@ -556,8 +569,12 @@ function buildFips() {
 			}
 			
 			if(this.alarmCount > 0){
+				
+				
+				
 				if(!this.ebActive){
 					this.ebActive = true;
+					this.wsActive = true;
 				}
 				
 				if(!this.ebIsol){
@@ -571,14 +588,31 @@ function buildFips() {
 					if(this.extBell.classList.contains('flashing')){this.extBell.classList.toggle('flashing')};
 				}
 				
+				if(!this.wsIsol){
+					//remove unlit class from extBell span, add flashing class
+					if(this.warnSys.classList.contains('unlit')){this.warnSys.classList.toggle('unlit')};
+					if(!this.warnSys.classList.contains('flashing')){this.warnSys.classList.toggle('flashing')};
+						
+				} else {
+					//if not already unlit, add this class and remove flashing class
+					if(!this.warnSys.classList.contains('unlit')){this.warnSys.classList.toggle('unlit')};
+					if(this.warnSys.classList.contains('flashing')){this.warnSys.classList.toggle('flashing')};
+				}
+				
 			} else {
 				this.ebActive = false;
 				if(!this.extBell.classList.contains('unlit')){this.extBell.classList.toggle('unlit')};
 				if(this.extBell.classList.contains('flashing')){this.extBell.classList.toggle('flashing')};
+				
+				this.wsActive = false;
+				if(!this.warnSys.classList.contains('unlit')){this.warnSys.classList.toggle('unlit')};
+				if(this.warnSys.classList.contains('flashing')){this.warnSys.classList.toggle('flashing')};
 			}
 			
 			//TODO: refactor the conditional toggling of classes into a toggleClass function (args are the element, and the className)
+			//TODO: put this repeated stuff into a function used to activate/deactivate auxiliary systems
 		};
+		
 	
 	f.displayStatus = function() {
 		let list = this.addressableDeviceList;
@@ -646,6 +680,8 @@ function buildFips() {
 		}
 	};
 	
+
+	
 	f.findPrev = function(status){
 		let list = this.addressableDeviceList;
 		for(let i = this.currentIndex, l = list.length; i >= -1; i--){
@@ -700,6 +736,8 @@ function buildFips() {
 					}
 	}
 	
+
+	
 	f.displayAlarm = function(device){
 		//clear display
 		this.descLine.innerHTML = '';
@@ -716,7 +754,7 @@ function buildFips() {
 			this.displayLines[1].innerHTML = 'L'+ device.loop + '  S' + device.num + '  Z' + device.zone;
 		}
 		this.displayLines[1].innerHTML +=' Status: ' + this.statusStrings[device.status];
-		this.displayLines[2].innerHTML = 'Last alarm: ' + device.lastAlarmTime;
+		this.displayLines[2].innerHTML = 'Last alarm: ' + device.lastAlarmTime[1];
 		if(this.confirmState == 'none'){
 			//display this alarm's number
 			//display how many other alarms there are, or, if some have been acknowledged, display this number
@@ -839,7 +877,7 @@ function buildFips() {
 				//anything still in alarm gets its 'last alarm' date updated
 				for(let i = 0, l = list.length; i < l; i++){
 					if(list[i].status == 'alarm'){
-						//list[i].lastAlarmTime = Date.now(); //refine this date (currently ms since 01.01.1970?)
+						//is this already being done elsewhere?
 					}
 				}
 				if(this.alarmCount == 0 && this.ackedCount == 0){
@@ -882,7 +920,7 @@ function buildFips() {
 			device.status = 'alarm';
 			device.status_internal = 'active';
 			let alarmTime = new Date();
-			device.lastAlarmTime = provideTimeString(alarmTime);
+			device.lastAlarmTime = f.getAlarmTime();
 		}
 	};
 	
@@ -918,7 +956,10 @@ function buildFips() {
 	};
 	
 	f.handleWsIsol = function(){
+		this.wsIsol = !this.wsIsol;
 		this.wsIsolLamp.classList.toggle('unlit');
+		this.assignStatusIds();
+		this.displayStatus();
 	};
 	
 	f.updateDeviceImagePath = function(device){
@@ -958,6 +999,7 @@ function buildFips() {
 	f.annunFault = f.annuns[2];
 	
 	f.extBell = f.panel.getElementsByClassName('extBell')[0];
+	f.warnSys = f.panel.getElementsByClassName('warnSys')[0];
 	
 	//EVENT LISTENERS
 	f.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
@@ -1014,8 +1056,7 @@ function buildFips() {
 			console.log(d);
 			d.status = 'alarm';
 			d.status_internal = 'active';
-			let alarmTime = new Date();
-			d.lastAlarmTime = provideTimeString(alarmTime);
+			d.lastAlarmTime = f.getAlarmTime();
 			if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
 		}
 	}

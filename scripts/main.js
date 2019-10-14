@@ -321,6 +321,7 @@ function buildFips() {
 				if(f.blockplan_card_elements['options'].getAttribute('data-fip-index') && f.blockplan_card_elements['options'].getAttribute('data-device-index')){
 					let device = sysObjectsByCategory['fip'][parseInt(f.blockplan_card_elements['options'].getAttribute('data-fip-index'))].deviceList[f.blockplan_card_elements['options'].getAttribute('data-device-index')];
 					if(device.type == 'mcp'){
+						//TODO: add in  another button which will activate and re-stuck the MCP, and trigger the alarm sys
 						device.stuck = false;
 					}
 				}	

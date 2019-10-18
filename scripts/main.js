@@ -498,8 +498,32 @@ function buildFips() {
 					}
 				}
 				
-				switch(device.status){
-					case 'alarm':
+				
+				if(device.status == 'isol'){
+						this.isolCount ++;
+						device.isolID = this.isolCount;
+						device.alarmID = -1;
+						device.ackedID = -1;
+				}
+				
+			}	
+			//produce separate list of devices, sorted in order of lastActivationTime (earliest to latest);
+			let sortList = [];
+	
+			for(let i = 0, l = list.length; i<l; i++){
+				sortList[i] = list[i];
+			}
+			
+			sortList.sort(
+				function(a,b) {
+					return a.lastAlarmTime[0] - b.lastAlarmTime[0];
+				}
+			);
+			
+			for(let i = 0, l = sortList.length; i < l; i++){
+					let device = sortList[i];
+					switch(device.status){
+						case 'alarm':
 						this.alarmCount ++;
 						device.alarmID = this.alarmCount;
 						break;
@@ -512,12 +536,9 @@ function buildFips() {
 						break;
 						
 					case 'isol':
-						this.isolCount ++;
-						device.isolID = this.isolCount;
-						device.alarmID = -1;
-						device.ackedID = -1;
-						break;
-						
+					break;
+
+					
 					default:
 						device.alarmID = -1;
 						device.ackedID = -1;
@@ -525,6 +546,9 @@ function buildFips() {
 					break;
 				}
 			}
+			
+			
+			
 			
 
 			
@@ -663,6 +687,10 @@ function buildFips() {
 					return a.lastAlarmTime[0] - b.lastAlarmTime[0];
 			}
 		);
+		
+		if(status == 'alarm'){
+			list = sortList;
+		}
 
 		
 		
@@ -670,6 +698,7 @@ function buildFips() {
 			if(i < l){
 				
 				//need to do something slightly different for alarms, so that the scrolling occurs in order of activation timey
+				//find a way to just jump on to the sortList instead- then scroll through as normal...
 						
 	
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
@@ -705,6 +734,25 @@ function buildFips() {
 	
 	f.findPrev = function(status){
 		let list = this.addressableDeviceList;
+		
+		//produce separate list of devices, sorted in order of lastActivationTime (earliest to latest);
+		let sortList = [];
+		
+		for(let i = 0, l = list.length; i<l; i++){
+			sortList[i] = list[i];
+		}
+		sortList.sort(
+			function(a,b) {
+					return a.lastAlarmTime[0] - b.lastAlarmTime[0];
+			}
+		);
+		
+		//if(status == 'alarm'){
+		//	list = sortList;
+		//}
+		//NO - don't do this because it really messes with the currentIndex, and how it applies to the acknowledge/reset handling
+		
+		
 		for(let i = this.currentIndex, l = list.length; i >= -1; i--){
 			if(i >= 0){
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
@@ -1076,7 +1124,8 @@ function buildFips() {
 			let d = list[chosenDevices[i]];
 			d.status = 'alarm';
 			d.status_internal = 'active';
-			d.lastAlarmTime = f.getAlarmTime();
+			let moment = new Date();
+			d.lastAlarmTime = f.getAlarmTime(moment.getTime() + 1000*i);
 			if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
 		}
 	}

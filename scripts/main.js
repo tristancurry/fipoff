@@ -143,14 +143,17 @@ function buildFips() {
 		
 		f.panel = document.getElementsByClassName('panel')[i]; 
 		
-		f.getAlarmTime = function(n){
-			let alarmTime = new Date();
+		f.getAlarmTime = function(t){
+			let alarmTime = 0;
 			
-			if(n){
-				alarmTime = new Date(n);
+			if(t >= 0){
+				alarmTime = new Date(t);
+			} else {
+				alarmTime = new Date();
 			}
-			console.log(alarmTime);
+			
 			let alarmString = provideTimeString(alarmTime);
+			alarmTime = alarmTime.getTime(); //convert into milliseconds since reference date, for sorting later
 		return [alarmTime, alarmString];
 	}
 		
@@ -174,6 +177,7 @@ function buildFips() {
 		
 
 		let blockplan_pages = f.blockplan_details['pages'];
+		
 		for(let i = 0, l = blockplan_pages.length; i < l; i++){
 			let temp_page = document.createElement('div');
 			temp_page.className = 'blockplan-page';
@@ -181,6 +185,7 @@ function buildFips() {
 			if(i == 0){temp_page.classList.add('show');}
 			f.blockplan.getElementsByClassName('blockplan-content')[0].appendChild(temp_page);
 		}
+		
 		f.blockplan_card = f.blockplan.getElementsByClassName('device-container')[0];
 		//TODO: find a way to make this stick to the window (and appear at a fixed position within the visible window)
 		f.blockplan_card_elements = {
@@ -321,7 +326,7 @@ function buildFips() {
 				if(f.blockplan_card_elements['options'].getAttribute('data-fip-index') && f.blockplan_card_elements['options'].getAttribute('data-device-index')){
 					let device = sysObjectsByCategory['fip'][parseInt(f.blockplan_card_elements['options'].getAttribute('data-fip-index'))].deviceList[f.blockplan_card_elements['options'].getAttribute('data-device-index')];
 					if(device.type == 'mcp'){
-						//TODO: add in  another button which will activate and re-stuck the MCP, and trigger the alarm sys
+						//TODO: add in another button which will activate and re-stuck the MCP, and trigger the alarm sys
 						device.stuck = false;
 					}
 				}	
@@ -349,7 +354,7 @@ function buildFips() {
 						device.status = 'normal';
 						device.stuck = false;
 					
-						device.lastAlarmTime = f.getAlarmTime(0);
+						device.lastAlarmTime = f.getAlarmTime(60000*k);
 					
 					
 					//provide the device with a representation in the DOM - in this case, a button/div in the blockplan
@@ -423,10 +428,6 @@ function buildFips() {
 			f.conventional = 'mixed';
 		}
 		
-		console.log('All devices on FIP:');
-		console.log(f.deviceList);
-		console.log('Addressable devices on FIP:');
-		console.log(f.addressableDeviceList);
 		
 		
 		
@@ -525,8 +526,7 @@ function buildFips() {
 				}
 			}
 			
-			console.log('assigned statuses:');
-			console.log(list);
+
 			
 			//handling statuses: this.status is what's checked by any upstream FIPs
 			if(this.status != 'isol'){
@@ -650,8 +650,28 @@ function buildFips() {
 	
 	f.findNext = function(status){
 		let list = this.addressableDeviceList;
+		
+		
+		//produce separate list of devices, sorted in order of lastActivationTime (earliest to latest);
+		let sortList = [];
+		
+		for(let i = 0, l = list.length; i<l; i++){
+			sortList[i] = list[i];
+		}
+		sortList.sort(
+			function(a,b) {
+					return a.lastAlarmTime[0] - b.lastAlarmTime[0];
+			}
+		);
+
+		
+		
 		for(let i = this.currentIndex, l = list.length; i < l + 1; i++){
 			if(i < l){
+				
+				//need to do something slightly different for alarms, so that the scrolling occurs in order of activation timey
+						
+	
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
 					let device = list[i];
 					//display this alarm
@@ -1054,7 +1074,6 @@ function buildFips() {
 		
 		for(let i = 0; i < numAlarms; i++){
 			let d = list[chosenDevices[i]];
-			console.log(d);
 			d.status = 'alarm';
 			d.status_internal = 'active';
 			d.lastAlarmTime = f.getAlarmTime();

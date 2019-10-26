@@ -454,10 +454,11 @@ function buildFips() {
 		f.wsActive = false;
 		f.wsIsol = false;
 		
-
+		f.sortedDeviceList = [];
 	
 		f.assignStatusIds = function() {
 			let list = this.addressableDeviceList;
+			this.sortedDeviceList = this.sortByAlarmTime(list);
 			//go through list of devices.
 			//if in alarm, assign an alarmID
 			//if in alarm, but acknowledged, assign an ackID
@@ -507,21 +508,10 @@ function buildFips() {
 				}
 				
 			}	
-			//produce separate list of devices, sorted in order of lastActivationTime (earliest to latest);
-			let sortList = [];
-	
-			for(let i = 0, l = list.length; i<l; i++){
-				sortList[i] = list[i];
-			}
+
 			
-			sortList.sort(
-				function(a,b) {
-					return a.lastAlarmTime[0] - b.lastAlarmTime[0];
-				}
-			);
-			
-			for(let i = 0, l = sortList.length; i < l; i++){
-					let device = sortList[i];
+			for(let i = 0, l = f.sortedDeviceList.length; i < l; i++){
+					let device = f.sortedDeviceList[i];
 					switch(device.status){
 						case 'alarm':
 						this.alarmCount ++;
@@ -672,9 +662,7 @@ function buildFips() {
 			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
 	};
 	
-	f.findNext = function(status){
-		let list = this.addressableDeviceList;
-		
+	f.sortByAlarmTime = function(list){
 		
 		//produce separate list of devices, sorted in order of lastActivationTime (earliest to latest);
 		let sortList = [];
@@ -688,8 +676,16 @@ function buildFips() {
 			}
 		);
 		
+		return sortList;
+		
+		
+	}
+	
+	f.findNext = function(status){
+		let list = this.addressableDeviceList;
+		
 		if(status == 'alarm'){
-			list = sortList;
+			list = this.sortedDeviceList;
 		}
 
 		
@@ -736,21 +732,11 @@ function buildFips() {
 		let list = this.addressableDeviceList;
 		
 		//produce separate list of devices, sorted in order of lastActivationTime (earliest to latest);
-		let sortList = [];
+
 		
-		for(let i = 0, l = list.length; i<l; i++){
-			sortList[i] = list[i];
+		if(status == 'alarm'){
+			list = this.sortedDeviceList;
 		}
-		sortList.sort(
-			function(a,b) {
-					return a.lastAlarmTime[0] - b.lastAlarmTime[0];
-			}
-		);
-		
-		//if(status == 'alarm'){
-		//	list = sortList;
-		//}
-		//NO - don't do this because it really messes with the currentIndex, and how it applies to the acknowledge/reset handling
 		
 		
 		for(let i = this.currentIndex, l = list.length; i >= -1; i--){
@@ -907,6 +893,7 @@ function buildFips() {
 	f.handleAcknowledged = function(){
 		if(!this.mainStatus){
 			let list = this.addressableDeviceList;
+			if(this.status == 'alarm'){list = this.sortedDeviceList};
 			let device = list[this.currentIndex]; //grab the currently viewed device
 			if(this.confirmState == 'none'){
 				//if the device is alarmed, and not already acknowledged, then do some stuff that moves only an active alarm to the acknowledged list

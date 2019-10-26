@@ -1,4 +1,4 @@
-let CACHE_NAME = 'fipoff-cache-test00v';
+let CACHE_NAME = 'fipoff-cache-test00w';
 let urlsToCache = [
 	'index.html',
 	'manifest.json',
@@ -6,7 +6,8 @@ let urlsToCache = [
 	'scripts/swHandling.js',
 	'scripts/main.js',
 	'scripts/interface.js',
-	'systems/system01/system01.js'
+	'systems/system00/system00.js',
+	'systems/system00/system00c.js'
 	
 ];
 

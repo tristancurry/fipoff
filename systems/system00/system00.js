@@ -6,7 +6,7 @@ system = {
 			name: 'Master FIP',
 			category: 'fip',
 			blockplan_details: {
-				pages: ['blockplanA_addr.png', 'blockplanA_conv.png'],
+				pages: ['blockplanA_addr.png'],
 				dimensions: {x:'1100px',y:'800px'},
 				detector_dimensions: {x:'20px', y:'20px'},
 				fip_dimensions: {x:'30px', y: '20px'},

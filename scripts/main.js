@@ -120,6 +120,9 @@ console.log(sysObjects);
 console.log(zones);
 buildFips();
 console.log(sysObjectsByCategory);
+let thisFip = sysObjectsByCategory['fip'][0];
+//keep the clock running. When we have multiple FIPs, do them all at once
+window.setInterval(function(){thisFip.displayStatus();}, 500);
 
 function buildSystem (sys) {
 //expect to encounter system name first
@@ -171,7 +174,6 @@ function buildFips() {
 		
 		
 		//now we have a blockplan in the DOM, we can do the other blockplanny stuff, based on the blockplan_details stored with the FIP
-		
 		
 		f.currentPage = 0;
 		
@@ -259,6 +261,7 @@ function buildFips() {
 				let fipIndex = parseInt(f.blockplan.getAttribute('data-index'));
 				let id = parseInt(t.getAttribute('data-index'));
 				let device = f.deviceList[id];
+				f.blockplan_displayed_device = device;
 				f.updateDeviceImagePath(device);
 				
 				if(device.type == 'mcp'){
@@ -326,8 +329,19 @@ function buildFips() {
 				if(f.blockplan_card_elements['options'].getAttribute('data-fip-index') && f.blockplan_card_elements['options'].getAttribute('data-device-index')){
 					let device = sysObjectsByCategory['fip'][parseInt(f.blockplan_card_elements['options'].getAttribute('data-fip-index'))].deviceList[f.blockplan_card_elements['options'].getAttribute('data-device-index')];
 					if(device.type == 'mcp'){
-						//TODO: add in another button which will activate and re-stuck the MCP, and trigger the alarm sys
-						device.stuck = false;
+						if(t.className == 'device-reset'){
+							//TODO: add in another button which will activate and re-stuck the MCP, and trigger the alarm sys
+							device.stuck = false;
+						} else if(t.className == 'device-activate'){
+							if(device.status_internal != 'active'){
+								device.status_internal = 'active';
+								device.status = 'alarm';
+								device.stuck = true;
+								device.lastAlarmTime = f.getAlarmTime();
+								f.update();
+							}
+						}
+						f.updateDeviceImagePath(device);
 					}
 				}	
 			}
@@ -387,6 +401,7 @@ function buildFips() {
 			}
 		}
 		
+		
 	//create the addressableDeviceList - the ones accessible via the FIP
 		f.addressableDeviceList = [];
 		
@@ -431,7 +446,7 @@ function buildFips() {
 		
 		
 		
-	//give the FIP all of the functions it needs to survive as a fip.
+	//initialise some fip variables useful for its correct operation.
 		f.status = 'normal';
 		f.alarmCount = 0;
 		f.ackedCount = 0;
@@ -455,9 +470,37 @@ function buildFips() {
 		f.wsIsol = false;
 		
 		f.sortedDeviceList = [];
+		
+		//give the FIP all of the functions it needs to survive as a fip.
+		
+		f.update = function() {
+			//this updates all things to do with the FIP
+			this.assignStatusIds();
+			this.displayStatus();
+			this.updateDeviceCard();
+			
+		}
+		
+		f.updateDeviceCard = function() {
+			//update the info in the cards, according to device status
+			
+			if(this.blockplan_displayed_device){
+				let device = this.blockplan_displayed_device;
+				if(device.status_internal){
+					this.blockplan_card_elements['status'].innerHTML = deviceStatusStrings[device.status_internal];
+				} else {
+					this.blockplan_card_elements['status'].innerHTML = 'Unknown';
+				}
+				//update the images displayed in the cards, according to device status	
+					this.updateDeviceImagePath(device);
+			}
+		}
+		
 	
 		f.assignStatusIds = function() {
-			let list = this.addressableDeviceList;
+
+			
+			let list = this.addressableDeviceList;			
 			this.sortedDeviceList = this.sortByAlarmTime(list);
 			//go through list of devices.
 			//if in alarm, assign an alarmID
@@ -543,6 +586,7 @@ function buildFips() {
 
 			
 			//handling statuses: this.status is what's checked by any upstream FIPs
+			//TODO: think about what to do if this input is isolated at the upstream FIP - will the applied status conflict with this in some way?
 			if(this.status != 'isol'){
 				if(this.alarmCount > 0){
 					this.status = 'alarm';
@@ -900,8 +944,7 @@ function buildFips() {
 				if(device.status == 'alarm'){
 					//change status to 'acknowledged' 
 					device.status ='acked';
-					this.assignStatusIds();
-					this.displayStatus();
+					this.update();
 					//once we have acknowledged the last alarm, set the ALARM light to solid, rather than flashing
 				}
 			} else {
@@ -939,7 +982,7 @@ function buildFips() {
 				if(this.alarmCount == 0 && this.ackedCount == 0){
 					this.mainStatus = true;
 				}
-				this.displayStatus();
+				this.update();
 			}
 		}
 	};
@@ -988,7 +1031,7 @@ function buildFips() {
 				this.confirmState = 'multi';
 			}
 			
-			else if(this.addressableDeviceList[this.currentIndex].status == 'alarm'){
+			else if(this.sortedDeviceList[this.currentIndex].status == 'alarm'){
 				this.confirmState = 'single';
 			}
 			
@@ -1006,16 +1049,13 @@ function buildFips() {
 	f.handleEbIsol = function(){
 			this.ebIsol = !this.ebIsol;
 			this.ebIsolLamp.classList.toggle('unlit');
-			this.assignStatusIds();
-			this.displayStatus();//oooh clumsy forced update...
-
+			this.update();
 	};
 	
 	f.handleWsIsol = function(){
 		this.wsIsol = !this.wsIsol;
 		this.wsIsolLamp.classList.toggle('unlit');
-		this.assignStatusIds();
-		this.displayStatus();
+		this.update()
 	};
 	
 	f.updateDeviceImagePath = function(device){
@@ -1112,7 +1152,7 @@ function buildFips() {
 			d.status = 'alarm';
 			d.status_internal = 'active';
 			let moment = new Date();
-			d.lastAlarmTime = f.getAlarmTime(moment.getTime() + 1000*i);
+			d.lastAlarmTime = f.getAlarmTime(moment.getTime() - 1000*i);
 			if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
 		}
 	}

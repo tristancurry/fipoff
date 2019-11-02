@@ -10,8 +10,8 @@ system = {
 				dimensions: {x:'1100px',y:'800px'},
 				detector_dimensions: {x:'20px', y:'20px'},
 				fip_dimensions: {x:'30px', y: '20px'},
-				
-				
+
+
 			},
 			//note there is also a MCP located at the panel...
 			children: [
@@ -148,9 +148,9 @@ system = {
 							pos: {x: '259px', y:'464px'},
 						},
 					]
-					
+
 				},
-				
+
 				{
 					name: 'Loop 2',
 					category: 'circuit',
@@ -241,7 +241,7 @@ system = {
 							subtype: 'th',
 							addressable: true,
 							pos: {x: '135px', y:'189px'},
-						},						
+						},
 						{
 							name: 'Crew quarters north, bedroom 3',
 							category: 'det',
@@ -317,9 +317,9 @@ system = {
 							pos: {x: '347px', y:'159px'},
 						},
 					]
-					
+
 				},
-			
+
 				{
 					name: 'Loop 3',
 					category: 'circuit',
@@ -331,11 +331,44 @@ system = {
 					children:[
 						{
 							name: 'Engine bay outer, NW corner',
-							category: 'det',
-							type: 'mcp',
-							subtype: 'mcp',
+							category: 'fip',
 							addressable:true,
 							pos: {x:'443px', y: '125px'},
+							blockplan_details: {
+								pages: ['blockplanA_conv.png'],
+								dimensions: {x:'1100px',y:'800px'},
+								detector_dimensions: {x:'20px', y:'20px'},
+								fip_dimensions: {x:'30px', y: '20px'},
+							},
+							children:[
+								{
+									name: 'Loop 1',
+									category: 'circuit',
+									addressable: true,
+									colour: 'blue',
+									loop: 1,
+									zone: 1,
+									page_number: 1,
+									children:[
+										{
+											name: 'Engine bay outer, SW corner',
+											category: 'det',
+											type: 'thermal',
+											subtype: 'th',
+											addressable: true,
+											pos: {x:'443px', y: '260px'},
+										},
+										{
+											name: 'Engine bay inner, NW corner',
+											category: 'det',
+											type: 'thermal',
+											subtype: 'th',
+											addressable: true,
+											pos: {x:'443px', y: '397px'},
+										},
+									],
+								},
+							],
 						},
 						{
 							name: 'Engine bay outer, SW corner',
@@ -360,7 +393,7 @@ system = {
 							subtype: 'th',
 							addressable: true,
 							pos: {x:'436px', y: '545px'},
-						},						
+						},
 						{
 							name: 'Engine bay outer, SE corner',
 							category: 'det',
@@ -392,10 +425,10 @@ system = {
 							subtype: 'th',
 							addressable: true,
 							pos: {x:'545px', y: '548px'},
-						},						
+						},
 					]
 				},
-			
+
 				{
 					name: 'Loop 4',
 					category: 'circuit',
@@ -431,7 +464,7 @@ system = {
 							pos: {x:'663px', y:'420px'},
 							concealed: true
 						},
-						
+
 								{
 							name: 'Community room north',
 							category: 'det',
@@ -482,10 +515,10 @@ system = {
 							addressable: true,
 							pos: {x:'757px', y:'88px'}
 						},
-						
+
 					]
 				},
 			]
 		}
-	]	
+	]
 };

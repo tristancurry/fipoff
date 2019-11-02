@@ -120,9 +120,21 @@ console.log(sysObjects);
 console.log(zones);
 buildFips();
 console.log(sysObjectsByCategory);
-let thisFip = sysObjectsByCategory['fip'][0];
-//keep the clock running. When we have multiple FIPs, do them all at once
-window.setInterval(function(){thisFip.displayStatus();}, 500);
+
+let fipList = sysObjectsByCategory['fip'];
+for (let l = fipList.length, i = l - 1; i >= 0; i--) {
+	let thisFip = fipList[i];
+		thisFip.triggerRandomAlarms(3);
+	 thisFip.assignStatusIds();
+	 thisFip.displayStatus();
+
+	for (let i = 0, l = thisFip.deviceList.length; i < l; i++){
+		thisFip.updateDeviceImagePath(thisFip.deviceList[i]);
+	}
+	//keep the clock running. When we have multiple FIPs, do them all at once
+	window.setInterval(function(){thisFip.displayStatus();}, 500);
+}
+
 
 function buildSystem (sys) {
 //expect to encounter system name first
@@ -137,6 +149,7 @@ function buildFips() {
 	let fipList = sysObjectsByCategory['fip'];
 	for(let i = 0, l = fipList.length; i < l; i++){
 		let f = fipList[i];
+
 
 
 		//provide the FIP a representation in the DOM. NB this will not work in IE
@@ -157,8 +170,8 @@ function buildFips() {
 
 			let alarmString = provideTimeString(alarmTime);
 			alarmTime = alarmTime.getTime(); //convert into milliseconds since reference date, for sorting later
-		return [alarmTime, alarmString];
-	}
+			return [alarmTime, alarmString];
+		}
 
 
 
@@ -396,7 +409,9 @@ function buildFips() {
 					if(device.concealed){
 						device.imageArray = deviceImages['concealed'][0];
 					} else {
+						if (device.category != 'fip') {
 						device.imageArray = deviceImages[device.type][0];
+					}
 					}
 
 					f.deviceList.push(device);
@@ -430,7 +445,6 @@ function buildFips() {
 				}
 			}
 		}
-
 		//work out if all of the devices on the addressableDeviceList are circuits, regular devices, or some kombo
 		let circuitCount = 0;
 		for(let i = 0, l = f.addressableDeviceList.length; i < l; i++){
@@ -498,7 +512,6 @@ function buildFips() {
 					this.updateDeviceImagePath(device);
 			}
 		}
-
 
 		f.assignStatusIds = function() {
 
@@ -592,20 +605,27 @@ function buildFips() {
 
 
 
-			//handling statuses: this.status is what's checked by any upstream FIPs
+			//handling statuses: this.status is what's checked by any upstream FIPs. actually, just set activated and stuck
 			//TODO: think about what to do if this input is isolated at the upstream FIP - will the applied status conflict with this in some way?
-			if(this.status != 'isol'){
+
 				if(this.alarmCount > 0){
-					this.status = 'alarm';
+					this.status_internal = 'activated';
 					this.stuck = true;
 					this.mainStatus = false;
 				} else if(this.ackedCount > 0){
-					this.status = 'alarm';
+					this.status_internal = 'alarm';
 					this.stuck = true;
 					this.mainStatus = false;
 				} else {
-					this.status = 'normal';
+					this.status_internal = 'normal';
 					this.stuck = false;
+				}
+			if(this.status != 'isol'){
+				if (this.status_internal == 'activated'){
+					if(this.status != 'alarm' && this.status != 'acked'){
+						this.status = 'alarm';
+						this.lastAlarmTime = this.getAlarmTime();
+					}
 				}
 			}
 
@@ -1163,15 +1183,8 @@ function buildFips() {
 			if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
 		}
 	}
-	//fire it up!
-	f.triggerRandomAlarms(3);
-	f.assignStatusIds();
-	f.displayStatus();
-	for(i = 0, l = f.deviceList.length; i < l; i++){
-		f.updateDeviceImagePath(f.deviceList[i]);
-	}
 
-	//work out whether it's the master fip or not (if not, the div representation will be hidden by default)
+	//TODO: work out whether it's the master fip or not (if not, the div representation will be hidden by default)
 	}
 }
 

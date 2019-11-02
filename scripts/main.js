@@ -122,6 +122,8 @@ buildFips();
 console.log(sysObjectsByCategory);
 
 let fipList = sysObjectsByCategory['fip'];
+// needed to loop backwards so that the alarm counts were correct for FIPs closer to the main FirePanel
+// TODO: make the title of the blockplan depend on a variable stored with the FIP, not the entire system
 for (let l = fipList.length, i = l - 1; i >= 0; i--) {
 	let thisFip = fipList[i];
 		thisFip.triggerRandomAlarms(3);
@@ -132,6 +134,7 @@ for (let l = fipList.length, i = l - 1; i >= 0; i--) {
 		thisFip.updateDeviceImagePath(thisFip.deviceList[i]);
 	}
 	//keep the clock running. When we have multiple FIPs, do them all at once
+	//TODO: make it so that there is only one setInterval, with one function that updates all FIP displays.
 	window.setInterval(function(){thisFip.displayStatus();}, 500);
 }
 

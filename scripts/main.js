@@ -162,7 +162,10 @@ function buildFips() {
 
 		f.panel = document.getElementsByClassName('panel')[i];
 		f.panel.setAttribute('data-index', i);
-		f.panel.parentNode.classList.add('show');
+		if (i == 0) {
+			f.panel.getElementsByClassName('closeBox')[0].style = 'display: none';
+			f.panel.parentNode.classList.add('show');
+		}
 		f.getAlarmTime = function(t){
 			let alarmTime = 0;
 
@@ -185,9 +188,6 @@ function buildFips() {
 		clone = temp.content.cloneNode(true);
 		f.panel.parentNode.appendChild(clone);
 		f.blockplan = document.getElementsByClassName('blockplan')[i];
-		// temporary...
-		f.blockplan.classList.add('show');
-		//end temporary
 		f.blockplan.setAttribute('data-index', i);
 		f.blockplan.style.width = f.blockplan_details['dimensions'].x;
 		f.blockplan.getElementsByClassName('blockplan-content')[0].style.height = f.blockplan_details['dimensions'].y;
@@ -237,6 +237,10 @@ function buildFips() {
 				//update currentPage.
 				f.currentPage += inc;
 				//refresh page number in blockplan footer/page title in header
+				let blockplanHeader = f.blockplan.getElementsByClassName('blockplan-header')[0];
+				let blockplanTitle = system.name + ' - ' + f.name;
+				blockplanHeader.getElementsByClassName('blockplan-title')[0].innerHTML = blockplanTitle;
+
 				f.blockplan.getElementsByClassName('blockplan-footer')[0].innerHTML = 'Page ' + (f.currentPage + 1) + ' of ' + f.blockplan_details['pages'].length;
 
 				//hide device card, if shown
@@ -1182,6 +1186,7 @@ function buildFips() {
 				closeElements(f.blockplan);
 			} else {
 				f.blockplan.classList.toggle('show');
+				f.blockplan.scrollIntoView({behavior: 'smooth'});
 			}
 		}
 	});

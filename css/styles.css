@@ -44,11 +44,20 @@ div {
 
 }
 
-.panel-container {
-	position : relative;
+.panel-backdrop {
+	position: fixed;
+	overflow:scroll;
+	width:100%;
+	height:100%;
 	display: none;
-}
+	background-color: rgb(150,150,150);
+	background-color: rgba(150,150,150,0.7);
 
+}
+.panel-container {
+	position: absolute;
+	//display: none;
+}
 
 .panel {
 	position:relative;
@@ -201,6 +210,7 @@ div {
 .panel-controls {
 	height:100%;
 	font-size: 0px;
+	white-space: nowrap;
 }
 
 .panel-controls button {
@@ -211,6 +221,7 @@ div {
 	background: none;
 	color: orange;
 	font-size: 0.9rem;
+	white-space: normal;
 }
 
 .left-info {
@@ -249,6 +260,7 @@ div {
 
 .blockplan {
 	position: relative;
+	top: -50px;
 	margin-left:20px;
 	border: 2px solid orange;
 	display: none;

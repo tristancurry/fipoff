@@ -5,6 +5,7 @@ system = {
 		{
 			name: 'Master FIP',
 			category: 'fip',
+			type: 'fip',
 			blockplan_details: {
 				pages: ['blockplanA_addr.png'],
 				dimensions: {x:'1100px',y:'800px'},
@@ -332,6 +333,7 @@ system = {
 						{
 							name: 'Engine bay outer, NW corner',
 							category: 'fip',
+							type: 'fip',
 							addressable:true,
 							pos: {x:'443px', y: '125px'},
 							blockplan_details: {

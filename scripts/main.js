@@ -162,9 +162,11 @@ function buildFips() {
 
 		f.panel = document.getElementsByClassName('panel')[i];
 		f.panel.setAttribute('data-index', i);
+		f.panel.parentNode.style.left = i*15 + 'px';
+		f.panel.parentNode.style.zIndex = i;
 		if (i == 0) {
 			f.panel.getElementsByClassName('closeBox')[0].style = 'display: none';
-			f.panel.parentNode.classList.add('show');
+			f.panel.parentNode.parentNode.classList.add('show');
 		}
 		f.getAlarmTime = function(t){
 			let alarmTime = 0;
@@ -288,10 +290,12 @@ function buildFips() {
 				let device = f.deviceList[id];
 
 				if (device.category == 'fip') {
-					if (device.panel.parentNode.classList.contains('show')) {
+					if (device.panel.parentNode.parentNode.classList.contains('show')) {
 						closeElements(device.panel.parentNode);
 					} else {
-						device.panel.parentNode.classList.toggle('show');
+						device.panel.parentNode.parentNode.classList.toggle('show');
+						device.panel.parentNode.style.top = event.pageY + 'px';
+
 					}
 
 				} else	if (device.category == 'det') {

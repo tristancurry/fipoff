@@ -29,7 +29,7 @@ function closeElements(target) {
 			if (blockplan && blockplan.classList.contains('show')) {
 				closeElements(blockplan);
 			}
-			target.classList.remove('show');
+			target.parentNode.classList.remove('show');
 			break;
 		case 'blockplan':
 			// does the blockplan have any fips open?

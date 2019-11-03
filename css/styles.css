@@ -220,7 +220,8 @@ div {
 	float: right;
 }
 
-.extBell {
+.extBell, .warnSys, .blockplan-view {
+	user-select: none;
 	position:absolute;
 	right: -80px;
 	width: 50px;
@@ -232,18 +233,18 @@ div {
 	background-color: #FF0000;
 }
 
+
+
 .warnSys {
-	position:absolute;
-	right: -80px;
 	top: 70px;
-	width:50px;
-	height: 50px;
-	text-align: center;
-	font-size: 30px;
-	border: 2px solid orange;
-	border-radius:25px;
-	background-color: #FF0000;
 }
+
+.blockplan-view {
+	top: 140px;
+	background-color: #111122;
+}
+
+
 
 .blockplan {
 	position: relative;
@@ -265,6 +266,7 @@ div {
 	position: relative;
 	width: 100%;
 	height: 50px;
+	background-color: black;
 }
 
 .blockplan-header {
@@ -288,7 +290,7 @@ div {
 	right: -15px;
 }
 
-.device-detector {
+.device-detector, .device-fip {
 	position:absolute;
 	background-color: rgba(255,100,0,0.5);
 }

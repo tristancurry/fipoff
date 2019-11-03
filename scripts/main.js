@@ -278,58 +278,68 @@ function buildFips() {
 		f.blockplan.addEventListener('click', function(event){
 			let t = event.target;
 
-			if(t.className == 'device-detector'){
+			if(t.className == 'device-detector' || t.className == 'device-fip'){
 				let fipIndex = parseInt(f.blockplan.getAttribute('data-index'));
 				let id = parseInt(t.getAttribute('data-index'));
 				let device = f.deviceList[id];
-				f.blockplan_displayed_device = device;
-				f.updateDeviceImagePath(device);
 
-				if(device.type == 'mcp'){
-					f.blockplan_card_elements['MCPOptions'].classList.add('show');
-					f.blockplan_card_elements['options'].setAttribute('data-fip-index', fipIndex);
-					f.blockplan_card_elements['options'].setAttribute('data-device-index', id);
-				} else {
-					f.blockplan_card_elements['MCPOptions'].classList.remove('show');
-				}
-
-				if(!f.blockplan_card.classList.contains('show-flash')){
-					f.blockplan_card.classList.toggle('show-flash');
-				} else if(f.blockplan_card.classList.contains('show-flash')){
-
-					if(f.blockplan_card_elements['desc'].innerHTML == device.name){
-						f.blockplan_card.classList.remove('show-flash');
+				if (device.category == 'fip') {
+					if (device.panel.parentNode.classList.contains('show')) {
+						closeElements(device.panel.parentNode);
 					} else {
-						f.blockplan_card.classList.remove('show-flash');
-						void f.blockplan_card.offsetWidth;
-						f.blockplan_card.classList.add('show-flash');
+						device.panel.parentNode.classList.toggle('show');
 					}
-				}
 
-				let titleString = '';
-				if(device.subtype){
-					titleString = subtypes[device.subtype];
-				} else if(device.type){
-					titleString = types[device.type];
-					if(device.category == 'det'){
-						titleString += ' Detector';
+				} else	if (device.category == 'det') {
+					f.blockplan_displayed_device = device;
+					f.updateDeviceImagePath(device);
+
+					if(device.type == 'mcp'){
+						f.blockplan_card_elements['MCPOptions'].classList.add('show');
+						f.blockplan_card_elements['options'].setAttribute('data-fip-index', fipIndex);
+						f.blockplan_card_elements['options'].setAttribute('data-device-index', id);
+					} else {
+						f.blockplan_card_elements['MCPOptions'].classList.remove('show');
 					}
-				}
 
-				f.blockplan_card_elements['title'].innerHTML = titleString;
-				if(device.name){
-					f.blockplan_card_elements['desc'].innerHTML = device.name;
-				}
-				if(device.zone){
-					f.blockplan_card_elements['zone'].innerHTML = device.zone;
-				}
-				if(device.num){
-					f.blockplan_card_elements['num'].innerHTML = device.num;
-				}
-				if(device.status_internal){
-					f.blockplan_card_elements['status'].innerHTML = deviceStatusStrings[device.status_internal];
-				} else {
-					f.blockplan_card_elements['status'].innerHTML = 'Unknown';
+					if(!f.blockplan_card.classList.contains('show-flash')){
+						f.blockplan_card.classList.toggle('show-flash');
+					} else if(f.blockplan_card.classList.contains('show-flash')){
+
+						if(f.blockplan_card_elements['desc'].innerHTML == device.name){
+							f.blockplan_card.classList.remove('show-flash');
+						} else {
+							f.blockplan_card.classList.remove('show-flash');
+							void f.blockplan_card.offsetWidth;
+							f.blockplan_card.classList.add('show-flash');
+						}
+					}
+
+					let titleString = '';
+					if(device.subtype){
+						titleString = subtypes[device.subtype];
+					} else if(device.type){
+						titleString = types[device.type];
+						if(device.category == 'det'){
+							titleString += ' Detector';
+						}
+					}
+
+					f.blockplan_card_elements['title'].innerHTML = titleString;
+					if(device.name){
+						f.blockplan_card_elements['desc'].innerHTML = device.name;
+					}
+					if(device.zone){
+						f.blockplan_card_elements['zone'].innerHTML = device.zone;
+					}
+					if(device.num){
+						f.blockplan_card_elements['num'].innerHTML = device.num;
+					}
+					if(device.status_internal){
+						f.blockplan_card_elements['status'].innerHTML = deviceStatusStrings[device.status_internal];
+					} else {
+						f.blockplan_card_elements['status'].innerHTML = 'Unknown';
+					}
 				}
 			}
 
@@ -396,15 +406,22 @@ function buildFips() {
 
 					//provide the device with a representation in the DOM - in this case, a button/div in the blockplan
 					let temp = document.createElement('div');
-					temp.classList.add('device-detector'); //TODO: add conditional here, to handle FIPs on the blockplan
+					if(device.category != 'fip') {
+						temp.classList.add('device-detector');
+						temp.style.width = f.blockplan_details['detector_dimensions'].x;
+						temp.style.height = f.blockplan_details['detector_dimensions'].y;
+					} else if(device.category == 'fip') {
+						temp.style.width = f.blockplan_details['fip_dimensions'].x;
+						temp.style.height = f.blockplan_details['fip_dimensions'].y;
+						temp.classList.add('device-fip');
+					} //TODO: add conditional here, to handle FIPs on the blockplan
 					//needs data-index - this is the same as the device's position in the FIP's deviceList
 					temp.setAttribute('data-index', currentDeviceIndex);
 					currentDeviceIndex++;
 					//needs position
 					temp.style.left = device.pos.x;
 					temp.style.top = device.pos.y;
-					temp.style.width = f.blockplan_details['detector_dimensions'].x;
-					temp.style.height = f.blockplan_details['detector_dimensions'].y;
+
 
 					let page = f.blockplan.getElementsByClassName('blockplan-page')[device.page - 1];
 					page.appendChild(temp);
@@ -1130,9 +1147,9 @@ function buildFips() {
 
 	f.extBell = f.panel.getElementsByClassName('extBell')[0];
 	f.warnSys = f.panel.getElementsByClassName('warnSys')[0];
-
+	f.blockplanView = f.panel.getElementsByClassName('blockplan-view')[0];
 	//EVENT LISTENERS
-	f.panel.getElementsByClassName('panel-controls')[0].addEventListener('click', function(event){
+	f.panel.addEventListener('click', function(event){
 		let t = event.target;
 		if(t == f.ebIsolButton){f.handleEbIsol();}
 		if(t == f.wsIsolButton){f.handleWsIsol();}
@@ -1160,6 +1177,13 @@ function buildFips() {
 		if(t == f.ackButton){f.lastPressed = 'ack'; f.handleAcknowledged();}
 		if(t == f.resetButton){f.lastPressed = 'reset'; f.handleReset();}
 		if(t == f.isolButton){f.lastPressed = 'isol'; f.handleIsolate();}
+		if(t == f.blockplanView) {
+			if (f.blockplan.classList.contains('show')){
+				closeElements(f.blockplan);
+			} else {
+				f.blockplan.classList.toggle('show');
+			}
+		}
 	});
 
 

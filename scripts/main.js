@@ -161,7 +161,8 @@ function buildFips() {
 		viewport.appendChild(clone);
 
 		f.panel = document.getElementsByClassName('panel')[i];
-
+		f.panel.setAttribute('data-index', i);
+		f.panel.parentNode.classList.add('show');
 		f.getAlarmTime = function(t){
 			let alarmTime = 0;
 
@@ -182,8 +183,11 @@ function buildFips() {
 		//TODO- might be worth creating this as a separate object within the FIP, with own methods etc.
 		temp = document.getElementsByClassName('template-blockplan')[0];
 		clone = temp.content.cloneNode(true);
-		f.panel.appendChild(clone);
+		f.panel.parentNode.appendChild(clone);
 		f.blockplan = document.getElementsByClassName('blockplan')[i];
+		// temporary...
+		f.blockplan.classList.add('show');
+		//end temporary
 		f.blockplan.setAttribute('data-index', i);
 		f.blockplan.style.width = f.blockplan_details['dimensions'].x;
 		f.blockplan.getElementsByClassName('blockplan-content')[0].style.height = f.blockplan_details['dimensions'].y;
@@ -208,6 +212,7 @@ function buildFips() {
 		//TODO: find a way to make this stick to the window (and appear at a fixed position within the visible window)
 		f.blockplan_card_elements = {
 			header:	f.blockplan_card.getElementsByClassName('device-header')[0],
+			title: f.blockplan_card.getElementsByClassName('device-type')[0],
 			info : f.blockplan_card.getElementsByClassName('device-info')[0],
 			image : f.blockplan_card.getElementsByClassName('device-image')[0],
 			desc : f.blockplan_card.getElementsByClassName('device-info-desc')[0].getElementsByTagName('span')[0],
@@ -311,7 +316,7 @@ function buildFips() {
 					}
 				}
 
-				f.blockplan_card_elements['header'].innerHTML = titleString;
+				f.blockplan_card_elements['title'].innerHTML = titleString;
 				if(device.name){
 					f.blockplan_card_elements['desc'].innerHTML = device.name;
 				}
@@ -346,7 +351,6 @@ function buildFips() {
 					let device = sysObjectsByCategory['fip'][parseInt(f.blockplan_card_elements['options'].getAttribute('data-fip-index'))].deviceList[f.blockplan_card_elements['options'].getAttribute('data-device-index')];
 					if(device.type == 'mcp'){
 						if(t.className == 'device-reset'){
-							//TODO: add in another button which will activate and re-stuck the MCP, and trigger the alarm sys
 							device.stuck = false;
 						} else if(t.className == 'device-activate'){
 							if(device.status_internal != 'active'){

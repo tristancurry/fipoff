@@ -16,19 +16,20 @@
 
 	<div onclick='void(0);'>
 		<div class='viewport'>
-		
-			
-			
+
+
+
 			<div class='update modal'>
 				<div class='modal-content'>update ready!<button id='updateBtn'>Y A Y</button></div>
 			</div>
-			
+
 		</div>
 	</div>
 
 	<!-- TEMPLATES for SYSTEM COMPONENTS -->
-	
+
 	<template class="template-panel">
+		<div class="panel-container">
 		<div class="panel">
 			<span class='panel-title'>FirePanel 3000</span>
 			<span class='interface-button closeBox'>&times</span>
@@ -69,16 +70,17 @@
 					</div>
 				</div>
 			</div>
+		</div>
 	</template>
-	
+
 	<template class='template-blockplan'>
 		<div class='blockplan' data-index=0>
 			<span class='interface-button closeBox'>&times</span>
-			<div class='blockplan-header'>System 00</div>
+			<div class='blockplan-header'>System 00<span class='interface-button closeBox'>&times</span></div>
 			<div class='blockplan-content'>
 			</div>
 			<div class='device-container'>
-				<div class ='device-header'>Device Type (e.g. Smoke, thermal, FIP)</div>
+				<div class ='device-header'><span class='device-type'>Device Type (e.g. Smoke, thermal, FIP)</span><span class='interface-button closeBox'>&times</span></div>
 				<div class='device-body'>
 					<div class='device-image' title='image of device type sourced from a library of images'></div>
 					<div class='device-info'>
@@ -96,11 +98,11 @@
 			<div class='blockplan-footer'>will contain page number</div>
 		</div>
 	</template>
-	
-	
+
+
 	<script type='text/javascript' src='systems/system00/system00.js'></script>
 	<script type='text/javascript' src='scripts/main.js'></script>
-	<script type='text/javascript' src='scripts/interface.js'></script>	
+	<script type='text/javascript' src='scripts/interface.js'></script>
 
 
 </body>

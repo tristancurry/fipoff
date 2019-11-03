@@ -7,7 +7,6 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-	
 }
 
 .test {
@@ -20,7 +19,7 @@ html {
 }
 
 body {
-	background-color: black;
+	background-color: #000011;
 }
 
 button {
@@ -34,15 +33,30 @@ button {
 
 .viewport {
 	position:absolute;
-	display: flex;
-	flex-direction:column;
-	width: 100%;
-	height:100%;
+	//display: flex;
+	//flex-direction: column;
+	//width: 100%;
+	//height:100%;
 	color: #FFDD00;
 }
 
 div {
-	
+
+}
+
+.panel-backdrop {
+	position: fixed;
+	overflow:scroll;
+	width:100%;
+	height:100%;
+	display: none;
+	background-color: rgb(150,150,150);
+	background-color: rgba(150,150,150,0.7);
+
+}
+.panel-container {
+	position: absolute;
+	//display: none;
 }
 
 .panel {
@@ -52,6 +66,7 @@ div {
 	height: 400px;
 	margin: 20px;
 	border: 1px solid orange;
+	background-color: black;
 }
 
 .panel-fff {
@@ -134,11 +149,11 @@ div {
 	0% {
 		opacity: 0;
 	}
-	
+
 	50% {
 		opacity: 1;
 	}
-	
+
 	100% {
 		opacity: 0;
 	}
@@ -149,7 +164,7 @@ div {
 	width: 70%;
 	position:relative;
 	border:none;
-} 
+}
 
 .panel-display-bezel {
 	position:absolute;
@@ -180,10 +195,11 @@ div {
 	font-size: 16px;
 	//text-shadow: 1px 1px 10px #223322;
 	color: #224422;
+	text-align:left;
 }
 
 .display-line {
-	height: 2em; 
+	height: 2em;
 }
 
 
@@ -194,6 +210,7 @@ div {
 .panel-controls {
 	height:100%;
 	font-size: 0px;
+	white-space: nowrap;
 }
 
 .panel-controls button {
@@ -204,6 +221,7 @@ div {
 	background: none;
 	color: orange;
 	font-size: 0.9rem;
+	white-space: normal;
 }
 
 .left-info {
@@ -214,7 +232,8 @@ div {
 	float: right;
 }
 
-.extBell {
+.extBell, .warnSys, .blockplan-view {
+	user-select: none;
 	position:absolute;
 	right: -80px;
 	width: 50px;
@@ -226,19 +245,147 @@ div {
 	background-color: #FF0000;
 }
 
+
+
+.warnSys {
+	top: 70px;
+}
+
+.blockplan-view {
+	top: 140px;
+	background-color: #111122;
+}
+
+
+
+.blockplan {
+	position: relative;
+	top: -50px;
+	margin-left:20px;
+	border: 2px solid orange;
+	display: none;
+}
+
+.blockplan-page {
+	position:relative;
+	width: 100%;
+	height: 100%;
+	background: no-repeat;
+	background-size: cover;
+	display: none;
+}
+
+.blockplan-header, .blockplan-footer {
+	position: relative;
+	width: 100%;
+	height: 50px;
+	background-color: black;
+}
+
+.blockplan-header {
+	font-size: 30px;
+}
+
+.blockplan-content {
+
+}
+
+.blockplan-next, .blockplan-prev {
+	background: none;
+	top: 50%;
+}
+
+.blockplan-prev {
+	left: -15px;
+}
+
+.blockplan-next {
+	right: -15px;
+}
+
+.device-detector, .device-fip {
+	position:absolute;
+	background-color: rgba(255,100,0,0.5);
+}
+
+.device-container {
+	position: absolute;
+	right: 20px;
+	top: 40px;
+	z-index:1;
+	width: 240px;
+	height: 320px;
+	border: 2px solid orange;
+	background-color: rgba(255,255,0,0.2);
+	color: black;
+	opacity:0;
+	transition: opacity 0.25s;
+}
+
+.device-image {
+	margin:auto;
+	margin-top:5px;
+	width:200px;
+	height:150px;
+	background-color:white;
+}
+
+.device-body {
+	width:95%;
+	padding:5px;
+	margin:auto;
+	border: 2px solid orange;
+}
+
+.device-info {
+	width:210px;
+	margin:auto;
+	margin-top:5px;
+	background-color:snow;
+}
+
+.device-options {
+	width:210px;
+	margin:auto;
+	margin-top:5px;
+	background-color:gray;
+}
+
+.device-options-mcp {
+	display:none;
+}
+
+
+
 /* control styles */
 
-.closeBox {
+
+
+.interface-button {
 	position:absolute;
-	top: -15px;
-	right: -15px;
 	width: 30px;
-	height:30px;
+	height: 30px;
 	border: 2px solid orange;
 	border-radius: 15px;
 	font-size: 24px;
 	text-align: center;
+	background-color: black;
+	color: orange;
+	user-select: none;
 }
+
+.interface-button[disabled] {
+	border-color: gray;
+	color: gray;
+}
+
+.closeBox {
+	top: -15px;
+	right: -15px;
+}
+
+
+
 
 .update {
 	display:none;
@@ -249,7 +396,7 @@ div {
 
 .modal {
 	display:none;
-	position:fixed;	
+	position:fixed;
 	z-index: 2;
 	width:100%;
 	height:100%;
@@ -311,7 +458,7 @@ div {
 	padding:10px;
 	text-align:center;
 	margin-bottom: 20px;
-	
+
 }
 
 .modal h3 {
@@ -343,9 +490,26 @@ div {
 	display:block;
 }
 
+.show-flash {
+	animation: flashon 0.25s 1;
+		opacity: 1;
+}
+
+@keyframes flashon {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+
+
+}
+
 /*Mobile-portrait style */
 @media only screen and (max-width: 700px),(orientation: portrait){
-	
+
 
 }
 
@@ -354,7 +518,7 @@ div {
 	.viewport {
 		flex-direction:row;
 	}
-	
+
 	.modal-content {
 		max-width:800px;
 	}
@@ -374,6 +538,5 @@ div {
 		text-align:center;
 	}
 
-	
-}
 
+}

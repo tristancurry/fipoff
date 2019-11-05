@@ -44,7 +44,21 @@ const deviceStatusStrings = {
 	normal: 'Normal'
 };
 
+const deviceImageSheet = new Image().src = imageDir + 'devices.png';
+const deviceImageSize = [200, 150];
+const deviceImageIndex = {
+	smoke: 5,
+	thermal: 7,
+	mcp: 0,
+	concealed: 3
+}
 
+const deviceImageVersions = {
+	smoke: 2,
+	thermal: 2,
+	mcp: 1,
+	concealed: 1
+}
 
 let sysObjects = [];
 let sysObjectsByCategory = {
@@ -162,11 +176,15 @@ function buildFips() {
 
 		f.panel = document.getElementsByClassName('panel')[i];
 		f.panel.setAttribute('data-index', i);
+		// displace sub-FIPs by a small amount in x and z directions
 		f.panel.parentNode.style.left = i*15 + 'px';
 		f.panel.parentNode.style.zIndex = i;
 		if (i == 0) {
 			f.panel.getElementsByClassName('closeBox')[0].style = 'display: none';
 			f.panel.parentNode.parentNode.classList.add('show');
+			if(i == 0){
+				f.panel.parentNode.parentNode.style.backgroundImage = 'linear-gradient(to bottom right, black, orange)';
+			}
 		}
 		f.getAlarmTime = function(t){
 			let alarmTime = 0;
@@ -225,6 +243,8 @@ function buildFips() {
 			MCPOptions : f.blockplan_card.getElementsByClassName('device-options-mcp')[0],
 
 		}
+
+		f.blockplan_card_elements['image'].style.backgroundImage = 'url(' + deviceImageSheet + ')';
 
 		f.incrementPage = function(inc){
 			let prevButton = f.blockplan.getElementsByClassName('blockplan-prev')[0];
@@ -438,6 +458,17 @@ function buildFips() {
 					device.imageArray = [];
 					device.imagePath = '';
 
+					// assign random device image from available images of appropriate type...
+					device.imageVersion = Math.floor(deviceImageVersions[device.type]*Math.random());
+					if (device.imageVersion == deviceImageVersions[device.type]) {
+						device.imageVersion = device.imageVersion - 1;
+					}
+
+					if (!device.concealed) {
+					device.imageCoords = {x: deviceImageIndex[device.type], y: device.imageVersion};
+				} else {
+					device.imageCoords = {x: deviceImageIndex['concealed'], y: device.imageVersion};
+				}
 					if(device.concealed){
 						device.imageArray = deviceImages['concealed'][0];
 					} else {
@@ -737,7 +768,7 @@ function buildFips() {
 		//access the FIP's list
 		//work out if anything is still in alarm
 		if(this.alarmCount > 0){
-			this.findNextOrPrev('alarm');
+				this.findNextOrPrev('alarm');
 		} else if (this.isolCount > 0) {
 			if(this.mainStatus){
 				this.displayMainStatus('isol');
@@ -790,15 +821,9 @@ function buildFips() {
 		if(status == 'alarm'){
 			list = this.sortedDeviceList;
 		}
-
-
-
+		console.log(list);
 		for(let i = this.currentIndex, l = list.length; i < l + 1; i++){
 			if(i < l){
-
-				//need to do something slightly different for alarms, so that the scrolling occurs in order of activation timey
-				//find a way to just jump on to the sortList instead- then scroll through as normal...
-
 
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
 					let device = list[i];
@@ -1117,19 +1142,34 @@ function buildFips() {
 		this.update()
 	};
 
-	f.updateDeviceImagePath = function(device){
+	f.updateDeviceImagePath = function(device) {
+		let coords;
 
-		if(device.status_internal == 'active'){
-			if(device.type == 'mcp' && device.stuck && device.imageArray.length == 3){
-				device.imagePath = imageDir + device.imageArray[2];
+		if (device.status_internal == 'active') {
+			// store current coordinates of the spritesheet for this detector
+			// then when displaying the detector, shift the image to these coords.
+			if(device.type == 'mcp' && device.stuck) {
+				coords =  [(device.imageCoords['x'] + 2)*deviceImageSize[0], device.imageCoords['y']*deviceImageSize[1]];
 			} else {
-				device.imagePath = imageDir + device.imageArray[1];
+				coords =  [(device.imageCoords['x'] + 1)*deviceImageSize[0], device.imageCoords['y']*deviceImageSize[1]];
 			}
 		} else {
-			device.imagePath =  imageDir + device.imageArray[0];
+			coords =  [(device.imageCoords['x'])*deviceImageSize[0], device.imageCoords['y']*deviceImageSize[1]];
 		}
 
-		f.blockplan_card_elements['image'].style.backgroundImage = 'url(' + device.imagePath + ')';
+		f.blockplan_card_elements['image'].style.backgroundPosition = -1*coords[0] + 'px ' + -1*coords[1] + 'px';
+
+		// if(device.status_internal == 'active'){
+		// 	if(device.type == 'mcp' && device.stuck && device.imageArray.length == 3){
+		// 		device.imagePath = imageDir + device.imageArray[2];
+		// 	} else {
+		// 		device.imagePath = imageDir + device.imageArray[1];
+		// 	}
+		// } else {
+		// 	device.imagePath =  imageDir + device.imageArray[0];
+		// }
+		//
+		//f.blockplan_card_elements['image'].style.backgroundImage = 'url(' + device.imagePath + ')';
 	};
 
 	f.display = f.panel.getElementsByClassName('panel-display-content')[0];
@@ -1219,7 +1259,7 @@ function buildFips() {
 			d.status = 'alarm';
 			d.status_internal = 'active';
 			let moment = new Date();
-			d.lastAlarmTime = f.getAlarmTime(moment.getTime() - 1000*i);
+			d.lastAlarmTime = f.getAlarmTime(moment.getTime() - 300000*i);
 			if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
 		}
 	}

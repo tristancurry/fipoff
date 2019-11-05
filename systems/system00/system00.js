@@ -332,45 +332,10 @@ system = {
 					children:[
 						{
 							name: 'Engine bay outer, NW corner',
-							category: 'fip',
-							type: 'fip',
+							category: 'det',
+							type: 'mcp',
 							addressable:true,
 							pos: {x:'443px', y: '125px'},
-							blockplan_details: {
-								pages: ['blockplanA_conv.png'],
-								dimensions: {x:'1100px',y:'800px'},
-								detector_dimensions: {x:'20px', y:'20px'},
-								fip_dimensions: {x:'30px', y: '20px'},
-							},
-							children:[
-								{
-									name: 'Loop 1',
-									category: 'circuit',
-									addressable: true,
-									colour: 'blue',
-									loop: 1,
-									zone: 1,
-									page_number: 1,
-									children:[
-										{
-											name: 'Engine bay outer, SW corner',
-											category: 'det',
-											type: 'thermal',
-											subtype: 'th',
-											addressable: true,
-											pos: {x:'443px', y: '260px'},
-										},
-										{
-											name: 'Engine bay inner, NW corner',
-											category: 'det',
-											type: 'thermal',
-											subtype: 'th',
-											addressable: true,
-											pos: {x:'443px', y: '397px'},
-										},
-									],
-								},
-							],
 						},
 						{
 							name: 'Engine bay outer, SW corner',

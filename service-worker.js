@@ -7,7 +7,7 @@ let urlsToCache = [
 	'scripts/main.js',
 	'scripts/interface.js',
 	'systems/system00/system00.js',
-	'systems/system00/system00c.js'
+	'systems/system00/system00c.js',
 	'images/devices.png'
 
 ];

@@ -1,4 +1,4 @@
-let CACHE_NAME = 'fipoff-cache-test00x';
+let CACHE_NAME = 'fipoff-cache-test00y';
 let urlsToCache = [
 	'index.html',
 	'manifest.json',
@@ -8,7 +8,8 @@ let urlsToCache = [
 	'scripts/interface.js',
 	'systems/system00/system00.js',
 	'systems/system00/system00c.js'
-	
+	'images/devices.png'
+
 ];
 
 self.addEventListener('install', function(event) {
@@ -68,7 +69,7 @@ self.addEventListener('activate', function(event) {
 		})
 	);
 
-	
+
 });
 
 self.addEventListener('message', function(event){
@@ -76,4 +77,3 @@ self.addEventListener('message', function(event){
 		self.skipWaiting();
 	}
 });
-

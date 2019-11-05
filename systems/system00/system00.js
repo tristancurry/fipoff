@@ -333,7 +333,7 @@ system = {
 						{
 							name: 'Engine bay outer, NW corner',
 							category: 'det',
-							type: 'thermal',
+							type: 'mcp',
 							addressable:true,
 							pos: {x:'443px', y: '125px'},
 						},

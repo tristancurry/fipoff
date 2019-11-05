@@ -21,7 +21,6 @@ viewport.addEventListener('click', function(event) {
 function closeElements(target) {
 	// first work out which element is being closed
 	// i.e. get type and data-index
-	console.log(target.classList[0]);
 	switch(target.classList[0]) {
 		case 'panel-container':
 		// does the panel-container have a blockplan with classList containing show?
@@ -49,7 +48,6 @@ function closeElements(target) {
 			// ----- grab the device-container div. if its classList contains 'show' then close it!
 			let device = target.getElementsByClassName('device-container')[0];
 			device.classList.remove('show-flash');
-			// after all of that, unshow the blockplan
 			target.classList.remove('show');
 			break;
 
@@ -57,9 +55,8 @@ function closeElements(target) {
 				//target.classList.remove('show');
 				target.classList.remove('show-flash');
 			break;
-
+			
 		default:
-			console.log('huh');
 			break;
 	}
 }

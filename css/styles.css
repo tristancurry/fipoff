@@ -411,6 +411,7 @@ div {
 
 .menu-page {
 	flex-grow: 1;
+	display: none;
 }
 
 .menu-selector {
@@ -421,6 +422,7 @@ div {
 	max-height: 200px;
 	min-height: 100px;
 	padding: 1%;
+	user-select: none;
 }
 
 .menu-option {
@@ -439,6 +441,7 @@ div {
 
 .menu-option-text {
 	font-size: 30px;
+	user-select: none;
 }
 
 /* modal things */

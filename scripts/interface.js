@@ -2,19 +2,29 @@
 
 //TODO:initialise button states
 
+let currentMenuPage = 0;
+
+let scenarioInfo = [0,0,0,0]; //system, activationNum, activationLoc, Faults
+
+let systemMenu = ['system00', 'system00c'];
+
+let faultMenu = [0, 0.05, 0.15, 1];
+
+const menuContainer = document.getElementsByClassName('menu-container')[0];
+menuContainer.getElementsByClassName('menu-page')[0].classList.toggle('show');
 //Add event listeners
 
 
 viewport.addEventListener('click', function(event) {
 	let t = event.target;
+		console.log(t);
 	if (t.classList.contains('closeBox')) {
 		// close the connected element and anything closeable within
-		// do this with a recursive function
-		// e.g. if the thing you're closing is a blockplan - look for any device cards and contained FIPs that are open and close them
-		// if the thing you're closing is a FIP then look for any open connected blockplans and close them
-		// if the thing you're closing is a device card then look for anything dependent on that, then close
 		 closeElements(t.parentNode.parentNode);
-		// event.stopPropagation();
+	}
+
+	if(t.classList.contains('menu-option') || t.classList.contains('menu-option-text')){
+		handleMenuInteraction(t);
 	}
 });
 
@@ -55,12 +65,41 @@ function closeElements(target) {
 				//target.classList.remove('show');
 				target.classList.remove('show-flash');
 			break;
-			
+
 		default:
 			break;
 	}
 }
 
+function handleMenuInteraction(target) {
+console.log(target);
+	// if the title screen start button is pressed,
+	// set the initial state of the menu screens
+	// e.g. current page - an index that lets the event handler know
+	// which information to store where, and which buttons to activate
+	if (target.classList.contains('title-button')) {
+		currentMenuPage = 1;
+
+	}
+
+	// if a selector is clicked on...
+	// 1.store the appropriate string and associated variable value
+	// 2.append the string the the appropriate span in the 'summary' page
+	// and anywhere else this info will be useful
+	// 3.trigger the disappearance of this page, and the appearance of the next
+	// unless we are on the summary page.
+	// 4.make the 'back' button in the footer do the correct thing
+	// 5.make the 'start scenario' button appear or disappear as necessary
+	if (target.classList.contains('menu-option') || target.classList.contains('menu-option-text')) {
+		if(currentMenuPage < 4) {
+				let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
+				let nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage + 1];
+				currentMenuPage++;
+				toggleDisplay(thisPage);
+				toggleDisplay(nextPage); // hopefully this will be done with a nice animation
+		}
+	}
+}
 
 function toggleDisplay(elm){
 	elm.classList.toggle('show');

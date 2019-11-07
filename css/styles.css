@@ -16,10 +16,12 @@
 html {
 	font-size: 14px;
 	font-family: Arial;
+	height: 100%;
 }
 
 body {
 	background-color: #000011;
+	height:100%;
 }
 
 button {
@@ -32,11 +34,11 @@ button {
 }
 
 .viewport {
-	position:absolute;
+	position:fixed;
 	//display: flex;
 	//flex-direction: column;
-	//width: 100%;
-	//height:100%;
+	width: 100%;
+	height:100%;
 	color: #FFDD00;
 }
 
@@ -385,12 +387,59 @@ div {
 }
 
 
-
-
 .update {
 	display:none;
 }
 
+.menu-container {
+	position: relative;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	color: white;
+}
+
+.menu-container h1 {
+	font-style: italic;
+	font-size: 50px;
+}
+.menu-container h2 {
+	font-style: italic;
+	font-size: 36px;
+}
+
+.menu-page {
+	flex-grow: 1;
+}
+
+.menu-selector {
+	margin: auto;
+	width: 75%;
+	display: flex;
+	flex-direction: row;
+	max-height: 200px;
+	min-height: 100px;
+	padding: 1%;
+}
+
+.menu-option {
+	margin: 3px;
+	//padding: 5px;
+	display:flex;
+	flex-grow: 1;
+	background-color: #8888ee;
+	color: white;
+	height: 100%;
+	max-width: 200px;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+.menu-option-text {
+	font-size: 30px;
+}
 
 /* modal things */
 

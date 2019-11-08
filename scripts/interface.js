@@ -6,12 +6,31 @@ let currentMenuPage = 0;
 
 let scenarioInfo = [0,0,0,0]; //system, activationNum, activationLoc, Faults
 
+let selections = []
+
 let systemMenu = ['system00', 'system00c'];
 
 let faultMenu = [0, 0.05, 0.15, 1];
 
 const menuContainer = document.getElementsByClassName('menu-container')[0];
-menuContainer.getElementsByClassName('menu-page')[0].classList.toggle('show');
+const menuPages = menuContainer.getElementsByClassName('menu-page');
+
+menuPages[0].classList.toggle('show');
+
+const summary = menuPages[menuPages.length - 1].getElementsByClassName('menu-summary')[0];
+const summaryLines = summary.getElementsByTagName('span');
+
+
+for (let i = 0, l = menuPages.length - 1; i < l; i++) {
+	let thisPage = menuPages[i];
+	let thisPageOptions = thisPage.getElementsByClassName('menu-option');
+	for(let j = 0, m = thisPageOptions.length; j < m; j++) {
+		let thisOption = thisPageOptions[j];
+		thisOption.setAttribute('data-index', j);
+	}
+}
+
+
 //Add event listeners
 
 
@@ -24,7 +43,7 @@ viewport.addEventListener('click', function(event) {
 	}
 
 	if(t.classList.contains('menu-option') || t.classList.contains('menu-option-text')){
-		handleMenuInteraction(t);
+		handleMenuInteraction(t, event);
 	}
 });
 
@@ -90,8 +109,17 @@ console.log(target);
 	// unless we are on the summary page.
 	// 4.make the 'back' button in the footer do the correct thing
 	// 5.make the 'start scenario' button appear or disappear as necessary
-	if (target.classList.contains('menu-option') || target.classList.contains('menu-option-text')) {
+	if(target.classList.contains('menu-option-text')) {
+		handleMenuInteraction(target.parentNode);
+
+	}
+
+	if (target.classList.contains('menu-option')) {
 		if(currentMenuPage < 4) {
+				let selection = target.getAttribute('data-index');
+				scenarioInfo[currentMenuPage] = selection;
+				selections[currentMenuPage] = target.getElementsByClassName('menu-option-text')[0].innerHTML;
+				summaryLines[currentMenuPage].innerHTML = selections[currentMenuPage];
 				let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
 				let nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage + 1];
 				currentMenuPage++;

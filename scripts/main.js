@@ -30,6 +30,7 @@ const subtypes = {
 //new devices will be assigned an image appropriate to their type from these arrays...
 
 const imageDir = 'images/';
+const systemDir = 'systems/';
 
 //consider doing these as a spritesheet (facilitate multiple pictures for each alarm type without having to specify heaps of urls (just pixel coords for each Normal/Active/ActiveStuck set
 const deviceImages = {
@@ -125,8 +126,6 @@ function addLeadingZero(str){
 //also produce a separate list of zones (administrative, as opposed to circuitry)
 
 
-
-
 // buildSystem(system);
 // buildZoneLists();
 // console.log(sysObjects);
@@ -159,6 +158,45 @@ function buildSystem (sys) {
 	if(sys.children){
 		createSystemObjects(sys.children[0]);
 	}
+}
+
+function triggerRandomAlarms(deviceList, _numAlarms){
+	let numAlarms = _numAlarms;
+	let list = deviceList;
+	numAlarms = fipoff_constrain(numAlarms, 0, list.length);
+	let chosenDevices = [];
+
+	while(chosenDevices.length < numAlarms){
+		let idx = Math.floor(Math.random()*list.length);
+		//could have used .includes(idx), but IE11...
+		if(chosenDevices.indexOf(idx) == -1){
+			chosenDevices.push(idx);
+		}
+	}
+	//this alarm activation needs to be bundled into a function, which also adds the activation date...
+
+	for(let i = 0; i < numAlarms; i++){
+		let d = list[chosenDevices[i]];
+		d.status = 'alarm';
+		d.status_internal = 'active';
+		let moment = new Date();
+		d.lastAlarmTime = getAlarmTime(moment.getTime() - 300000*i);
+		if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
+	}
+}
+
+function getAlarmTime(t) {
+	let alarmTime = 0;
+
+	if(t >= 0){
+		alarmTime = new Date(t);
+	} else {
+		alarmTime = new Date();
+	}
+
+	let alarmString = provideTimeString(alarmTime);
+	alarmTime = alarmTime.getTime(); //convert into milliseconds since reference date, for sorting later
+	return [alarmTime, alarmString];
 }
 
 function buildFips() {

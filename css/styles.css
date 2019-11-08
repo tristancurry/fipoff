@@ -392,7 +392,6 @@ div {
 }
 
 .menu-container {
-	position: relative;
 	height: 100%;
 	width: 100%;
 	display: flex;
@@ -401,22 +400,41 @@ div {
 }
 
 .menu-container h1 {
+	padding: 10px;
 	font-style: italic;
 	font-size: 50px;
 }
 .menu-container h2 {
+	padding: 10px;
 	font-style: italic;
 	font-size: 36px;
 }
 
 .menu-page {
+	position: relative;
+	padding: 10px;
 	flex-grow: 1;
 	display: none;
+	animation-name: animateR;
+	animation-duration: 0.4s;
+	-webkit-animation-name: animateR;
+	-webkit-animation-duration: 0.4s;
+}
+
+ @keyframes animateR {
+from {right: -100%;}
+to {right: 0;}
+}
+
+@-webkit-keyframes animateR {
+from {top: -300px;}
+to {top: 0;}
 }
 
 .menu-selector {
 	margin: auto;
 	width: 75%;
+	height: 75%;
 	display: flex;
 	flex-direction: row;
 	max-height: 200px;
@@ -442,6 +460,21 @@ div {
 .menu-option-text {
 	font-size: 30px;
 	user-select: none;
+}
+
+.menu-summary p {
+	max-width: 50%;
+	margin: auto;
+	padding-left: 20px;
+	padding-top: 10px;
+	font-style: italic;
+	font-size: 36px;
+	text-align: justify;
+}
+
+.menu-summary span {
+	float: right;
+	color: gray;
 }
 
 /* modal things */

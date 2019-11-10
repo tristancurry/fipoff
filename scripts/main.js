@@ -462,6 +462,7 @@ function buildFips() {
 			if(child.category == 'circuit'){
 				child.status = 'normal';
 				child.status_internal = 'normal';
+				child.lastAlarmTime = getAlarmTime(0);
 				//do some deeper digging. All devices should be on a circuit, not directly 'plugged into' the fip.
 				for(let k = 0, n = child.children.length; k < n; k++){
 					let device = child.children[k];
@@ -567,6 +568,7 @@ function buildFips() {
 		} else {
 			f.conventional = 'mixed';
 		}
+
 
 
 
@@ -849,6 +851,7 @@ function buildFips() {
 		for(let i = 0, l = list.length; i<l; i++){
 			sortList[i] = list[i];
 		}
+
 		sortList.sort(
 			function(a,b) {
 					return a.lastAlarmTime[0] - b.lastAlarmTime[0];
@@ -866,7 +869,6 @@ function buildFips() {
 		if(status == 'alarm'){
 			list = this.sortedDeviceList;
 		}
-		console.log(list);
 		for(let i = this.currentIndex, l = list.length; i < l + 1; i++){
 			if(i < l){
 

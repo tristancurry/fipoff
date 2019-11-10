@@ -199,8 +199,10 @@ function handleMenuInteraction(target) {
 					// TODO: make the title of the blockplan depend on a variable stored with the FIP, not the entire system
 					for (let l = fipList.length, i = l - 1; i >= 0; i--) {
 						let thisFip = fipList[i];
+
 						 thisFip.assignStatusIds();
 						 thisFip.displayStatus();
+	
 
 						for (let i = 0, l = thisFip.deviceList.length; i < l; i++){
 							thisFip.updateDeviceImagePath(thisFip.deviceList[i]);

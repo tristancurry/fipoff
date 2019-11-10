@@ -426,24 +426,36 @@ div {
 .menu-selector {
 	margin: auto;
 	width: 75%;
-	height: 75%;
+	height: 100%;
 	display: flex;
-	flex-direction: row;
-	max-height: 200px;
+	flex-direction: column;
+	max-height: 400px;
 	min-height: 100px;
 	padding: 1%;
 	user-select: none;
+	justify-content: center;
 }
 
-.menu-option {
+.menu-option-container {
 	margin: 3px;
-	//padding: 5px;
 	display:flex;
 	flex-grow: 1;
+	//min-height: 75px;
+	max-height: 150px;
+	color: white;
+}
+
+
+.menu-option {
+	//margin: 3px;
+	display:flex;
+	flex-grow: 1;
+	height: 100%;
+
+	max-width: 200px;
 	background-color: #8888ee;
 	color: white;
-	height: 100%;
-	max-width: 200px;
+
 	align-items: center;
 	justify-content: center;
 	text-align: center;
@@ -454,8 +466,15 @@ div {
 	user-select: none;
 }
 
-.menu-option-description {
-
+.menu-option-desc {
+	flex-grow: 1;
+	height: 100%;
+	max-width:60%;
+	padding: 5px;
+	border: 1px dashed white;
+	font-size: 18px;
+	text-align: left;
+	user-select: none;
 }
 
 .menu-selected, .menu-option:active{
@@ -479,25 +498,35 @@ div {
 }
 
 .menu-footer {
+	padding: 3px;
 	margin: auto;
 	max-width: 75%;
 	min-width: 50%;
 	display: flex;
+	flex-grow: 1;
 }
 
 .menu-back, .menu-start {
-	flex-grow: 1;
-	padding: 3px;
 	margin: 3px;
-	min-width: 50px;
-	background-color: #8888ee;
-	display: none;
-	font-size: 24px;
+	width: 50%;
+	font-size: 30px;
+	text-align: center;
+	user-select: none;
 }
 
+.menu-back {
+	background-color: #8888ee;
+}
 .menu-start {
 	background-color: #22AA22;
 }
+
+
+.menu-back[disabled], .menu-start[disabled] {
+	background-color: #666666;
+	color: #BBBBBB;
+}
+
 
 /* modal things */
 

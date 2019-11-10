@@ -93,7 +93,6 @@ function closeElements(target) {
 }
 
 function handleMenuInteraction(target) {
-console.log(target);
 	// if the title screen start button is pressed,
 	// set the initial state of the menu screens
 	// e.g. current page - an index that lets the event handler know
@@ -124,7 +123,7 @@ console.log(target);
 				let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
 				let nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage + 1];
 				currentMenuPage++;
-				let theseOptions = target.parentNode.getElementsByClassName('menu-option');
+				let theseOptions = target.parentNode.parentNode.getElementsByClassName('menu-option');
 				console.log(theseOptions);
 				for (let i = 0, l = theseOptions.length; i < l; i++) {
 					theseOptions[i].classList.remove('menu-selected');
@@ -144,9 +143,7 @@ console.log(target);
 				 }
 
 				 if(currentMenuPage == menuPages.length - 1) {
-					 menuContainer.getElementsByClassName('menu-start')[0].classList.add('show');
-				 } else {
-					 menuContainer.getElementsByClassName('menu-start')[0].classList.remove('show');
+					 menuContainer.getElementsByClassName('menu-start')[0].removeAttribute('disabled');
 				 }
 
 		}
@@ -161,6 +158,7 @@ console.log(target);
 			toggleDisplay(nextPage);
 			// actually,this button should never be disabled...
 			if(currentMenuPage == 0) {target.classList.remove('show');}
+			menuContainer.getElementsByClassName('menu-start')[0].setAttribute('disabled','disabled');
 		}
 	}
 

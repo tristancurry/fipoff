@@ -16,39 +16,42 @@
 
 	<div onclick='void(0);'>
 		<div class='viewport'>
+			<div class='title-screen'>
+				Welcome to fipoff
+			</div>
 			<div class='menu-container'>
 				<div class='menu-header'><h1>Create Scenario</h1></div>
 				<div class='menu-content'>
 					<div class='menu-page'>
 						<h2>System</h2>
 						<div class='menu-selector'>
-							<div class='menu-option'><div class='menu-option-text'>System 00</div></div>
-							<div class='menu-option'><div class='menu-option-text'>System 00c</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>System 00</div></div><div class='menu-option-desc'>Small facility with about fifty addressable devices across four zones.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>System 00c</div></div><div class='menu-option-desc'>Small facility with a conventional system containing about fifty devices across four zones.</div></div>
 						</div>
 					</div>
 					<div class='menu-page'>
 						<h2>Alarm Activations</h2>
 						<div class='menu-selector'>
-							<div class='menu-option'><div class='menu-option-text'>One</div></div>
-							<div class='menu-option'><div class='menu-option-text'>A couple</div></div>
-							<div class='menu-option'><div class='menu-option-text'>A few</div></div>
-							<div class='menu-option'><div class='menu-option-text'>Several</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>One</div></div><div class='menu-option-desc'>Exactly one device will activate.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>A couple</div></div><div class='menu-option-desc'>Exactly two devices will activate.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>A few</div></div><div class='menu-option-desc'>Somewhere between three and five devices will activate.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>Several</div></div><div class='menu-option-desc'>Up to ten devices will activate.</div></div>
 						</div>
 					</div>
 					<div class='menu-page'>
 					<h2>Alarm Locations</h2>
 					<div class='menu-selector'>
-						<div class='menu-option'><div class='menu-option-text'>Random</div></div>
-						<div class='menu-option'><div class='menu-option-text'>Clustered</div></div>
+						<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>Random</div></div><div class='menu-option-desc'>Activations will happen at random locations.</div></div>
+						<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>Clustered</div></div><div class='menu-option-desc'>Activations will be grouped together, where possible.</div></div>
 					</div>
 				</div>
 					<div class='menu-page'>
 						<h2>Faults</h2>
 						<div class='menu-selector'>
-							<div class='menu-option'><div class='menu-option-text'>None</div></div>
-							<div class='menu-option'><div class='menu-option-text'>Possible</div></div>
-							<div class='menu-option'><div class='menu-option-text'>Likely</div></div>
-							<div class='menu-option'><div class='menu-option-text'>At least one</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>None</div></div><div class='menu-option-desc'>All devices will behave themselves.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>Possible</div></div><div class='menu-option-desc'>There is a small chance that a device will misbehave.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>Likely</div></div><div class='menu-option-desc'>You may find some surprises waiting when you attempt a reset.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>At least one</div></div><div class='menu-option-desc'>At least one device will be troublesome.</div></div>
 						</div>
 					</div>
 					<div class='menu-page'>
@@ -61,11 +64,12 @@
 							</div>
 					</div>
 				</div>
-				<div class='menu-footer'>
-					<span class='menu-back'>Back</span>
-					<span class='menu-start'>Start Scenario</start>
-				</div>
 
+				<div class='menu-footer'>
+						<span class='menu-back'>Back</span>
+						<span class='menu-start' disabled>Start Scenario</span>
+				</div>
+</div>
 
 
 			<div class='update modal'>

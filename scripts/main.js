@@ -32,6 +32,7 @@ const subtypes = {
 const imageDir = 'images/';
 const systemDir = 'systems/';
 
+
 //consider doing these as a spritesheet (facilitate multiple pictures for each alarm type without having to specify heaps of urls (just pixel coords for each Normal/Active/ActiveStuck set
 const deviceImages = {
 	smoke: [['pe_01_N.png','pe_01_A.png']],

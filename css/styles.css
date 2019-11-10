@@ -454,6 +454,15 @@ div {
 	user-select: none;
 }
 
+.menu-option-description {
+
+}
+
+.menu-selected, .menu-option:active{
+	background-color: #FFDDEE;
+	color: black;
+}
+
 .menu-summary p {
 	max-width: 50%;
 	margin: auto;
@@ -469,13 +478,25 @@ div {
 	color: gray;
 }
 
-.menu-back {
+.menu-footer {
+	margin: auto;
+	max-width: 75%;
+	min-width: 50%;
+	display: flex;
+}
+
+.menu-back, .menu-start {
+	flex-grow: 1;
+	padding: 3px;
+	margin: 3px;
+	min-width: 50px;
 	background-color: #8888ee;
 	display: none;
+	font-size: 24px;
 }
 
 .menu-start {
-	display: none;
+	background-color: #22AA22;
 }
 
 /* modal things */
@@ -602,13 +623,13 @@ div {
 }
 
 @keyframes animateR {
-	from {right: -100%;}
-	to {right: 0;}
+	from {right: -100%; opacity: 0}
+	to {right: 0; opacity: 1}
 }
 
 @-webkit-keyframes animateR {
-	from {top: -100%;}
-	to {top: 0;}
+	from {top: -100%; opacity: 0}
+	to {top: 0; opacity: 1}
 }
 
 

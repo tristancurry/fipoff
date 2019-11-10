@@ -124,6 +124,12 @@ console.log(target);
 				let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
 				let nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage + 1];
 				currentMenuPage++;
+				let theseOptions = target.parentNode.getElementsByClassName('menu-option');
+				console.log(theseOptions);
+				for (let i = 0, l = theseOptions.length; i < l; i++) {
+					theseOptions[i].classList.remove('menu-selected');
+				}
+				target.classList.add('menu-selected');
 
 
 				toggleDisplay(thisPage);
@@ -137,19 +143,36 @@ console.log(target);
 					 menuContainer.getElementsByClassName('menu-back')[0].classList.add('show');
 				 }
 
+				 if(currentMenuPage == menuPages.length - 1) {
+					 menuContainer.getElementsByClassName('menu-start')[0].classList.add('show');
+				 } else {
+					 menuContainer.getElementsByClassName('menu-start')[0].classList.remove('show');
+				 }
+
 		}
 	}
 
-if(target.classList.contains('menu-back')) {
-	if (currentMenuPage > 0) {
-		let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
-		let nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage - 1];
-		currentMenuPage--;
-		toggleDisplay(thisPage);
-		toggleDisplay(nextPage);
-		if(currentMenuPage == 0) {target.classList.remove('show');}
+	if(target.classList.contains('menu-back')) {
+		if (currentMenuPage > 0) {
+			let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
+			let nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage - 1];
+			currentMenuPage--;
+			toggleDisplay(thisPage);
+			toggleDisplay(nextPage);
+			// actually,this button should never be disabled...
+			if(currentMenuPage == 0) {target.classList.remove('show');}
+		}
 	}
-}
+
+	if(target.classList.contains('menu-start')) {
+		// call the appropriate system builder function with
+		// parameters supplied by the menu selections made by the
+		// user.
+
+		// Hide the menu system.
+		// Reset the menu system to the start page.
+		// Reset the selection styles in the menu system (ready for next time)
+	}
 
 }
 

@@ -1,6 +1,5 @@
 //Interface.js
-
-//TODO:initialise button states
+const viewport = document.getElementsByClassName('viewport')[0];
 
 let currentMenuPage = 0;
 
@@ -9,7 +8,6 @@ let scenarioInfo = [0,0,0,0]; //system, activationNum, activationLoc, Faults
 let selections = []
 
 let systemMenu = ['system00', 'system00c'];
-
 let faultMenu = [0, 0.05, 0.15, 1];
 
 const menuContainer = document.getElementsByClassName('menu-container')[0];
@@ -37,13 +35,12 @@ for (let i = 0, l = menuPages.length - 1; i < l; i++) {
 
 viewport.addEventListener('click', function(event) {
 	let t = event.target;
-		console.log(t);
 	if (t.classList.contains('closeBox')) {
 		// close the connected element and anything closeable within
 		 closeElements(t.parentNode.parentNode);
 	}
 
-	if(t.classList.contains('menu-option') || t.classList.contains('menu-option-text') || t.classList.contains('menu-back')) {
+	if(t.classList.contains('menu-option') || t.classList.contains('menu-option-text') || t.classList.contains('menu-back')||t.classList.contains('menu-start')) {
 		handleMenuInteraction(t, event);
 	}
 
@@ -124,7 +121,6 @@ function handleMenuInteraction(target) {
 				let nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage + 1];
 				currentMenuPage++;
 				let theseOptions = target.parentNode.parentNode.getElementsByClassName('menu-option');
-				console.log(theseOptions);
 				for (let i = 0, l = theseOptions.length; i < l; i++) {
 					theseOptions[i].classList.remove('menu-selected');
 				}
@@ -162,20 +158,90 @@ function handleMenuInteraction(target) {
 		}
 	}
 
-	if(target.classList.contains('menu-start')) {
-		// call the appropriate system builder function with
-		// parameters supplied by the menu selections made by the
-		// user.
+	if (target.classList.contains('menu-start')) {
+			if (!target.disabled) {
+			// call the appropriate system builder function with
+			// parameters supplied by the menu selections made by the
+			// user.
 
-		// Hide the menu system.
-		// Reset the menu system to the start page.
-		// Reset the selection styles in the menu system (ready for next time)
+
+			let thisSystemPath = systemDir + systemPaths[systemMenu[parseInt(scenarioInfo[0])]];
+			loadScript(thisSystemPath).then(
+				function(){
+					buildSystem(system);
+					buildZoneLists();
+					buildFips();
+					menuContainer.style.display = 'none';
+
+					let devList = sysObjectsByCategory['det'];
+					console.log(scenarioInfo[1]);
+					let alarmChoice = parseInt(scenarioInfo[1]);
+					let numAlarms = 0;
+					switch(alarmChoice){
+						case 0:
+							numAlarms = 1;
+							break;
+						case 1:
+							numAlarms = 2;
+							break;
+						case 2:
+							numAlarms = Math.round(Math.floor(3*Math.random()) + 2.9);
+							break;
+						case 3:
+							numAlarms = Math.round(Math.floor(8*Math.random()) + 2.9);
+							break;
+					}
+					triggerRandomAlarms(devList, numAlarms);
+
+
+					let fipList = sysObjectsByCategory['fip'];
+					// needed to loop backwards so that the alarm counts were correct for FIPs closer to the main FirePanel
+					// TODO: make the title of the blockplan depend on a variable stored with the FIP, not the entire system
+					for (let l = fipList.length, i = l - 1; i >= 0; i--) {
+						let thisFip = fipList[i];
+						 thisFip.assignStatusIds();
+						 thisFip.displayStatus();
+
+						for (let i = 0, l = thisFip.deviceList.length; i < l; i++){
+							thisFip.updateDeviceImagePath(thisFip.deviceList[i]);
+						}
+						//keep the clock running. When we have multiple FIPs, do them all at once
+						//TODO: make it so that there is only one setInterval, with one function that updates all FIP displays.
+						window.setInterval(function(){thisFip.displayStatus();}, 500);
+					}
+
+			}).catch(function(){console.log('whoops')});
+			// Hide the menu system.
+			// Reset the menu system to the start page.
+			// Reset the selection styles in the menu system (ready for next time)
+
+		}
 	}
-
 }
 
 
 
 function toggleDisplay(elm){
 	elm.classList.toggle('show');
+}
+
+function loadScript(url) {
+	return new Promise (function(resolve, reject) {
+		var elm = document.createElement('script');
+
+		elm.onload = function () {
+			resolve(url);
+		}
+
+		elm.onerror = function () {
+			reject(url);
+		}
+
+		elm.async = true;
+		elm.setAttribute('id', 'activeSystem');
+		elm.setAttribute('type', 'text/javascript');
+		elm.setAttribute('src', url);
+		document.getElementsByTagName('body')[0].appendChild(elm);
+
+	});
 }

@@ -6,7 +6,8 @@
 
 //GLOBALS
 
-const viewport = document.getElementsByClassName('viewport')[0];
+
+
 
 const types = {
 	smoke: 'Smoke',
@@ -31,6 +32,11 @@ const subtypes = {
 
 const imageDir = 'images/';
 const systemDir = 'systems/';
+
+const systemPaths = {
+	system00: 'system00/system00.js',
+	system00c: 'system00/system00c.js'
+}
 
 
 //consider doing these as a spritesheet (facilitate multiple pictures for each alarm type without having to specify heaps of urls (just pixel coords for each Normal/Active/ActiveStuck set

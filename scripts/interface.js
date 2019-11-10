@@ -15,6 +15,7 @@ let faultMenu = [0, 0.05, 0.15, 1];
 const menuContainer = document.getElementsByClassName('menu-container')[0];
 const menuPages = menuContainer.getElementsByClassName('menu-page');
 
+menuPages[0].classList.add('returnRight');
 menuPages[0].classList.toggle('show');
 
 const summary = menuPages[menuPages.length - 1].getElementsByClassName('menu-summary')[0];
@@ -42,9 +43,10 @@ viewport.addEventListener('click', function(event) {
 		 closeElements(t.parentNode.parentNode);
 	}
 
-	if(t.classList.contains('menu-option') || t.classList.contains('menu-option-text')){
+	if(t.classList.contains('menu-option') || t.classList.contains('menu-option-text') || t.classList.contains('menu-back')) {
 		handleMenuInteraction(t, event);
 	}
+
 });
 
 function closeElements(target) {
@@ -98,7 +100,6 @@ console.log(target);
 	// which information to store where, and which buttons to activate
 	if (target.classList.contains('title-button')) {
 		currentMenuPage = 1;
-
 	}
 
 	// if a selector is clicked on...
@@ -123,11 +124,36 @@ console.log(target);
 				let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
 				let nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage + 1];
 				currentMenuPage++;
+
+
 				toggleDisplay(thisPage);
-				toggleDisplay(nextPage); // hopefully this will be done with a nice animation
+				nextPage.classList.remove('returnLeft');
+				nextPage.classList.add('returnRight');
+				toggleDisplay(nextPage);
+				thisPage.classList.remove('returnRight');
+				thisPage.classList.add('returnLeft');
+				 // hopefully this will be done with a nice animation
+				 if(currentMenuPage > 0) {
+					 menuContainer.getElementsByClassName('menu-back')[0].classList.add('show');
+				 }
+
 		}
 	}
+
+if(target.classList.contains('menu-back')) {
+	if (currentMenuPage > 0) {
+		let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
+		let nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage - 1];
+		currentMenuPage--;
+		toggleDisplay(thisPage);
+		toggleDisplay(nextPage);
+		if(currentMenuPage == 0) {target.classList.remove('show');}
+	}
 }
+
+}
+
+
 
 function toggleDisplay(elm){
 	elm.classList.toggle('show');

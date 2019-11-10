@@ -410,25 +410,17 @@ div {
 	font-size: 36px;
 }
 
+.menu-content {
+	display: flex;
+	flex-direction: row;
+	height:75%;
+}
+
 .menu-page {
 	position: relative;
 	padding: 10px;
 	flex-grow: 1;
 	display: none;
-	animation-name: animateR;
-	animation-duration: 0.4s;
-	-webkit-animation-name: animateR;
-	-webkit-animation-duration: 0.4s;
-}
-
- @keyframes animateR {
-from {right: -100%;}
-to {right: 0;}
-}
-
-@-webkit-keyframes animateR {
-from {top: -300px;}
-to {top: 0;}
 }
 
 .menu-selector {
@@ -475,6 +467,15 @@ to {top: 0;}
 .menu-summary span {
 	float: right;
 	color: gray;
+}
+
+.menu-back {
+	background-color: #8888ee;
+	display: none;
+}
+
+.menu-start {
+	display: none;
 }
 
 /* modal things */
@@ -591,6 +592,47 @@ to {top: 0;}
 
 
 }
+
+
+.returnRight {
+	animation-name: animateR;
+	animation-duration: 0.4s;
+	-webkit-animation-name: animateR;
+	-webkit-animation-duration: 0.4s;
+}
+
+@keyframes animateR {
+	from {right: -100%;}
+	to {right: 0;}
+}
+
+@-webkit-keyframes animateR {
+	from {top: -100%;}
+	to {top: 0;}
+}
+
+
+
+.returnLeft {
+	position: relative;
+	//display: none;
+	animation-name: animateL;
+	animation-duration: 0.4s;
+	animation-fill-mode: forwards;
+	-webkit-animation-name: animateL;
+	-webkit-animation-duration: 0.4s;
+}
+
+ @keyframes animateL {
+from {left: -100%;}
+to {left: 0;}
+}
+
+@-webkit-keyframes animateL {
+from {left: -100%;}
+to {left: 0;}
+}
+
 
 /*Mobile-portrait style */
 @media only screen and (max-width: 700px),(orientation: portrait){

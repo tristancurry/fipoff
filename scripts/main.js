@@ -124,39 +124,7 @@ function addLeadingZero(str){
 
 
 //System-specific stuff
-
-//build a system from the jsonny madness
-//create objects for each entry
-//add these objects to a global object list
-//add objects to lists by type
-//sort out parents and children of these objects
-//also produce a separate list of zones (administrative, as opposed to circuitry)
-
-
-// buildSystem(system);
-// buildZoneLists();
-// console.log(sysObjects);
-//
-// console.log(zones);
-// buildFips();
-// console.log(sysObjectsByCategory);
-//
-// let fipList = sysObjectsByCategory['fip'];
-// // needed to loop backwards so that the alarm counts were correct for FIPs closer to the main FirePanel
-// // TODO: make the title of the blockplan depend on a variable stored with the FIP, not the entire system
-// for (let l = fipList.length, i = l - 1; i >= 0; i--) {
-// 	let thisFip = fipList[i];
-// 		thisFip.triggerRandomAlarms(3);
-// 	 thisFip.assignStatusIds();
-// 	 thisFip.displayStatus();
-//
-// 	for (let i = 0, l = thisFip.deviceList.length; i < l; i++){
-// 		thisFip.updateDeviceImagePath(thisFip.deviceList[i]);
-// 	}
-// 	//keep the clock running. When we have multiple FIPs, do them all at once
-// 	//TODO: make it so that there is only one setInterval, with one function that updates all FIP displays.
-// 	window.setInterval(function(){thisFip.displayStatus();}, 500);
-// }
+const alarmRecencyThreshold = 86400000; // number of milliseconds before an alarm is thought to be 'old news' while alarm condition is active.
 
 
 function buildSystem (sys) {
@@ -723,7 +691,7 @@ function buildFips() {
 					this.stuck = true;
 					this.mainStatus = false;
 				} else if(this.ackedCount > 0){
-					this.status_internal = 'alarm';
+					this.status_internal = 'activated';
 					this.stuck = true;
 					this.mainStatus = false;
 				} else {
@@ -858,6 +826,24 @@ function buildFips() {
 			}
 		);
 
+		// grab any chunk of devices with 'recent' alarm times (e.g. last day)
+		// and put this at the start of the list...
+		// work backwards from the end of the sorted list, moving elements from the end to the beginning
+		// until the lastAlarmTime starts getting too old.
+
+		let recentAlarms = [];
+		for (let l = sortList.length, i = l - 1; i >= 0; i--) {
+			let d = new Date();
+			if (d.getTime() - sortList[i].lastAlarmTime[0] < alarmRecencyThreshold) {
+				recentAlarms.push(sortList[i]);
+			}
+		}
+
+		for (let i = 0, l = recentAlarms.length; i < l; i++) {
+			sortList.pop();
+			sortList.unshift(recentAlarms[i]);
+		}
+
 		return sortList;
 
 
@@ -875,8 +861,8 @@ function buildFips() {
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
 					let device = list[i];
 					//display this alarm
-					this.displayAlarm(device);
 					this.currentIndex = i;
+					this.displayAlarm(device);
 					break;
 				}
 			} else {
@@ -919,8 +905,8 @@ function buildFips() {
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
 					let device = list[i];
 					//display this device
-					this.displayAlarm(device);
 					this.currentIndex = i;
+					this.displayAlarm(device);
 					break;
 				}
 			} else {
@@ -1068,8 +1054,10 @@ function buildFips() {
 	f.handleAcknowledged = function(){
 		if(!this.mainStatus){
 			let list = this.addressableDeviceList;
-			if(this.status == 'alarm'){list = this.sortedDeviceList};
+			if(this.status_internal == 'activated'){list = this.sortedDeviceList; console.log('here');}
 			let device = list[this.currentIndex]; //grab the currently viewed device
+			console.log(list);
+			console.log(device);
 			if(this.confirmState == 'none'){
 				//if the device is alarmed, and not already acknowledged, then do some stuff that moves only an active alarm to the acknowledged list
 				if(device.status == 'alarm'){
@@ -1099,6 +1087,7 @@ function buildFips() {
 					case 'isol':
 						//isolate the device
 						this.isolateDevice(device);
+						break;
 				}
 				//return confirmState to 'none'
 				this.confirmState = 'none';
@@ -1119,7 +1108,7 @@ function buildFips() {
 	};
 
 	f.handleIsolate = function(){
-		if(this.confirmState == 'none'){
+		if(this.confirmState == 'none' && !this.mainStatus){
 			//put system in state where it's waiting for the user to confirm the isolation.
 			this.confirmState = 'isol';
 		} else if(this.confirmState == 'single' || this.confirmState == 'multi' || this.confirmState == 'isol'){
@@ -1155,7 +1144,7 @@ function buildFips() {
 	};
 
 	f.handleReset = function(){
-		if(this.confirmState == 'none'){
+		if(this.confirmState == 'none' && !this.mainStatus){
 
 			//if there are acknowledged alarms, attempt to reset these to normal
 			if(this.ackedCount > 0){

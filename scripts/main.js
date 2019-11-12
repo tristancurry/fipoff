@@ -39,13 +39,7 @@ const systemPaths = {
 }
 
 
-//consider doing these as a spritesheet (facilitate multiple pictures for each alarm type without having to specify heaps of urls (just pixel coords for each Normal/Active/ActiveStuck set
-const deviceImages = {
-	smoke: [['pe_01_N.png','pe_01_A.png']],
-	thermal: [['th_01_N.png','th_01_A.png']],
-	mcp: [['mcp_01_N.png', 'mcp_01_A.png','mcp_01_AS.png']],
-	concealed: [['conc_01_N.png','conc_01_A.png']]
-};
+
 
 const deviceStatusStrings = {
 	active: 'Activated',
@@ -172,7 +166,6 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered) {
 		}
 		distances.sort(function(a, b){return a[1]-b[1]});
 		fipoff_constrain(numAlarms, 0, distances.length);
-		console.log(distances);
 		for (let i = 1; i < numAlarms; i++) {
 			chosenDevices.push(distances[i][0]);
 		}
@@ -274,8 +267,8 @@ function buildFips() {
 		for(let i = 0, l = blockplan_pages.length; i < l; i++){
 			let temp_page = document.createElement('div');
 			temp_page.className = 'blockplan-page';
-			let thisPageBg = new Image().src = 'url(' + f.blockplan_details['pages'][i] + ')';
-			temp_page.style.backgroundImage = thisPageBg;
+			let thisPageBg = new Image().src = f.blockplan_details['pages'][i];
+			temp_page.style.backgroundImage = 'url(' + thisPageBg + ')';
 			if(i == 0){temp_page.classList.add('show');}
 			f.blockplan.getElementsByClassName('blockplan-content')[0].appendChild(temp_page);
 		}
@@ -507,10 +500,6 @@ function buildFips() {
 					let page = f.blockplan.getElementsByClassName('blockplan-page')[device.page - 1];
 					page.appendChild(temp);
 
-
-					device.imageArray = [];
-					device.imagePath = '';
-
 					// assign random device image from available images of appropriate type...
 					device.imageVersion = Math.floor(deviceImageVersions[device.type]*Math.random());
 					if (device.imageVersion == deviceImageVersions[device.type]) {
@@ -519,16 +508,11 @@ function buildFips() {
 
 					if (!device.concealed) {
 					device.imageCoords = {x: deviceImageIndex[device.type], y: device.imageVersion};
-				} else {
-					device.imageCoords = {x: deviceImageIndex['concealed'], y: device.imageVersion};
-				}
-					if(device.concealed){
-						device.imageArray = deviceImages['concealed'][0];
 					} else {
-						if (device.category != 'fip') {
-						device.imageArray = deviceImages[device.type][0];
+						device.imageCoords = {x: deviceImageIndex['concealed'], y: device.imageVersion};
 					}
-					}
+
+
 
 					f.deviceList.push(device);
 				}
@@ -673,8 +657,6 @@ function buildFips() {
 						let thisChild = device.children[j];
 						if (thisChild.status_internal == 'active'){
 							let d = new Date();
-							console.log(device.lastAlarmTime);
-							console.log(thisChild.lastAlarmTime);
 							if (device.lastAlarmTime[0] < d.getTime() - alarmRecencyThreshold) {
 								device.lastAlarmTime = thisChild.lastAlarmTime;
 							} else if (device.lastAlarmTime[0] > thisChild.lastAlarmTime[0]) {
@@ -1101,10 +1083,8 @@ function buildFips() {
 	f.handleAcknowledged = function(){
 		if(!this.mainStatus){
 			let list = this.addressableDeviceList;
-			if(this.status_internal == 'active'){list = this.sortedDeviceList; console.log('here');}
+			if(this.status_internal == 'active'){list = this.sortedDeviceList;}
 			let device = list[this.currentIndex]; //grab the currently viewed device
-			console.log(list);
-			console.log(device);
 			if(this.confirmState == 'none'){
 				//if the device is alarmed, and not already acknowledged, then do some stuff that moves only an active alarm to the acknowledged list
 				if(device.status == 'alarm'){
@@ -1242,17 +1222,7 @@ function buildFips() {
 
 		f.blockplan_card_elements['image'].style.backgroundPosition = -1*coords[0] + 'px ' + -1*coords[1] + 'px';
 
-		// if(device.status_internal == 'active'){
-		// 	if(device.type == 'mcp' && device.stuck && device.imageArray.length == 3){
-		// 		device.imagePath = imageDir + device.imageArray[2];
-		// 	} else {
-		// 		device.imagePath = imageDir + device.imageArray[1];
-		// 	}
-		// } else {
-		// 	device.imagePath =  imageDir + device.imageArray[0];
-		// }
-		//
-		//f.blockplan_card_elements['image'].style.backgroundImage = 'url(' + device.imagePath + ')';
+
 	};
 
 	f.display = f.panel.getElementsByClassName('panel-display-content')[0];

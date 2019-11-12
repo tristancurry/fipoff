@@ -192,7 +192,7 @@ function handleMenuInteraction(target) {
 							numAlarms = Math.round(Math.floor(8*Math.random()) + 4.9);
 							break;
 					}
-					console.log(locationMenu[scenarioInfo[2]]);
+
 					triggerRandomAlarms(devList, numAlarms, locationMenu[scenarioInfo[2]]);
 
 

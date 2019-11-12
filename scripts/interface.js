@@ -211,7 +211,7 @@ function handleMenuInteraction(target) {
 						}
 						//keep the clock running. When we have multiple FIPs, do them all at once
 						//TODO: make it so that there is only one setInterval, with one function that updates all FIP displays.
-						window.setInterval(function(){thisFip.displayStatus();}, 500);
+						window.setInterval(function(){checkStuckList(); thisFip.update();}, 500);
 					}
 
 			}).catch(function(){console.log('whoops')});

@@ -8,6 +8,7 @@ let scenarioInfo = [0,0,0,0]; //system, activationNum, activationLoc, Faults
 let selections = []
 
 let systemMenu = ['system00', 'system00c'];
+let locationMenu = [false, true];
 let faultMenu = [0, 0.05, 0.15, 1];
 
 const menuContainer = document.getElementsByClassName('menu-container')[0];
@@ -174,7 +175,7 @@ function handleMenuInteraction(target) {
 					menuContainer.style.display = 'none';
 
 					let devList = sysObjectsByCategory['det'];
-					console.log(scenarioInfo[1]);
+
 					let alarmChoice = parseInt(scenarioInfo[1]);
 					let numAlarms = 0;
 					switch(alarmChoice){
@@ -188,10 +189,11 @@ function handleMenuInteraction(target) {
 							numAlarms = Math.round(Math.floor(3*Math.random()) + 2.9);
 							break;
 						case 3:
-							numAlarms = Math.round(Math.floor(8*Math.random()) + 2.9);
+							numAlarms = Math.round(Math.floor(8*Math.random()) + 4.9);
 							break;
 					}
-					triggerRandomAlarms(devList, numAlarms);
+					console.log(locationMenu[scenarioInfo[2]]);
+					triggerRandomAlarms(devList, numAlarms, locationMenu[scenarioInfo[2]]);
 
 
 					let fipList = sysObjectsByCategory['fip'];
@@ -202,7 +204,7 @@ function handleMenuInteraction(target) {
 
 						 thisFip.assignStatusIds();
 						 thisFip.displayStatus();
-	
+
 
 						for (let i = 0, l = thisFip.deviceList.length; i < l; i++){
 							thisFip.updateDeviceImagePath(thisFip.deviceList[i]);

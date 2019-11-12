@@ -135,27 +135,65 @@ function buildSystem (sys) {
 	}
 }
 
-function triggerRandomAlarms(deviceList, _numAlarms){
+function triggerRandomAlarms(deviceList, _numAlarms, clustered) {
 	let numAlarms = _numAlarms;
 	let list = deviceList;
 	numAlarms = fipoff_constrain(numAlarms, 0, list.length);
 	let chosenDevices = [];
 
-	while(chosenDevices.length < numAlarms){
-		let idx = Math.floor(Math.random()*list.length);
-		//could have used .includes(idx), but IE11...
-		if(chosenDevices.indexOf(idx) == -1){
-			chosenDevices.push(idx);
+	if (clustered) {
+		while (chosenDevices.length < 1) {
+			let idx = Math.floor(Math.random()*list.length);
+			if(list[idx].category != 'circuit') {
+				chosenDevices.push(idx);
+			}
+		}
+		// Sort the deviceList according to blockplan distance
+		// from the chosen device. This should also be restricted to the same blockplan page!
+		// 1. get all devices on same page as the chosen device
+		// 2. sort this list according to Pythagorean distance from chosen device
+		// 3. constrain numAlarms to the length of this list
+		// 4. push the first numAlarms of these devices to chosenDevices
+
+		let centralDevice = list[chosenDevices[0]];
+		let samePage = [];
+		let distances = [];
+		for (let i = 0, l = list.length; i < l; i++) {
+			if (list[i].page == centralDevice.page) {
+				// deliberately include the chosen device to allow for some list matching later...
+				samePage.push(list[i]);
+				let cdX = parseInt(centralDevice.pos.x.split('px')[0]);
+				let cdY = parseInt(centralDevice.pos.y.split('px')[0]);
+				let tdX = parseInt(list[i].pos.x.split('px')[0]);
+				let tdY = parseInt(list[i].pos.y.split('px')[0]);
+				let distance = Math.sqrt(Math.pow((tdX - cdX), 2) + Math.pow((tdY - cdY), 2));
+				distances.push([i, distance]);
+			}
+		}
+		distances.sort(function(a, b){return a[1]-b[1]});
+		fipoff_constrain(numAlarms, 0, distances.length);
+		console.log(distances);
+		for (let i = 1; i < numAlarms; i++) {
+			chosenDevices.push(distances[i][0]);
+		}
+
+	} else {
+		while (chosenDevices.length < numAlarms) {
+			let idx = Math.floor(Math.random()*list.length);
+			//could have used .includes(idx), but IE11...
+			if (chosenDevices.indexOf(idx) == -1 && list[idx].category != 'circuit') {
+				chosenDevices.push(idx);
+			}
 		}
 	}
-	//this alarm activation needs to be bundled into a function, which also adds the activation date...
+	//TODO: this alarm activation needs to be bundled into a function, which also adds the activation date...
 
 	for(let i = 0; i < numAlarms; i++){
 		let d = list[chosenDevices[i]];
 		d.status = 'alarm';
 		d.status_internal = 'active';
 		let moment = new Date();
-		d.lastAlarmTime = getAlarmTime(moment.getTime() - 300000*i);
+		d.lastAlarmTime = getAlarmTime(moment.getTime() - 420000 + 30000*i);
 		if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
 	}
 }
@@ -431,7 +469,6 @@ function buildFips() {
 				child.status = 'normal';
 				child.status_internal = 'normal';
 				child.lastAlarmTime = getAlarmTime(0);
-				console.log(child.lastAlarmTime);
 				//do some deeper digging. All devices should be on a circuit, not directly 'plugged into' the fip.
 				for(let k = 0, n = child.children.length; k < n; k++){
 					let device = child.children[k];

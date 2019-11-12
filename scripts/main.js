@@ -274,7 +274,8 @@ function buildFips() {
 		for(let i = 0, l = blockplan_pages.length; i < l; i++){
 			let temp_page = document.createElement('div');
 			temp_page.className = 'blockplan-page';
-			temp_page.style.backgroundImage = 'url(' + f.blockplan_details['pages'][i] + ')';
+			let thisPageBg = new Image().src = 'url(' + f.blockplan_details['pages'][i] + ')';
+			temp_page.style.backgroundImage = thisPageBg;
 			if(i == 0){temp_page.classList.add('show');}
 			f.blockplan.getElementsByClassName('blockplan-content')[0].appendChild(temp_page);
 		}

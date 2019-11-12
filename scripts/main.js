@@ -431,6 +431,7 @@ function buildFips() {
 				child.status = 'normal';
 				child.status_internal = 'normal';
 				child.lastAlarmTime = getAlarmTime(0);
+				console.log(child.lastAlarmTime);
 				//do some deeper digging. All devices should be on a circuit, not directly 'plugged into' the fip.
 				for(let k = 0, n = child.children.length; k < n; k++){
 					let device = child.children[k];
@@ -595,7 +596,7 @@ function buildFips() {
 
 
 			let list = this.addressableDeviceList;
-			this.sortedDeviceList = this.sortByAlarmTime(list);
+
 			//go through list of devices.
 			//if in alarm, assign an alarmID
 			//if in alarm, but acknowledged, assign an ackID
@@ -630,12 +631,19 @@ function buildFips() {
 				//check to see if the device is a circuit (non-addressable) and not already in alarm, acked or isolated, check to see if any of its children are alarmed
 				if(device.category == 'circuit' && device.children && device.status == 'normal'){
 					device.status_internal = 'normal';
-					for(let j = 0, m = device.children.length; j < m; j++){
-						if(device.children[j].status_internal == 'active'){
-							device.lastAlarmTime = f.getAlarmTime();
+					for (let j = 0, m = device.children.length; j < m; j++) {
+						let thisChild = device.children[j];
+						if (thisChild.status_internal == 'active'){
+							let d = new Date();
+							console.log(device.lastAlarmTime);
+							console.log(thisChild.lastAlarmTime);
+							if (device.lastAlarmTime[0] < d.getTime() - alarmRecencyThreshold) {
+								device.lastAlarmTime = thisChild.lastAlarmTime;
+							} else if (device.lastAlarmTime[0] > thisChild.lastAlarmTime[0]) {
+								device.lastAlarmTime = thisChild.lastAlarmTime;
+							}
 							device.status = 'alarm';
 							device.status_internal = 'active';
-							break;
 						}
 					}
 				}
@@ -650,6 +658,7 @@ function buildFips() {
 
 			}
 
+			this.sortedDeviceList = this.sortByAlarmTime(list);
 
 			for(let i = 0, l = f.sortedDeviceList.length; i < l; i++){
 					let device = f.sortedDeviceList[i];
@@ -687,11 +696,11 @@ function buildFips() {
 			//TODO: think about what to do if this input is isolated at the upstream FIP - will the applied status conflict with this in some way?
 
 				if(this.alarmCount > 0){
-					this.status_internal = 'activated';
+					this.status_internal = 'active';
 					this.stuck = true;
 					this.mainStatus = false;
 				} else if(this.ackedCount > 0){
-					this.status_internal = 'activated';
+					this.status_internal = 'active';
 					this.stuck = true;
 					this.mainStatus = false;
 				} else {
@@ -699,7 +708,7 @@ function buildFips() {
 					this.stuck = false;
 				}
 			if(this.status != 'isol'){
-				if (this.status_internal == 'activated'){
+				if (this.status_internal == 'active'){
 					if(this.status != 'alarm' && this.status != 'acked'){
 						this.status = 'alarm';
 						this.lastAlarmTime = this.getAlarmTime();
@@ -1054,7 +1063,7 @@ function buildFips() {
 	f.handleAcknowledged = function(){
 		if(!this.mainStatus){
 			let list = this.addressableDeviceList;
-			if(this.status_internal == 'activated'){list = this.sortedDeviceList; console.log('here');}
+			if(this.status_internal == 'active'){list = this.sortedDeviceList; console.log('here');}
 			let device = list[this.currentIndex]; //grab the currently viewed device
 			console.log(list);
 			console.log(device);

@@ -155,7 +155,7 @@ function handleMenuInteraction(target) {
 			toggleDisplay(nextPage);
 			// actually,this button should never be disabled...
 			if(currentMenuPage == 0) {target.classList.remove('show');}
-			menuContainer.getElementsByClassName('menu-start')[0].setAttribute('disabled','disabled');
+			//menuContainer.getElementsByClassName('menu-start')[0].setAttribute('disabled','disabled');
 		}
 	}
 

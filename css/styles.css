@@ -209,13 +209,13 @@ div {
 }
 
 .panel-controls {
-	height:100%;
+	display: flex;
 	font-size: 0px;
+	height: 100%;
 	white-space: nowrap;
 }
 
 .panel-controls button {
-	height:100%;
 	width: calc(100% * 1/7);
 	vertical-align:top;
 	border: 1px solid orange;
@@ -654,19 +654,18 @@ div {
 
 @keyframes animateR {
 	from {right: -100%; opacity: 0}
-	to {right: 0; opacity: 1}
+	to {right: 0%; opacity: 1}
 }
 
 @-webkit-keyframes animateR {
-	from {top: -100%; opacity: 0}
-	to {top: 0; opacity: 1}
+	from {right: -100%; opacity: 0}
+	to {right: 0%; opacity: 1}
 }
 
 
 
 .returnLeft {
 	position: relative;
-	//display: none;
 	animation-name: animateL;
 	animation-duration: 0.4s;
 	animation-fill-mode: forwards;
@@ -676,12 +675,12 @@ div {
 
  @keyframes animateL {
 from {left: -100%;}
-to {left: 0;}
+to {left: 0%;}
 }
 
 @-webkit-keyframes animateL {
 from {left: -100%;}
-to {left: 0;}
+to {left: 0%;}
 }
 
 

@@ -9,7 +9,7 @@ let selections = []
 
 let systemMenu = ['system00', 'system00c'];
 let locationMenu = [false, true];
-let faultMenu = [0, 0.05, 0.15, 1];
+let faultMenu = [0, 0.02, 0.15, 1];
 
 const menuContainer = document.getElementsByClassName('menu-container')[0];
 const menuPages = menuContainer.getElementsByClassName('menu-page');

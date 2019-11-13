@@ -81,6 +81,8 @@ let zones = {};
 // if 'enough' time has elapsed, the device is reactivated, triggering an alarm.
 // (Unless it's an MCP, in which case, it's immediately reactivated when stuck)
 let stuckList = [];
+const reactivateTime = 2000;
+const reactivateVariance = 15000;
 //General Utility Functions
 //modify a value if it exceeds limits
 function fipoff_constrain(n, min, max){
@@ -200,6 +202,7 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
 		let stuckRoll = Math.random();
 		if(stuckRoll < stuckProb || device.type == 'mcp'){
 			device.stuck = true;
+			device.reactivateTime = reactivateTime + Math.floor(reactivateVariance*Math.random());
 			stuckList.push(device);
 		}
 		let moment = new Date();
@@ -220,7 +223,7 @@ function checkStuckList () {
 	let moment = d.getTime();
 	for (let i = 0, l = stuckList.length; i < l; i++) {
 		if (stuckList[i].lastResetTime) {
-			if (moment - stuckList[i].lastResetTime > 10000 && stuckList[i].type != 'mcp') {
+			if (moment - stuckList[i].lastResetTime > stuckList[i].reactivateTime && stuckList[i].type != 'mcp') {
 				if(stuckList[i].status_internal == 'normal' && stuckList[i].status == 'normal') {
 					stuckList[i].status_internal = 'active';
 					stuckList[i].status = 'alarm';

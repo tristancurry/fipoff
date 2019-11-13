@@ -104,6 +104,9 @@ div {
 	display:flex;
 	flex-direction:column;
 	user-select:none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 }
 
 .panel-annunciators div {
@@ -233,6 +236,10 @@ div {
 
 .extBell, .warnSys, .blockplan-view {
 	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	cursor: pointer;
 	position:absolute;
 	right: -80px;
 	width: 50px;
@@ -370,7 +377,11 @@ div {
 	text-align: center;
 	background-color: black;
 	color: orange;
+	cursor: pointer;
 	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 }
 
 .interface-button[disabled] {
@@ -430,6 +441,9 @@ div {
 	min-height: 100px;
 	padding: 1%;
 	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 }
 
 .menu-option-container {
@@ -443,7 +457,6 @@ div {
 
 
 .menu-option {
-	//margin: 3px;
 	display:flex;
 	flex-grow: 1;
 	height: 100%;
@@ -459,8 +472,12 @@ div {
 }
 
 .menu-option-text {
+	flex-grow: 1;
 	font-size: 30px;
 	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 }
 
 .menu-option-desc {
@@ -472,6 +489,9 @@ div {
 	font-size: 18px;
 	text-align: left;
 	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 }
 
 .menu-selected, .menu-option:active{
@@ -510,6 +530,9 @@ div {
 	text-align: center;
 	color: white;
 	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 	cursor: pointer;
 }
 
@@ -648,16 +671,17 @@ div {
 	animation-duration: 0.4s;
 	-webkit-animation-name: animateR;
 	-webkit-animation-duration: 0.4s;
+	will-change: transform;
 }
 
 @keyframes animateR {
-	from {right: -100%; opacity: 0}
-	to {right: 0%; opacity: 1}
+	from {transform: translateX(200%);}
+	to {transform: translateX(0%);}
 }
 
 @-webkit-keyframes animateR {
-	from {right: -100%; opacity: 0}
-	to {right: 0%; opacity: 1}
+	from {transform: translateX(200%);}
+	to {transform: translateX(0%);}
 }
 
 
@@ -669,16 +693,17 @@ div {
 	animation-fill-mode: forwards;
 	-webkit-animation-name: animateL;
 	-webkit-animation-duration: 0.4s;
+	will-change: transform;
 }
 
  @keyframes animateL {
-from {left: -100%;}
-to {left: 0%;}
+	 from {transform: translateX(-100%); opacity: 0}
+ 	to {transform: translateX(0%); opacity: 1}
 }
 
 @-webkit-keyframes animateL {
-from {left: -100%;}
-to {left: 0%;}
+	from {transform: translateX(-100%); opacity: 0}
+ 	to {transform: translateX(0%); opacity: 1}
 }
 
 

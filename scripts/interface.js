@@ -193,7 +193,9 @@ function handleMenuInteraction(target) {
 							break;
 					}
 
-					triggerRandomAlarms(devList, numAlarms, locationMenu[scenarioInfo[2]]);
+					let stuckProb = faultMenu[parseInt(scenarioInfo[3])];
+
+					triggerRandomAlarms(devList, numAlarms, locationMenu[scenarioInfo[2]], stuckProb);
 
 
 					let fipList = sysObjectsByCategory['fip'];

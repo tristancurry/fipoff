@@ -134,11 +134,17 @@ function buildSystem (sys) {
 	}
 }
 
-function triggerRandomAlarms(deviceList, _numAlarms, clustered) {
-	let stuckProb = 0.2;
+function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
 	let numAlarms = _numAlarms;
 	let list = deviceList;
 	numAlarms = fipoff_constrain(numAlarms, 0, list.length);
+	let stuckProb = _stuckProb;
+	let stuckCertain = false;
+	if (stuckProb >= 1) {
+		stuckCertain = true;
+		stuckProb = faultMenu[1];
+	}
+
 	let chosenDevices = [];
 
 	if (clustered) {
@@ -185,22 +191,27 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered) {
 			}
 		}
 	}
-	//TODO: this alarm activation needs to be bundled into a function, which also adds the activation date...
 
+	//TODO: this alarm activation needs to be bundled into a function, which also adds the activation date...
 	for(let i = 0; i < numAlarms; i++){
-		let d = list[chosenDevices[i]];
-		d.status = 'alarm';
-		d.status_internal = 'active';
+		let device = list[chosenDevices[i]];
+		device.status = 'alarm';
+		device.status_internal = 'active';
 		let stuckRoll = Math.random();
-		if(stuckRoll < stuckProb || d.type == 'mcp'){
-			console.log('stucky');
-			d.stuck = true;
-			stuckList.push(d);
+		if(stuckRoll < stuckProb || device.type == 'mcp'){
+			device.stuck = true;
+			stuckList.push(device);
 		}
 		let moment = new Date();
-		d.lastAlarmTime = getAlarmTime(moment.getTime() - 420000 + 30000*i);
+		device.lastAlarmTime = getAlarmTime(moment.getTime() - 420000 + 30000*i);
 	}
-		console.log(stuckList);
+
+	if(stuckCertain && stuckList.length == 0) {
+		let handOfFate = Math.floor(chosenDevices.length*Math.random());
+		let device = list[chosenDevices[handOfFate]];
+		device.stuck = true;
+		stuckList.push(device);
+	}
 }
 
 function checkStuckList () {
@@ -211,7 +222,6 @@ function checkStuckList () {
 		if (stuckList[i].lastResetTime) {
 			if (moment - stuckList[i].lastResetTime > 10000 && stuckList[i].type != 'mcp') {
 				if(stuckList[i].status_internal == 'normal' && stuckList[i].status == 'normal') {
-					console.log('here');
 					stuckList[i].status_internal = 'active';
 					stuckList[i].status = 'alarm';
 					stuckList[i].lastAlarmTime = getAlarmTime();

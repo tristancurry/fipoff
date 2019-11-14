@@ -195,12 +195,13 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
 	}
 
 	//TODO: this alarm activation needs to be bundled into a function, which also adds the activation date...
+
 	for(let i = 0; i < numAlarms; i++){
 		let device = list[chosenDevices[i]];
 		device.status = 'alarm';
 		device.status_internal = 'active';
 		let stuckRoll = Math.random();
-		if(stuckRoll < stuckProb || device.type == 'mcp'){
+		if((stuckRoll < stuckProb && device.type != 'mcp')|| (i == numAlarms - 1 && stuckCertain && stuckList.length == 0)){
 			device.stuck = true;
 			device.reactivateTime = reactivateTime + Math.floor(reactivateVariance*Math.random());
 			stuckList.push(device);
@@ -209,12 +210,12 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
 		device.lastAlarmTime = getAlarmTime(moment.getTime() - 420000 + 30000*i);
 	}
 
-	if(stuckCertain && stuckList.length == 0) {
-		let handOfFate = Math.floor(chosenDevices.length*Math.random());
-		let device = list[chosenDevices[handOfFate]];
-		device.stuck = true;
-		stuckList.push(device);
-	}
+	// if(stuckCertain && stuckList.length == 0) {
+	// 	let handOfFate = Math.floor(chosenDevices.length*Math.random());
+	// 	let device = list[chosenDevices[handOfFate]];
+	// 	device.stuck = true;
+	// 	stuckList.push(device);
+	// }
 }
 
 function checkStuckList () {
@@ -1338,36 +1339,6 @@ function buildFips() {
 		}
 	});
 
-
-
-	//TEMPORARY - initialise with some random alarms
-	//TODO - make this more sophisticated -> multiple alarms are triggered by proximity (e.g. find the nearest alarms to the last one activated?)
-	// f.triggerRandomAlarms = function(_numAlarms){
-	// 	let numAlarms = _numAlarms;
-	// 	let list = f.deviceList;
-	// 	numAlarms = fipoff_constrain(numAlarms, 0, list.length);
-	// 	let chosenDevices = [];
-	//
-	// 	while(chosenDevices.length < numAlarms){
-	// 		let idx = Math.floor(Math.random()*list.length);
-	// 		//could have used .includes(idx), but IE11...
-	// 		if(chosenDevices.indexOf(idx) == -1){
-	// 			chosenDevices.push(idx);
-	// 		}
-	// 	}
-	// 	//this alarm activation needs to be bundled into a function, which also adds the activation date...
-	//
-	// 	for(let i = 0; i < numAlarms; i++){
-	// 		let d = list[chosenDevices[i]];
-	// 		d.status = 'alarm';
-	// 		d.status_internal = 'active';
-	// 		let moment = new Date();
-	// 		d.lastAlarmTime = f.getAlarmTime(moment.getTime() - 300000*i);
-	// 		if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
-	// 	}
-	// }
-
-	//TODO: work out whether it's the master fip or not (if not, the div representation will be hidden by default)
 	}
 }
 

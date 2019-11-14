@@ -450,7 +450,6 @@ div {
 	margin: 3px;
 	display:flex;
 	flex-grow: 1;
-	//min-height: 75px;
 	max-height: 150px;
 	color: white;
 }
@@ -459,7 +458,6 @@ div {
 .menu-option {
 	display:flex;
 	flex-grow: 1;
-	height: 100%;
 
 	max-width: 200px;
 	background-color: #8888ee;
@@ -481,8 +479,8 @@ div {
 }
 
 .menu-option-desc {
+	display: flex;
 	flex-grow: 1;
-	height: 100%;
 	max-width:60%;
 	padding: 5px;
 	border: 1px dashed white;

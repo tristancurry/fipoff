@@ -1,4 +1,4 @@
-let CACHE_NAME = 'fipoff-cache-test00E';
+let CACHE_NAME = 'fipoff-cache-test001';
 let urlsToCache = [
 	'index.html',
 	'manifest.json',

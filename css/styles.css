@@ -679,8 +679,8 @@ div {
 }
 
 @-webkit-keyframes animateB {
-	from {transform: translateY(0px); opacity: 0;}
-  to {transform: translateY(100px); opacity: 1;}
+	from {transform: translateY(100px); opacity: 0;}
+  to {transform: translateY(0px); opacity: 1;}
 }
 
 .update p {

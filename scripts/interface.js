@@ -119,15 +119,32 @@ function handleMenuInteraction(target) {
 				selections[currentMenuPage] = target.getElementsByClassName('menu-option-text')[0].innerHTML;
 				summaryLines[currentMenuPage].innerHTML = selections[currentMenuPage];
 				let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
-				let nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage + 1];
-				currentMenuPage++;
+
 				let theseOptions = target.parentNode.parentNode.getElementsByClassName('menu-option');
 				for (let i = 0, l = theseOptions.length; i < l; i++) {
 					theseOptions[i].classList.remove('menu-selected');
 				}
 				target.classList.add('menu-selected');
 
-
+				let nextPage;
+				if (currentMenuPage == 1 && selection < 2) {
+					if (selection == 0) {
+						scenarioInfo[2] = 0;
+						summaryLines[2].innerHTML = 'N/A';
+						scenarioInfo[3] = 0;
+						summaryLines[3].innerHTML = 'N/A';
+						nextPage = 	menuContainer.getElementsByClassName('menu-page')[4];
+						currentMenuPage = 4;
+					} else if (selection == 1) {
+						scenarioInfo[2] = 0;
+						summaryLines[2].innerHTML = 'Random';
+						nextPage = 	menuContainer.getElementsByClassName('menu-page')[3];
+						currentMenuPage = 3;
+					}
+				} else {
+					nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage + 1];
+					currentMenuPage++;
+				}
 				toggleDisplay(thisPage);
 				nextPage.classList.remove('returnLeft');
 				nextPage.classList.add('returnRight');
@@ -149,8 +166,18 @@ function handleMenuInteraction(target) {
 	if(target.classList.contains('menu-back')) {
 		if (currentMenuPage > 0) {
 			let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
-			let nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage - 1];
-			currentMenuPage--;
+			let nextPage;
+
+			if (currentMenuPage == 4 && scenarioInfo[1] == 0) {
+				nextPage = 	menuContainer.getElementsByClassName('menu-page')[1];
+				currentMenuPage = 1;
+			} else if (currentMenuPage == 3 && scenarioInfo[1] == 1) {
+				nextPage = 	menuContainer.getElementsByClassName('menu-page')[1];
+				currentMenuPage = 1;
+			} else {
+				nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage - 1];
+				currentMenuPage--;
+			}
 			toggleDisplay(thisPage);
 			toggleDisplay(nextPage);
 			// actually,this button should never be disabled...
@@ -180,23 +207,27 @@ function handleMenuInteraction(target) {
 					let numAlarms = 0;
 					switch(alarmChoice){
 						case 0:
-							numAlarms = 1;
+							numAlarms = 0;
 							break;
 						case 1:
-							numAlarms = 2;
+							numAlarms = 1;
 							break;
 						case 2:
-							numAlarms = Math.round(Math.floor(3*Math.random()) + 2.9);
+							numAlarms = 2;
 							break;
 						case 3:
-							numAlarms = Math.round(Math.floor(8*Math.random()) + 4.9);
+							numAlarms = Math.round(Math.floor(3*Math.random()) + 2.9);
+							break;
+						case 4:
+							numAlarms = Math.round(Math.floor(8*Math.random()) + 5.9);
 							break;
 					}
 
 					let stuckProb = faultMenu[parseInt(scenarioInfo[3])];
 
-					triggerRandomAlarms(devList, numAlarms, locationMenu[scenarioInfo[2]], stuckProb);
-
+					if (numAlarms > 0) {
+						triggerRandomAlarms(devList, numAlarms, locationMenu[scenarioInfo[2]], stuckProb);
+					}
 
 					let fipList = sysObjectsByCategory['fip'];
 					// needed to loop backwards so that the alarm counts were correct for FIPs closer to the main FirePanel

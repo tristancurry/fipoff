@@ -81,6 +81,10 @@ let zones = {};
 // if 'enough' time has elapsed, the device is reactivated, triggering an alarm.
 // (Unless it's an MCP, in which case, it's immediately reactivated when stuck)
 let stuckList = [];
+// trackinglist is for keeping track of user input in relation to the activated devices, and anything that is in alarm because of them
+// this includes fips, non-addressable circuits, and detectors.
+// the time to assess inclusion in this list is after the first round of assignStatusIds for each FIP...I think.
+let trackingList = [];
 const reactivateTime = 2000;
 const reactivateVariance = 15000;
 //General Utility Functions
@@ -223,12 +227,18 @@ function checkStuckList () {
 	let d = new Date();
 	let moment = d.getTime();
 	for (let i = 0, l = stuckList.length; i < l; i++) {
-		if (stuckList[i].lastResetTime) {
-			if (moment - stuckList[i].lastResetTime > stuckList[i].reactivateTime && stuckList[i].type != 'mcp') {
-				if(stuckList[i].status_internal == 'normal' && stuckList[i].status == 'normal') {
-					stuckList[i].status_internal = 'active';
-					stuckList[i].status = 'alarm';
-					stuckList[i].lastAlarmTime = getAlarmTime();
+		let device = stuckList[i];
+		if (device.lastResetTime) {
+			if (moment - device.lastResetTime > device.reactivateTime && device.type != 'mcp') {
+				if(device.status_internal == 'normal' && device.status == 'normal') {
+					device.status_internal = 'active';
+					device.status = 'alarm';
+					device.lastAlarmTime = getAlarmTime();
+					if (!device.hasReactivated) {device.hasReactivated = true;}
+					// if this device is on a conventional circuit, push the hasReactivated to the circuit, too
+					if (device.parent.category == 'circuit' && !device.parent.addressable && !device.parent.hasReactivated) {
+						device.parent.hasReactivated = true;
+					}
 				}
 			}
 		}
@@ -410,6 +420,10 @@ function buildFips() {
 				} else	if (device.category == 'det') {
 					f.blockplan_displayed_device = device;
 					f.updateDeviceImagePath(device);
+					if (device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) && !device.beenReset && !device.hasBeenLookedAt){
+						device.hasBeenLookedAt = true;
+						console.log(trackingList);
+					}
 
 					if(device.type == 'mcp'){
 						f.blockplan_card_elements['MCPOptions'].classList.add('show');
@@ -754,12 +768,6 @@ function buildFips() {
 					break;
 				}
 			}
-
-
-
-
-
-
 			//handling statuses: this.status is what's checked by any upstream FIPs. actually, just set activated and stuck
 			//TODO: think about what to do if this input is isolated at the upstream FIP - will the applied status conflict with this in some way?
 
@@ -850,6 +858,7 @@ function buildFips() {
 				if(this.warnSys.classList.contains('flashing')){this.warnSys.classList.toggle('flashing')};
 			}
 
+
 			//TODO: refactor the conditional toggling of classes into a toggleClass function (args are the element, and the className)
 			//TODO: put this repeated stuff into a function used to activate/deactivate auxiliary systems
 		};
@@ -886,6 +895,14 @@ function buildFips() {
 			this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
 			this.displayLines[2].innerHTML = 'Ph: 0444 444444';
 			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
+	};
+
+	f.trackActiveDevices = function(list) {
+		for (let i = 0, l = list.length; i < l; i++) {
+			if (list[i].status_internal == 'active') {
+				trackingList.push(list[i]);
+			}
+		}
 	};
 
 	f.sortByAlarmTime = function(list){
@@ -1195,6 +1212,19 @@ function buildFips() {
 
 	f.isolateDevice = function(device){
 		device.status = 'isol';
+		if (!device.hasBeenIsolated) {device.hasBeenIsolated = true;}
+		// if not already being tracked, please add it to the tracking list
+		// if it's added to the tracking list, flag this too: lateAddition or freakIsolation
+		// in other words, the end dialogue will ask why the user isolated this device.
+		let checkIfPresent = function(d){
+			if(d == device){
+				return d;
+			}
+		};
+		let check = trackingList.filter(checkIfPresent);
+		if(check.length == 0){
+			trackingList.push(device);
+		}
 	};
 
 	f.resetDevice = function(device){
@@ -1209,10 +1239,11 @@ function buildFips() {
 		}
 		let d = new Date();
 		device.lastResetTime = d.getTime();
-		if((device.type != 'mcp' || (device.type == 'mcp' && !device.stuck)) && (device.status == 'alarm' || device.status == 'acked')){
+		if (!device.hasBeenReset) {device.hasBeenReset = true;}
+		if ((device.type != 'mcp' || (device.type == 'mcp' && !device.stuck)) && (device.status == 'alarm' || device.status == 'acked')) {
 			device.status = 'normal';
 			device.status_internal = 'normal';
-		} else if (device.stuck && (device.status == 'alarm' || device.status == 'acked') && device.type == 'mcp'){
+		} else if (device.stuck && (device.status == 'alarm' || device.status == 'acked') && device.type == 'mcp') {
 			device.status = 'alarm';
 			device.status_internal = 'active';
 			device.lastAlarmTime = f.getAlarmTime();

@@ -236,6 +236,7 @@ function handleMenuInteraction(target) {
 						let thisFip = fipList[i];
 
 						 thisFip.assignStatusIds();
+						 thisFip.trackActiveDevices(thisFip.addressableDeviceList);
 						 thisFip.displayStatus();
 
 
@@ -246,7 +247,7 @@ function handleMenuInteraction(target) {
 						//TODO: make it so that there is only one setInterval, with one function that updates all FIP displays.
 						window.setInterval(function(){checkStuckList(); thisFip.update();}, 500);
 					}
-
+					console.log(trackingList);
 			}).catch(function(){console.log('whoops')});
 			// Hide the menu system.
 			// Reset the menu system to the start page.

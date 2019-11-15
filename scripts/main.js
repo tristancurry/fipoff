@@ -491,7 +491,7 @@ function buildFips() {
 				} else	if (device.category == 'det') {
 					f.blockplan_displayed_device = device;
 					f.updateDeviceImagePath(device);
-					if (device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) && !device.beenReset && !device.hasBeenLookedAt){
+					if (device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) && !device.hasBeenReset && !device.hasBeenLookedAt){
 						device.hasBeenLookedAt = true;
 						console.log(trackingList);
 						console.log(feedbackStrings[getFeedbackCode(device)]);
@@ -1276,6 +1276,8 @@ function buildFips() {
 			device.status = 'alarm';
 			device.status_internal = 'active';
 			device.lastAlarmTime = f.getAlarmTime();
+			if (!device.hasReactivated) {device.hasReactivated = true;}
+			// if this device is on a conventional circuit, push the hasReactivated to the circuit, too
 
 
 		}

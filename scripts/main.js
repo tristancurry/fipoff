@@ -69,7 +69,7 @@ const feedbackStrings = [
 	'imposs', //0101 5
 	'reset without investigation. Device reactivated, but was not isolated.', //0110 6
 	'reset after investigation. Device reactivated, but was not isolated.', //0111 7
-	'isolated without investigation or an attempt to reset.', //1000 8 also codes for isolation without prior activation...
+	'isolated without investigation or an attempt to reset. Not Good!', //1000 8 also codes for isolation without prior activation...
 	'investigated, but isolated without first attempting to reset.', //1001 9
 	'reset without investigation, then isolated without having reactivated.',//1010 10
 	'reset after investigation, but isolated without having reactivated.',//1011 11
@@ -221,6 +221,11 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
 		let device = list[chosenDevices[i]];
 		device.status = 'alarm';
 		device.status_internal = 'active';
+		if(device.type == 'mcp') {
+			device.stuck = true;
+			device.reactivateTime = 0;
+			stuckList.push(device);
+		}
 		let stuckRoll = Math.random();
 		if((stuckRoll < stuckProb && device.type != 'mcp')|| (i == numAlarms - 1 && stuckCertain && stuckList.length == 0)){
 			device.stuck = true;
@@ -245,20 +250,22 @@ function checkStuckList () {
 	let moment = d.getTime();
 	for (let i = 0, l = stuckList.length; i < l; i++) {
 		let device = stuckList[i];
-		if (device.lastResetTime) {
-			if (moment - device.lastResetTime > device.reactivateTime && device.type != 'mcp') {
-				if(device.status_internal == 'normal' && device.status == 'normal') {
-					device.status_internal = 'active';
-					device.status = 'alarm';
-					device.lastAlarmTime = getAlarmTime();
-					if (!device.hasReactivated) {device.hasReactivated = true;}
-					// if this device is on a conventional circuit, push the hasReactivated to the circuit, too
-					if (device.parent.category == 'circuit' && !device.parent.addressable && !device.parent.hasReactivated) {
-						device.parent.hasReactivated = true;
+		if (device.type != 'mcp') {
+			if (device.lastResetTime) {
+				if (moment - device.lastResetTime > device.reactivateTime && device.stuck) {
+					if(device.status_internal == 'normal' && device.status == 'normal') {
+						device.status_internal = 'active';
+						device.status = 'alarm';
+						device.lastAlarmTime = getAlarmTime();
+						if (!device.hasReactivated) {device.hasReactivated = true;}
+						// if this device is on a conventional circuit, push the hasReactivated to the circuit, too
+						if (device.parent.category == 'circuit' && !device.parent.addressable && !device.parent.hasReactivated) {
+							device.parent.hasReactivated = true;
+						}
 					}
 				}
 			}
-		}
+		} 
 	}
 }
 
@@ -328,6 +335,15 @@ function getFeedbackCode(device) {
 	if (feedbackCode == 8 && device.hasNoReason) {feedbackCode = 13;}
 
 	return feedbackCode;
+}
+// temporary function for testing feedback gen
+function getDigest() {
+	console.log('____________________');
+	for (let i = 0, l = trackingList.length; i < l; i++) {
+		let device = trackingList[i];
+		let code = getFeedbackCode(device);
+		console.log(device.name + ', status: ' + feedbackStrings[code]);
+	}
 }
 
 
@@ -493,8 +509,6 @@ function buildFips() {
 					f.updateDeviceImagePath(device);
 					if (device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) && !device.hasBeenReset && !device.hasBeenLookedAt){
 						device.hasBeenLookedAt = true;
-						console.log(trackingList);
-						console.log(feedbackStrings[getFeedbackCode(device)]);
 					}
 
 					if(device.type == 'mcp'){

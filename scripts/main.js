@@ -38,9 +38,6 @@ const systemPaths = {
 	system00c: 'system00/system00c.js'
 }
 
-
-
-
 const deviceStatusStrings = {
 	active: 'Activated',
 	normal: 'Normal'
@@ -61,6 +58,26 @@ const deviceImageVersions = {
 	mcp: 1,
 	concealed: 1
 }
+
+// at the end of the scenario, the tracked devices are assigned a status code
+const feedbackStrings = [
+	'no action was taken', //0000 0
+	'investigated, without an attempt to reset', //0001 1
+	'reset without investigation. Not Good!', //0010 2 of whole circuit, if conventional
+	'reset after investigation', //0011 3 This is the correct sequence, if there are no reactivations.
+	'imposs', //0100 4
+	'imposs', //0101 5
+	'reset without investigation. Device reactivated, but was not isolated.', //0110 6
+	'reset after investigation. Device reactivated, but was not isolated.', //0111 7
+	'isolated without investigation or an attempt to reset.', //1000 8 also codes for isolation without prior activation...
+	'investigated, but isolated without first attempting to reset.', //1001 9
+	'reset without investigation, then isolated without having reactivated.',//1010 10
+	'reset after investigation, but isolated without having reactivated.',//1011 11
+	'imposs', //1100 12
+	'isolated without having activated.', //1101 13 this state is manually assigned. Shares binary code with 8.
+	'reset without investigation, then isolated upon reactivation. Not Good!', //1110 This is a BAD one! 14
+	'reset after investigation, then isolated upon reactivation.'//1111 This is the most correct action 15
+];
 
 let sysObjects = [];
 let sysObjectsByCategory = {
@@ -299,6 +316,20 @@ function sortByAlarmTime (list) {
 	return sortList;
 }
 
+function getFeedbackCode(device) {
+	let binaryString = '';
+	if (device.hasBeenIsolated) {binaryString += '1';} else {binaryString += '0'}
+	if (device.hasReactivated) {binaryString += '1';} else {binaryString += '0'}
+	if (device.hasBeenReset) {binaryString += '1';} else {binaryString += '0'}
+	if (device.hasBeenLookedAt) {binaryString += '1';} else {binaryString += '0'}
+
+	console.log(binaryString);
+	let feedbackCode = parseInt(binaryString, 2);
+	if (feedbackCode == 8 && device.hasNoReason) {feedbackCode = 13;}
+
+	return feedbackCode;
+}
+
 
 function buildFips() {
 	//for each fip in the list of fips...
@@ -463,6 +494,7 @@ function buildFips() {
 					if (device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) && !device.beenReset && !device.hasBeenLookedAt){
 						device.hasBeenLookedAt = true;
 						console.log(trackingList);
+						console.log(feedbackStrings[getFeedbackCode(device)]);
 					}
 
 					if(device.type == 'mcp'){
@@ -1219,6 +1251,7 @@ function buildFips() {
 		};
 		let check = trackingList.filter(checkIfPresent);
 		if(check.length == 0){
+			device.hasNoReason = true;
 			trackingList.push(device);
 		}
 	};

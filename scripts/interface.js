@@ -236,7 +236,7 @@ function handleMenuInteraction(target) {
 						let thisFip = fipList[i];
 
 						 thisFip.assignStatusIds();
-						 thisFip.trackActiveDevices(thisFip.addressableDeviceList);
+						 trackActiveDevices(thisFip.addressableDeviceList);
 						 thisFip.displayStatus();
 
 

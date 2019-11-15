@@ -259,12 +259,52 @@ function getAlarmTime(t) {
 	return [alarmTime, alarmString];
 }
 
+function trackActiveDevices (list) {
+	for (let i = 0, l = list.length; i < l; i++) {
+		if (list[i].status_internal == 'active') {
+			trackingList.push(list[i]);
+		}
+	}
+};
+
+function sortByAlarmTime (list) {
+	//produce separate list of devices, sorted in order of lastActivationTime (earliest to latest);
+	let sortList = [];
+	for (let i = 0, l = list.length; i<l; i++) {
+		sortList[i] = list[i];
+	}
+	sortList.sort (
+		function(a,b) {
+				return a.lastAlarmTime[0] - b.lastAlarmTime[0];
+		}
+	);
+
+	// grab any chunk of devices with 'recent' alarm times (e.g. last day)
+	// and put this at the start of the list...
+	// work backwards from the end of the sorted list, moving elements from the end to the beginning
+	// until the lastAlarmTime starts getting too old.
+
+	let recentAlarms = [];
+	for (let l = sortList.length, i = l - 1; i >= 0; i--) {
+		let d = new Date();
+		if (d.getTime() - sortList[i].lastAlarmTime[0] < alarmRecencyThreshold) {
+			recentAlarms.push(sortList[i]);
+		}
+	}
+
+	for (let i = 0, l = recentAlarms.length; i < l; i++) {
+		sortList.pop();
+		sortList.unshift(recentAlarms[i]);
+	}
+	return sortList;
+}
+
+
 function buildFips() {
 	//for each fip in the list of fips...
 	let fipList = sysObjectsByCategory['fip'];
 	for(let i = 0, l = fipList.length; i < l; i++){
 		let f = fipList[i];
-
 
 
 		//provide the FIP a representation in the DOM. NB this will not work in IE
@@ -740,7 +780,7 @@ function buildFips() {
 
 			}
 
-			this.sortedDeviceList = this.sortByAlarmTime(list);
+			this.sortedDeviceList = sortByAlarmTime(list);
 
 			for(let i = 0, l = f.sortedDeviceList.length; i < l; i++){
 					let device = f.sortedDeviceList[i];
@@ -897,51 +937,7 @@ function buildFips() {
 			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
 	};
 
-	f.trackActiveDevices = function(list) {
-		for (let i = 0, l = list.length; i < l; i++) {
-			if (list[i].status_internal == 'active') {
-				trackingList.push(list[i]);
-			}
-		}
-	};
 
-	f.sortByAlarmTime = function(list){
-
-		//produce separate list of devices, sorted in order of lastActivationTime (earliest to latest);
-		let sortList = [];
-
-		for(let i = 0, l = list.length; i<l; i++){
-			sortList[i] = list[i];
-		}
-
-		sortList.sort(
-			function(a,b) {
-					return a.lastAlarmTime[0] - b.lastAlarmTime[0];
-			}
-		);
-
-		// grab any chunk of devices with 'recent' alarm times (e.g. last day)
-		// and put this at the start of the list...
-		// work backwards from the end of the sorted list, moving elements from the end to the beginning
-		// until the lastAlarmTime starts getting too old.
-
-		let recentAlarms = [];
-		for (let l = sortList.length, i = l - 1; i >= 0; i--) {
-			let d = new Date();
-			if (d.getTime() - sortList[i].lastAlarmTime[0] < alarmRecencyThreshold) {
-				recentAlarms.push(sortList[i]);
-			}
-		}
-
-		for (let i = 0, l = recentAlarms.length; i < l; i++) {
-			sortList.pop();
-			sortList.unshift(recentAlarms[i]);
-		}
-
-		return sortList;
-
-
-	}
 
 	f.findNext = function(status){
 		let list = this.addressableDeviceList;

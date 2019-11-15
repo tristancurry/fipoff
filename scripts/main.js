@@ -6,7 +6,8 @@
 
 //GLOBALS
 
-const viewport = document.getElementsByClassName('viewport')[0];
+
+
 
 const types = {
 	smoke: 'Smoke',
@@ -30,14 +31,15 @@ const subtypes = {
 //new devices will be assigned an image appropriate to their type from these arrays...
 
 const imageDir = 'images/';
+const systemDir = 'systems/';
 
-//consider doing these as a spritesheet (facilitate multiple pictures for each alarm type without having to specify heaps of urls (just pixel coords for each Normal/Active/ActiveStuck set
-const deviceImages = {
-	smoke: [['pe_01_N.png','pe_01_A.png']],
-	thermal: [['th_01_N.png','th_01_A.png']],
-	mcp: [['mcp_01_N.png', 'mcp_01_A.png','mcp_01_AS.png']],
-	concealed: [['conc_01_N.png','conc_01_A.png']]
-};
+const systemPaths = {
+	system00: 'system00/system00.js',
+	system00c: 'system00/system00c.js'
+}
+
+
+
 
 const deviceStatusStrings = {
 	active: 'Activated',
@@ -73,7 +75,14 @@ let circuits = [];
 let dets = [];
 let zones = {};
 
-
+// when a device that is 'stuck' is reset, it is added to 'stuckList'
+// the time of reset is also stored
+// each update cycle, this time is checked against the current time.
+// if 'enough' time has elapsed, the device is reactivated, triggering an alarm.
+// (Unless it's an MCP, in which case, it's immediately reactivated when stuck)
+let stuckList = [];
+const reactivateTime = 2000;
+const reactivateVariance = 15000;
 //General Utility Functions
 //modify a value if it exceeds limits
 function fipoff_constrain(n, min, max){
@@ -116,41 +125,7 @@ function addLeadingZero(str){
 
 
 //System-specific stuff
-
-//build a system from the jsonny madness
-//create objects for each entry
-//add these objects to a global object list
-//add objects to lists by type
-//sort out parents and children of these objects
-//also produce a separate list of zones (administrative, as opposed to circuitry)
-
-
-
-
-buildSystem(system);
-buildZoneLists();
-console.log(sysObjects);
-
-console.log(zones);
-buildFips();
-console.log(sysObjectsByCategory);
-
-let fipList = sysObjectsByCategory['fip'];
-// needed to loop backwards so that the alarm counts were correct for FIPs closer to the main FirePanel
-// TODO: make the title of the blockplan depend on a variable stored with the FIP, not the entire system
-for (let l = fipList.length, i = l - 1; i >= 0; i--) {
-	let thisFip = fipList[i];
-		thisFip.triggerRandomAlarms(3);
-	 thisFip.assignStatusIds();
-	 thisFip.displayStatus();
-
-	for (let i = 0, l = thisFip.deviceList.length; i < l; i++){
-		thisFip.updateDeviceImagePath(thisFip.deviceList[i]);
-	}
-	//keep the clock running. When we have multiple FIPs, do them all at once
-	//TODO: make it so that there is only one setInterval, with one function that updates all FIP displays.
-	window.setInterval(function(){thisFip.displayStatus();}, 500);
-}
+const alarmRecencyThreshold = 86400000; // number of milliseconds before an alarm is thought to be 'old news' while alarm condition is active.
 
 
 function buildSystem (sys) {
@@ -159,6 +134,119 @@ function buildSystem (sys) {
 	if(sys.children){
 		createSystemObjects(sys.children[0]);
 	}
+}
+
+function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
+	let numAlarms = _numAlarms;
+	let list = deviceList;
+	numAlarms = fipoff_constrain(numAlarms, 0, list.length);
+	let stuckProb = _stuckProb;
+	let stuckCertain = false;
+	if (stuckProb >= 1) {
+		stuckCertain = true;
+		stuckProb = faultMenu[1];
+	}
+
+	let chosenDevices = [];
+
+	if (clustered) {
+		while (chosenDevices.length < 1) {
+			let idx = Math.floor(Math.random()*list.length);
+			if(list[idx].category != 'circuit') {
+				chosenDevices.push(idx);
+			}
+		}
+		// Sort the deviceList according to blockplan distance
+		// from the chosen device. This should also be restricted to the same blockplan page!
+		// 1. get all devices on same page as the chosen device
+		// 2. sort this list according to Pythagorean distance from chosen device
+		// 3. constrain numAlarms to the length of this list
+		// 4. push the first numAlarms of these devices to chosenDevices
+
+		let centralDevice = list[chosenDevices[0]];
+		let samePage = [];
+		let distances = [];
+		for (let i = 0, l = list.length; i < l; i++) {
+			if (list[i].page == centralDevice.page) {
+				// deliberately include the chosen device to allow for some list matching later...
+				samePage.push(list[i]);
+				let cdX = parseInt(centralDevice.pos.x.split('px')[0]);
+				let cdY = parseInt(centralDevice.pos.y.split('px')[0]);
+				let tdX = parseInt(list[i].pos.x.split('px')[0]);
+				let tdY = parseInt(list[i].pos.y.split('px')[0]);
+				let distance = Math.sqrt(Math.pow((tdX - cdX), 2) + Math.pow((tdY - cdY), 2));
+				distances.push([i, distance]);
+			}
+		}
+		distances.sort(function(a, b){return a[1]-b[1]});
+		fipoff_constrain(numAlarms, 0, distances.length);
+		for (let i = 1; i < numAlarms; i++) {
+			chosenDevices.push(distances[i][0]);
+		}
+
+	} else {
+		while (chosenDevices.length < numAlarms) {
+			let idx = Math.floor(Math.random()*list.length);
+			//could have used .includes(idx), but IE11...
+			if (chosenDevices.indexOf(idx) == -1 && list[idx].category != 'circuit') {
+				chosenDevices.push(idx);
+			}
+		}
+	}
+
+	//TODO: this alarm activation needs to be bundled into a function, which also adds the activation date...
+
+	for(let i = 0; i < numAlarms; i++){
+		let device = list[chosenDevices[i]];
+		device.status = 'alarm';
+		device.status_internal = 'active';
+		let stuckRoll = Math.random();
+		if((stuckRoll < stuckProb && device.type != 'mcp')|| (i == numAlarms - 1 && stuckCertain && stuckList.length == 0)){
+			device.stuck = true;
+			device.reactivateTime = reactivateTime + Math.floor(reactivateVariance*Math.random());
+			stuckList.push(device);
+		}
+		let moment = new Date();
+		device.lastAlarmTime = getAlarmTime(moment.getTime() - 420000 + 30000*i);
+	}
+
+	// if(stuckCertain && stuckList.length == 0) {
+	// 	let handOfFate = Math.floor(chosenDevices.length*Math.random());
+	// 	let device = list[chosenDevices[handOfFate]];
+	// 	device.stuck = true;
+	// 	stuckList.push(device);
+	// }
+}
+
+function checkStuckList () {
+
+	let d = new Date();
+	let moment = d.getTime();
+	for (let i = 0, l = stuckList.length; i < l; i++) {
+		if (stuckList[i].lastResetTime) {
+			if (moment - stuckList[i].lastResetTime > stuckList[i].reactivateTime && stuckList[i].type != 'mcp') {
+				if(stuckList[i].status_internal == 'normal' && stuckList[i].status == 'normal') {
+					stuckList[i].status_internal = 'active';
+					stuckList[i].status = 'alarm';
+					stuckList[i].lastAlarmTime = getAlarmTime();
+				}
+			}
+		}
+	}
+}
+
+function getAlarmTime(t) {
+	let alarmTime = 0;
+
+	if(t >= 0){
+		alarmTime = new Date(t);
+	} else {
+		alarmTime = new Date();
+	}
+
+	let alarmString = provideTimeString(alarmTime);
+	alarmTime = alarmTime.getTime(); //convert into milliseconds since reference date, for sorting later
+	return [alarmTime, alarmString];
 }
 
 function buildFips() {
@@ -223,7 +311,8 @@ function buildFips() {
 		for(let i = 0, l = blockplan_pages.length; i < l; i++){
 			let temp_page = document.createElement('div');
 			temp_page.className = 'blockplan-page';
-			temp_page.style.backgroundImage = 'url(' + f.blockplan_details['pages'][i] + ')';
+			let thisPageBg = new Image().src = f.blockplan_details['pages'][i];
+			temp_page.style.backgroundImage = 'url(' + thisPageBg + ')';
 			if(i == 0){temp_page.classList.add('show');}
 			f.blockplan.getElementsByClassName('blockplan-content')[0].appendChild(temp_page);
 		}
@@ -417,6 +506,8 @@ function buildFips() {
 			if(child.category == 'circuit'){
 				child.status = 'normal';
 				child.status_internal = 'normal';
+				child.lastAlarmTime = getAlarmTime(0);
+				child.reset = true;
 				//do some deeper digging. All devices should be on a circuit, not directly 'plugged into' the fip.
 				for(let k = 0, n = child.children.length; k < n; k++){
 					let device = child.children[k];
@@ -454,10 +545,6 @@ function buildFips() {
 					let page = f.blockplan.getElementsByClassName('blockplan-page')[device.page - 1];
 					page.appendChild(temp);
 
-
-					device.imageArray = [];
-					device.imagePath = '';
-
 					// assign random device image from available images of appropriate type...
 					device.imageVersion = Math.floor(deviceImageVersions[device.type]*Math.random());
 					if (device.imageVersion == deviceImageVersions[device.type]) {
@@ -466,16 +553,11 @@ function buildFips() {
 
 					if (!device.concealed) {
 					device.imageCoords = {x: deviceImageIndex[device.type], y: device.imageVersion};
-				} else {
-					device.imageCoords = {x: deviceImageIndex['concealed'], y: device.imageVersion};
-				}
-					if(device.concealed){
-						device.imageArray = deviceImages['concealed'][0];
 					} else {
-						if (device.category != 'fip') {
-						device.imageArray = deviceImages[device.type][0];
+						device.imageCoords = {x: deviceImageIndex['concealed'], y: device.imageVersion};
 					}
-					}
+
+
 
 					f.deviceList.push(device);
 				}
@@ -522,6 +604,7 @@ function buildFips() {
 		} else {
 			f.conventional = 'mixed';
 		}
+
 
 
 
@@ -580,7 +663,7 @@ function buildFips() {
 
 
 			let list = this.addressableDeviceList;
-			this.sortedDeviceList = this.sortByAlarmTime(list);
+
 			//go through list of devices.
 			//if in alarm, assign an alarmID
 			//if in alarm, but acknowledged, assign an ackID
@@ -615,12 +698,20 @@ function buildFips() {
 				//check to see if the device is a circuit (non-addressable) and not already in alarm, acked or isolated, check to see if any of its children are alarmed
 				if(device.category == 'circuit' && device.children && device.status == 'normal'){
 					device.status_internal = 'normal';
-					for(let j = 0, m = device.children.length; j < m; j++){
-						if(device.children[j].status_internal == 'active'){
-							device.lastAlarmTime = f.getAlarmTime();
+					for (let j = 0, m = device.children.length; j < m; j++) {
+						let thisChild = device.children[j];
+						if (thisChild.status_internal == 'active'){
+							let d = new Date();
+							if (device.lastAlarmTime[0] < d.getTime() - alarmRecencyThreshold) {
+								device.lastAlarmTime = thisChild.lastAlarmTime;
+							} else if (device.reset) {
+								device.lastAlarmTime = thisChild.lastAlarmTime;
+								device.reset = false;
+							} else if (device.lastAlarmTime[0] > thisChild.lastAlarmTime[0]) {
+								device.lastAlarmTime = thisChild.lastAlarmTime;
+							}
 							device.status = 'alarm';
 							device.status_internal = 'active';
-							break;
 						}
 					}
 				}
@@ -635,6 +726,7 @@ function buildFips() {
 
 			}
 
+			this.sortedDeviceList = this.sortByAlarmTime(list);
 
 			for(let i = 0, l = f.sortedDeviceList.length; i < l; i++){
 					let device = f.sortedDeviceList[i];
@@ -672,11 +764,11 @@ function buildFips() {
 			//TODO: think about what to do if this input is isolated at the upstream FIP - will the applied status conflict with this in some way?
 
 				if(this.alarmCount > 0){
-					this.status_internal = 'activated';
+					this.status_internal = 'active';
 					this.stuck = true;
 					this.mainStatus = false;
 				} else if(this.ackedCount > 0){
-					this.status_internal = 'alarm';
+					this.status_internal = 'active';
 					this.stuck = true;
 					this.mainStatus = false;
 				} else {
@@ -684,7 +776,7 @@ function buildFips() {
 					this.stuck = false;
 				}
 			if(this.status != 'isol'){
-				if (this.status_internal == 'activated'){
+				if (this.status_internal == 'active'){
 					if(this.status != 'alarm' && this.status != 'acked'){
 						this.status = 'alarm';
 						this.lastAlarmTime = this.getAlarmTime();
@@ -804,11 +896,30 @@ function buildFips() {
 		for(let i = 0, l = list.length; i<l; i++){
 			sortList[i] = list[i];
 		}
+
 		sortList.sort(
 			function(a,b) {
 					return a.lastAlarmTime[0] - b.lastAlarmTime[0];
 			}
 		);
+
+		// grab any chunk of devices with 'recent' alarm times (e.g. last day)
+		// and put this at the start of the list...
+		// work backwards from the end of the sorted list, moving elements from the end to the beginning
+		// until the lastAlarmTime starts getting too old.
+
+		let recentAlarms = [];
+		for (let l = sortList.length, i = l - 1; i >= 0; i--) {
+			let d = new Date();
+			if (d.getTime() - sortList[i].lastAlarmTime[0] < alarmRecencyThreshold) {
+				recentAlarms.push(sortList[i]);
+			}
+		}
+
+		for (let i = 0, l = recentAlarms.length; i < l; i++) {
+			sortList.pop();
+			sortList.unshift(recentAlarms[i]);
+		}
 
 		return sortList;
 
@@ -821,15 +932,14 @@ function buildFips() {
 		if(status == 'alarm'){
 			list = this.sortedDeviceList;
 		}
-		console.log(list);
 		for(let i = this.currentIndex, l = list.length; i < l + 1; i++){
 			if(i < l){
 
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
 					let device = list[i];
 					//display this alarm
-					this.displayAlarm(device);
 					this.currentIndex = i;
+					this.displayAlarm(device);
 					break;
 				}
 			} else {
@@ -872,8 +982,8 @@ function buildFips() {
 				if(list[i].status == status || (status == 'alarm' && list[i].status == 'acked')){
 					let device = list[i];
 					//display this device
-					this.displayAlarm(device);
 					this.currentIndex = i;
+					this.displayAlarm(device);
 					break;
 				}
 			} else {
@@ -1021,7 +1131,7 @@ function buildFips() {
 	f.handleAcknowledged = function(){
 		if(!this.mainStatus){
 			let list = this.addressableDeviceList;
-			if(this.status == 'alarm'){list = this.sortedDeviceList};
+			if(this.status_internal == 'active'){list = this.sortedDeviceList;}
 			let device = list[this.currentIndex]; //grab the currently viewed device
 			if(this.confirmState == 'none'){
 				//if the device is alarmed, and not already acknowledged, then do some stuff that moves only an active alarm to the acknowledged list
@@ -1052,6 +1162,7 @@ function buildFips() {
 					case 'isol':
 						//isolate the device
 						this.isolateDevice(device);
+						break;
 				}
 				//return confirmState to 'none'
 				this.confirmState = 'none';
@@ -1072,7 +1183,7 @@ function buildFips() {
 	};
 
 	f.handleIsolate = function(){
-		if(this.confirmState == 'none'){
+		if(this.confirmState == 'none' && !this.mainStatus){
 			//put system in state where it's waiting for the user to confirm the isolation.
 			this.confirmState = 'isol';
 		} else if(this.confirmState == 'single' || this.confirmState == 'multi' || this.confirmState == 'isol'){
@@ -1094,21 +1205,24 @@ function buildFips() {
 			for(let i = 0, l = device.children.length; i < l; i++){
 				f.resetDevice(device.children[i]);
 			}
+			device.reset = true;
 		}
-
-		if(!device.stuck && (device.status == 'alarm' || device.status == 'acked')){
+		let d = new Date();
+		device.lastResetTime = d.getTime();
+		if((device.type != 'mcp' || (device.type == 'mcp' && !device.stuck)) && (device.status == 'alarm' || device.status == 'acked')){
 			device.status = 'normal';
 			device.status_internal = 'normal';
-		} else if (device.stuck && (device.status == 'alarm' || device.status == 'acked')){
+		} else if (device.stuck && (device.status == 'alarm' || device.status == 'acked') && device.type == 'mcp'){
 			device.status = 'alarm';
 			device.status_internal = 'active';
-			let alarmTime = new Date();
 			device.lastAlarmTime = f.getAlarmTime();
+
+
 		}
 	};
 
 	f.handleReset = function(){
-		if(this.confirmState == 'none'){
+		if(this.confirmState == 'none' && !this.mainStatus){
 
 			//if there are acknowledged alarms, attempt to reset these to normal
 			if(this.ackedCount > 0){
@@ -1159,17 +1273,7 @@ function buildFips() {
 
 		f.blockplan_card_elements['image'].style.backgroundPosition = -1*coords[0] + 'px ' + -1*coords[1] + 'px';
 
-		// if(device.status_internal == 'active'){
-		// 	if(device.type == 'mcp' && device.stuck && device.imageArray.length == 3){
-		// 		device.imagePath = imageDir + device.imageArray[2];
-		// 	} else {
-		// 		device.imagePath = imageDir + device.imageArray[1];
-		// 	}
-		// } else {
-		// 	device.imagePath =  imageDir + device.imageArray[0];
-		// }
-		//
-		//f.blockplan_card_elements['image'].style.backgroundImage = 'url(' + device.imagePath + ')';
+
 	};
 
 	f.display = f.panel.getElementsByClassName('panel-display-content')[0];
@@ -1235,36 +1339,6 @@ function buildFips() {
 		}
 	});
 
-
-
-	//TEMPORARY - initialise with some random alarms
-	//TODO - make this more sophisticated -> multiple alarms are triggered by proximity (e.g. find the nearest alarms to the last one activated?)
-	f.triggerRandomAlarms = function(_numAlarms){
-		let numAlarms = _numAlarms;
-		let list = f.deviceList;
-		numAlarms = fipoff_constrain(numAlarms, 0, list.length);
-		let chosenDevices = [];
-
-		while(chosenDevices.length < numAlarms){
-			let idx = Math.floor(Math.random()*list.length);
-			//could have used .includes(idx), but IE11...
-			if(chosenDevices.indexOf(idx) == -1){
-				chosenDevices.push(idx);
-			}
-		}
-		//this alarm activation needs to be bundled into a function, which also adds the activation date...
-
-		for(let i = 0; i < numAlarms; i++){
-			let d = list[chosenDevices[i]];
-			d.status = 'alarm';
-			d.status_internal = 'active';
-			let moment = new Date();
-			d.lastAlarmTime = f.getAlarmTime(moment.getTime() - 300000*i);
-			if(d.type == 'mcp'){d.stuck = true;} else {d.stuck = false;}
-		}
-	}
-
-	//TODO: work out whether it's the master fip or not (if not, the div representation will be hidden by default)
 	}
 }
 

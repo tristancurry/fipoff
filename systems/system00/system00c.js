@@ -5,6 +5,7 @@ system = {
 		{
 			name: 'Master FIP',
 			category: 'fip',
+			type: 'fip',
 			blockplan_details: {
 				pages: ['blockplanA_conv.png'],
 				dimensions: {x:'1100px',y:'800px'},

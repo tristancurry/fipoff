@@ -12,15 +12,76 @@
 
 <body>
 	<script type='text/javascript' src='scripts/swHandling.js'></script>
-
+	<div class='font-preload' style='opacity: 0'>
+		<span style='font-family: lcd_font, Arial, sans-serif;'></span>
+	</div>
 
 	<div onclick='void(0);'>
 		<div class='viewport'>
+			<!-- <div class='title-screen'>
+				Welcome to fipoff
+			</div> -->
+			<div class='menu-container'>
+				<div class='menu-header'><h1>Create Scenario</h1></div>
+				<div class='menu-content'>
+					<div class='menu-page'>
+						<h2>Choose System</h2>
+						<div class='menu-selector'>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>System 00</div></div><div class='menu-option-desc'>Small facility with about fifty addressable devices across four zones.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>System 00c</div></div><div class='menu-option-desc'>Small facility with a conventional system containing about fifty devices across four zones.</div></div>
+						</div>
+					</div>
+					<div class='menu-page'>
+						<h2>Select Alarm Activations</h2>
+						<div class='menu-selector'>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>None</div></div><div class='menu-option-desc'>No devices will be activated!</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>One</div></div><div class='menu-option-desc'>Exactly one device will activate.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>A couple</div></div><div class='menu-option-desc'>Exactly two devices will activate.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>A few</div></div><div class='menu-option-desc'>Somewhere between three and five devices will activate.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>Lots</div></div><div class='menu-option-desc'>An unreasonable number of devices will activate.</div></div>
+						</div>
+					</div>
+					<div class='menu-page'>
+					<h2>Select Alarm Locations</h2>
+					<div class='menu-selector'>
+						<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>Random</div></div><div class='menu-option-desc'>Activations will happen at random locations.</div></div>
+						<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>Clustered</div></div><div class='menu-option-desc'>Activations will be grouped together, where possible.</div></div>
+					</div>
+				</div>
+					<div class='menu-page'>
+						<h2>Select Faults</h2>
+						<div class='menu-selector'>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>None</div></div><div class='menu-option-desc'>All devices will behave themselves.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>Possible</div></div><div class='menu-option-desc'>There is a small chance that a device will misbehave.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>Likely</div></div><div class='menu-option-desc'>You may find some surprises waiting when you attempt a reset.</div></div>
+							<div class='menu-option-container'><div class='menu-option'><div class='menu-option-text'>At least one</div></div><div class='menu-option-desc'>At least one device will be troublesome.</div></div>
+						</div>
+					</div>
+					<div class='menu-page'>
+						<h2>Summary</h2>
+							<div class='menu-summary'>
+								<p>System:<span></span></p>
+								<p>Alarm activations:<span></span></p>
+								<p>Alarm locations:<span></span></p>
+								<p>Faults:<span></span></p>
+							</div>
+					</div>
+				</div>
 
+				<div class='menu-footer'>
+						<button class='menu-back'>Back</button>
+						<button class='menu-start' autocomplete='off' disabled>Start Scenario</button>
+				</div>
+</div>
 
 
 			<div class='update modal'>
-				<div class='modal-content'>update ready!<button id='updateBtn'>Y A Y</button></div>
+				<div class='update-content'>
+					<p>New version available!</p>
+					<div class='button-container'>
+					<button id='updateBtn'>INSTALL</button>
+					<button onclick='toggleDisplay(document.getElementsByClassName("update")[0])'>DISMISS</button>
+				</div>
 			</div>
 
 		</div>
@@ -103,10 +164,10 @@
 	</template>
 
 
-	<script type='text/javascript' src='systems/system00/system00.js'></script>
-	<script type='text/javascript' src='scripts/main.js'></script>
-	<script type='text/javascript' src='scripts/interface.js'></script>
 
+
+	<script type='text/javascript' src='scripts/interface.js'></script>
+		<script type='text/javascript' src='scripts/main.js'></script>
 
 </body>
 </html>

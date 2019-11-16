@@ -285,15 +285,12 @@ function checkCircuitHasReactivated (circuit) {
 }
 
 function checkCircuitHasBeenLookedAt (circuit) {
-	console.log('here');
 	let numDevicesLookedAt = 0;
 	if (circuit.children) {
-			console.log('here also');
 			let numDevices = circuit.children.length;
 			for (let i = 0; i < numDevices; i++) {
 				let thisDevice = circuit.children[i];
 				if (thisDevice.hasBeenLookedAt) {numDevicesLookedAt++;}
-				console.log(numDevicesLookedAt);
 			}
 			if (numDevices == numDevicesLookedAt) {
 				return true;

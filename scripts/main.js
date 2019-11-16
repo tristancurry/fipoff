@@ -104,8 +104,9 @@ let stuckList = [];
 let trackingList = [];
 const reactivateTime = 2000;
 const reactivateVariance = 15000;
+
 //General Utility Functions
-//modify a value if it exceeds limits
+//modify a value if it exceeds specified limits
 function fipoff_constrain(n, min, max){
 	if(n > max){n = max;} else if(n < min){n = min;}
 	return n;
@@ -265,8 +266,42 @@ function checkStuckList () {
 					}
 				}
 			}
-		} 
+		}
 	}
+}
+
+
+function checkCircuitHasReactivated (circuit) {
+	if (circuit.children) {
+		let numDevices = circuit.children.length;
+		for (let i = 0; i < numDevices; i++) {
+			let thisDevice = circuit.children[i];
+			if (thisDevice.hasReactivated) {
+				if(!circuit.hasReactivated) {circuit.hasReactivated = true;}
+				break;
+			}
+		}
+	}
+}
+
+function checkCircuitHasBeenLookedAt (circuit) {
+	console.log('here');
+	let numDevicesLookedAt = 0;
+	if (circuit.children) {
+			console.log('here also');
+			let numDevices = circuit.children.length;
+			for (let i = 0; i < numDevices; i++) {
+				let thisDevice = circuit.children[i];
+				if (thisDevice.hasBeenLookedAt) {numDevicesLookedAt++;}
+				console.log(numDevicesLookedAt);
+			}
+			if (numDevices == numDevicesLookedAt) {
+				return true;
+			} else {
+				return false;
+			}
+	}
+
 }
 
 function getAlarmTime(t) {
@@ -325,10 +360,11 @@ function sortByAlarmTime (list) {
 
 function getFeedbackCode(device) {
 	let binaryString = '';
-	if (device.hasBeenIsolated) {binaryString += '1';} else {binaryString += '0'}
-	if (device.hasReactivated) {binaryString += '1';} else {binaryString += '0'}
-	if (device.hasBeenReset) {binaryString += '1';} else {binaryString += '0'}
-	if (device.hasBeenLookedAt) {binaryString += '1';} else {binaryString += '0'}
+	if (device.hasBeenIsolated) {binaryString += '1';} else {binaryString += '0';}
+	if (device.hasReactivated) {binaryString += '1';} else {binaryString += '0';}
+	if (device.hasBeenReset) {binaryString += '1';} else {binaryString += '0';}
+	if (device.category == 'circuit' && checkCircuitHasBeenLookedAt(device) && !device.hasBeenLookedAt) {device.hasBeenLookedAt = true;}
+	if (device.hasBeenLookedAt) {binaryString += '1';} else {binaryString += '0';}
 
 	console.log(binaryString);
 	let feedbackCode = parseInt(binaryString, 2);
@@ -507,7 +543,8 @@ function buildFips() {
 				} else	if (device.category == 'det') {
 					f.blockplan_displayed_device = device;
 					f.updateDeviceImagePath(device);
-					if (device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) && !device.hasBeenReset && !device.hasBeenLookedAt){
+					if ((device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) || (device.parent.category == 'circuit' && !device.parent.addressable && device.parent.status_internal == 'active' && (device.parent.status == 'alarm' || device.parent.status == 'acked')))
+					 && !device.hasBeenReset && !device.hasBeenLookedAt){
 						device.hasBeenLookedAt = true;
 					}
 
@@ -1292,6 +1329,9 @@ function buildFips() {
 			device.lastAlarmTime = f.getAlarmTime();
 			if (!device.hasReactivated) {device.hasReactivated = true;}
 			// if this device is on a conventional circuit, push the hasReactivated to the circuit, too
+			if (device.parent.category == 'circuit' && !device.parent.addressable && !device.parent.hasReactivated) {
+				device.parent.hasReactivated = true;
+			}
 
 
 		}

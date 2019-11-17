@@ -87,9 +87,7 @@ let sysObjectsByCategory = {
 };
 
 
-let fips = [];
-let circuits = [];
-let dets = [];
+
 let zones = {};
 
 // when a device that is 'stuck' is reset, it is added to 'stuckList'
@@ -341,6 +339,7 @@ function sortByAlarmTime (list) {
 	// until the lastAlarmTime starts getting too old.
 
 	let recentAlarms = [];
+
 	for (let l = sortList.length, i = l - 1; i >= 0; i--) {
 		let d = new Date();
 		if (d.getTime() - sortList[i].lastAlarmTime[0] < alarmRecencyThreshold) {
@@ -385,13 +384,14 @@ function buildFips() {
 	let fipList = sysObjectsByCategory['fip'];
 	for(let i = 0, l = fipList.length; i < l; i++){
 		let f = fipList[i];
-
+		console.log(fipList);
 
 		//provide the FIP a representation in the DOM. NB this will not work in IE
 		let temp = document.getElementsByClassName('template-panel')[0];
 		let clone = temp.content.cloneNode(true);
+		console.log(clone);
 		viewport.appendChild(clone);
-
+		console.log(document.getElementsByClassName('panel'));
 		f.panel = document.getElementsByClassName('panel')[i];
 		f.panel.setAttribute('data-index', i);
 		// displace sub-FIPs by a small amount in x and z directions

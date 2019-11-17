@@ -18,9 +18,11 @@
 
 	<div onclick='void(0);'>
 		<div class='viewport'>
-			<!-- <div class='title-screen'>
+			<div class='title-screen'>
 				Welcome to fipoff
-			</div> -->
+				<button onClick='openMenu();'>Start</button>
+				<button>About</button>
+			</div>
 			<button class='get-digest' onClick='beginEnd(); getDigest();'>End Scenario</button>
 			<div class='menu-container'>
 				<div class='menu-header'><h1>Create Scenario</h1></div>
@@ -106,7 +108,7 @@
 				</div>
 				<div class='modal-body'>
 					<div class='modal-button-container'>
-						<button onclick='restartScenario();'>Restart Scenario</button><button>Quit to Title</button>
+						<button onclick='restartScenario();'>Restart Scenario</button><button onclick='quitToTitle()'>Quit to Title</button>
 					</div>
 				</div>
 			</div>

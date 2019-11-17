@@ -400,15 +400,20 @@ div {
 	right: -15px;
 }
 
-
-.update {
-	display:none;
+.title-screen {
+	display: none;
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	background-color: pink;
 }
+
+
 
 .menu-container {
 	height: 100%;
 	width: 100%;
-	display: flex;
+	display: none;
 	flex-direction: column;
 	color: white;
 }

@@ -300,6 +300,7 @@ function beginScenario () {
 		//TODO: make it so that there is only one setInterval, with one function that updates all FIP displays.
 		window.setInterval(function(){checkStuckList(); thisFip.update();}, 500);
 	}
+	showElement(document.getElementsByClassName('get-digest')[0]);
 }
 
 function beginEnd() {
@@ -331,7 +332,7 @@ function initialiseSystem() {
 			feedbackList[i] = [];
 		}
 		zones = {};
-
+		document.getElementsByClassName('digest')[0].getElementsByClassName('modal-body')[0].innerHTML = '';
 	}
 }
 
@@ -377,5 +378,6 @@ function quitToTitle () {
 	}
 	// 3. render title screen visible
 	hideElement(document.getElementsByClassName('digest')[0]);
+	hideElement(document.getElementsByClassName('get-digest')[0]);
 	showElement(titleScreen);
 }

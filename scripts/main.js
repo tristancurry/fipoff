@@ -61,7 +61,7 @@ const deviceImageVersions = {
 
 // at the end of the scenario, the tracked devices are assigned a status code
 const feedbackStrings = [
-	'no action was taken', //0000 0
+	'not dealt with in any way', //0000 0
 	'investigated, without an attempt to reset', //0001 1
 	'reset without investigation. Not Good!', //0010 2 of whole circuit, if conventional
 	'reset after investigation', //0011 3 This is the correct sequence, if there are no reactivations.
@@ -396,6 +396,16 @@ function getDigest() {
 			digest.systemNormal = true;
 		}
 
+
+		// were the external bell and warning system for EACH FIP isolated when you left?
+		digest.ebOK = true;
+		digest.wsOK = true;
+		for(let i = 0, l = sysObjectsByCategory['fip'].length; i < l; i++) {
+			let thisFip = sysObjectsByCategory['fip'][i];
+			if (thisFip.ebIsol && digest.ebOK) {digest.ebOK = false;}
+			if (thisFip.wsIsol && digest.wsOK) {digest.wsOK = false;}
+		}
+
 		// enumerate 'correctly-handled' devices
 		digest.numCorrectlyHandled = feedbackList[15].length;
 		if (digest.waitedLongEnough) {
@@ -414,22 +424,64 @@ function getDigest() {
 
  		// this summary construction should happen elsewhere, using the figures in the digest
 		let correctHandlingSummary = document.createElement('p');
-		if (digest.numCorrectlyHandled || digest.numCorrectlyHandledBut) {
+		if (digest.numCorrectlyHandled > 0 || digest.numCorrectlyHandledBut > 0) {
 			if (digest.allCorrectlyHandled || digest.allCorrectlyHandledBut) {
 				correctHandlingSummary.innerHTML = 'You correctly handled all alarms on this system';
 				if(digest.allCorrectlyHandledBut) {
-					correctHandlingSummary.innerHTML += '<h3>BUT</h3>You could have waited longer to check for reactivations';
+					correctHandlingSummary.innerHTML += ', but you could have waited longer to check for reactivations';
 				}
+				correctHandlingSummary.innerHTML +='.';
 			} else {
 				if(!digest.numCorrectlyHandledBut) {digest.numCorrectlyHandledBut = 0;}
-				correctHandlingSummary.innerHTML = 'You correctly handled ' + (digest.numCorrectlyHandled + digest.numCorrectlyHandledBut) + 'alarms on this system.';
+				let numOK = digest.numCorrectlyHandled + digest.numCorrectlyHandledBut;
+				correctHandlingSummary.innerHTML = 'You correctly handled ' + numOK + ' alarm';
+				if(numOK > 1) {correctHandlingSummary.innerHTML += 's';}
+				correctHandlingSummary.innerHTML += ' of ' + initialAlarmList.length + ' on this system';
 				if(digest.numCorrectlyHandledBut > 0) {
-					correctHandlingSummary.innerHTML += '<br>BUT<br>You could have waited longer to check for reactivation of ' + digest.numCorrectlyHandledBut + ' those alarms.';
+					correctHandlingSummary.innerHTML += ', but you could have waited longer to check for reactivation of ';
+					if(numOK > 1) {correctHandlingSummary.innerHTML += digest.numCorrectlyHandledBut + ' of those alarms';}
+					else {correctHandlingSummary.innerHTML += 'that alarm';}
 				}
+				correctHandlingSummary.innerHTML += '.';
 			}
 
+		} else {
+			if(trackingList.length == 0) {
+				correctHandlingSummary.innerHTML = 'There were no initial alarms on this system.'
+			}	else {
+				correctHandlingSummary.innerHTML = 'You handled no alarms correctly.'
+			}
 		}
 		digest_content.appendChild(correctHandlingSummary);
+
+		// next go through all of the alarm codes to itemise each error:
+		if (!digest.allCorrectlyHandled || !digest.allCorrectlyHandledBut) {
+			let alarmErrorSummary = document.createElement('p');
+			alarmErrorSummary.innerHTML = '<h3>Errors</h3>'
+			for (let i = 0; i < 16; i++) {
+				if(i != 3 && i != 15) {
+				let num = feedbackList[i].length;
+					if(num > 0) {
+						alarmErrorSummary.innerHTML += num;
+						if(num == 1) {alarmErrorSummary.innerHTML += ' was ';}
+						else {alarmErrorSummary.innerHTML += ' were ';}
+						alarmErrorSummary.innerHTML += feedbackStrings[i] + '<br>';
+					}
+				}
+			}
+			digest_content.appendChild(alarmErrorSummary);
+		}
+
+		if (!digest.systemNormal || !digest.ebOK || !digest.wsOK) {
+			let otherErrorSummary = document.createElement('p');
+			otherErrorSummary.innerHTML = '<h3>Other issues</h3>';
+			if(!digest.systemNormal) {otherErrorSummary.innerHTML += 'The system was still in alarm when you left.<br>';}
+			if(!digest.ebOK) {otherErrorSummary.innerHTML += 'Did you remember to deisolate all external bells?';}
+			if(!digest.wsOK) {otherErrorSummary.innerHTML += 'Did you remember to deisolate all warning systems?';}
+
+			digest_content.appendChild(otherErrorSummary);
+		}
+
 
 }
 

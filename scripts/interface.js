@@ -283,3 +283,35 @@ function loadScript(url) {
 
 	});
 }
+
+function beginEnd() {
+	document.getElementsByClassName('endScenario')[0].classList.toggle('show');
+}
+
+function restartScenario () {
+	// regenerate the existing scenario with the same selections
+	// 1. display a 'screening element' to hide whatever will appear after the FIPs etc are removed
+	// 2. remove the fips from the DOM
+	let panels = document.getElementsByClassName('panel-backdrop');
+	for (let i = 0, l = panels.length; i < l; i++) {
+		panels[i].parentNode.remove(panels[i]);
+	}
+	// 3. may need to clear systemObjectsByCategory
+	// 4. build system with same selections as before
+	// 5. remove 'screening element'
+}
+function replayScenario () {
+	// regenerate the existing scenario with same devices and stuckparams
+	// need to keep stuckList, sysObs
+	// need the list of all devices in alarm at scenario start
+	// clear every device's last alarm time, hasBeens etc
+	// clear trackingList, then re-seed it with the alarmed devices
+	// close all open elements
+}
+
+function quitToTitle () {
+	// 1. perform tasks 1-3  of restartScenario
+	// 2. clear user selections - restore menu system to mint condition
+	// 3. render title screen visible
+	// 4. remove 'screening element'
+}

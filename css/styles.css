@@ -556,7 +556,7 @@ div {
 
 /* modal things */
 
-/* .modal {
+.modal {
 	display:none;
 	position:fixed;
 	z-index: 2;
@@ -644,7 +644,7 @@ div {
 @-webkit-keyframes animatetop {
   from {top: -300px; opacity: 0}
   to {top: 0; opacity: 1}
-} */
+}
 
 .update {
 	display:none;

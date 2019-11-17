@@ -615,6 +615,7 @@ function buildFips() {
 							device.stuck = false;
 						} else if(t.className == 'device-activate'){
 							if(device.status_internal != 'active'){
+								if(!device.hasBeenLookedAt) {device.hasBeenLookedAt = true;}
 								device.status_internal = 'active';
 								if(device.status != 'isol'){
 									device.status = 'alarm';

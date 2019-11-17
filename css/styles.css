@@ -745,46 +745,81 @@ div {
 
 }
 
+.exitLeft, .returnLeft, .exitRight, .returnRight {
+	position: relative;
+	animation-fill-mode: forwards;
 
-.returnRight {
-	animation-name: animateR;
 	animation-duration: 0.4s;
-	-webkit-animation-name: animateR;
 	-webkit-animation-duration: 0.4s;
 	will-change: transform;
 }
-
-@keyframes animateR {
-	from {transform: translateX(200%);}
-	to {transform: translateX(0%);}
-}
-
-@-webkit-keyframes animateR {
-	from {transform: translateX(200%);}
-	to {transform: translateX(0%);}
-}
-
-
 
 .returnLeft {
-	position: relative;
-	animation-name: animateL;
-	animation-duration: 0.4s;
-	animation-fill-mode: forwards;
-	-webkit-animation-name: animateL;
-	-webkit-animation-duration: 0.4s;
-	will-change: transform;
+	animation-name: animateRetL;
+	-webkit-animation-name: animateRetL;
 }
 
- @keyframes animateL {
-	 from {transform: translateX(-100%); opacity: 0}
- 	to {transform: translateX(0%); opacity: 1}
+.exitLeft {
+	animation-name: animateExitL;
+	-webkit-animation-name: animateExitL;
 }
 
-@-webkit-keyframes animateL {
+.returnRight {
+	animation-name: animateRetR;
+	-webkit-animation-name: animateRetR;
+}
+
+.exitRight {
+	animation-name: animateExitR;
+	-webkit-animation-name: animateExitR;
+}
+
+@keyframes animateRetL {
 	from {transform: translateX(-100%); opacity: 0}
- 	to {transform: translateX(0%); opacity: 1}
+ to {transform: translateX(0%); opacity: 1}
 }
+
+@-webkit-keyframes animateRetL {
+ from {transform: translateX(-100%); opacity: 0}
+ to {transform: translateX(0%); opacity: 1}
+}
+
+@keyframes animateExitL {
+	from {transform: translateX(0%); opacity: 1}
+ to {transform: translateX(-100%); opacity: 0}
+}
+
+@-webkit-keyframes animateExitL {
+	from {transform: translateX(0%); opacity: 1}
+ to {transform: translateX(-100%); opacity: 0}
+}
+
+@keyframes animateRetR {
+	from {transform: translateX(200%);}
+	to {transform: translateX(0%);}
+}
+
+@-webkit-keyframes animateRetR {
+	from {transform: translateX(200%);}
+	to {transform: translateX(0%);}
+}
+
+@keyframes animateExitR {
+	from {transform: translateX(0%);}
+	to {transform: translateX(200%);}
+}
+
+@-webkit-keyframes animateExitR {
+	from {transform: translateX(0%);}
+	to {transform: translateX(200%);}
+}
+
+
+
+
+
+
+
 
 
 /*Mobile-portrait style */

@@ -300,7 +300,6 @@ function beginScenario () {
 		//TODO: make it so that there is only one setInterval, with one function that updates all FIP displays.
 		window.setInterval(function(){checkStuckList(); thisFip.update();}, 500);
 	}
-	console.log(trackingList);
 }
 
 function beginEnd() {
@@ -310,22 +309,28 @@ function beginEnd() {
 
 function initialiseSystem() {
 	// 1. remove the fips from the DOM
-	let panels = document.getElementsByClassName('panel-backdrop');
-	for (let i = 0, l = panels.length; i < l; i++) {
-		viewport.removeChild(panels[i]);
+	if (document.getElementsByClassName('panel-backdrop')) {
+		let panels = document.getElementsByClassName('panel-backdrop');
+		for (let i = 0, l = panels.length; i < l; i++) {
+			viewport.removeChild(panels[i]);
+		}
 	}
 	// 2. may need to clear sysObjectsByCategory
 	if (sysObjectsByCategory) {
-
 		sysObjectsByCategory = {
 			fip: [],
 			circuit: [],
 			det: []
 		};
+
+		initialAlarmList = [];
 		stuckList = [];
 		trackingList = [];
+		feedbackList = [];
+		for (let i = 0; i < 16; i++) {
+			feedbackList[i] = [];
+		}
 		zones = {};
-		console.log(sysObjectsByCategory);
 
 	}
 }

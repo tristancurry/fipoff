@@ -88,18 +88,15 @@ let sysObjectsByCategory = {
 
 
 
-let zones = {};
+let zones;
 
-// when a device that is 'stuck' is reset, it is added to 'stuckList'
-// the time of reset is also stored
-// each update cycle, this time is checked against the current time.
-// if 'enough' time has elapsed, the device is reactivated, triggering an alarm.
-// (Unless it's an MCP, in which case, it's immediately reactivated when stuck)
-let stuckList = [];
-// trackinglist is for keeping track of user input in relation to the activated devices, and anything that is in alarm because of them
-// this includes fips, non-addressable circuits, and detectors.
-// the time to assess inclusion in this list is after the first round of assignStatusIds for each FIP...I think.
-let trackingList = [];
+let initialAlarmList;
+let stuckList;
+let trackingList;
+let feedbackList;
+
+initialiseSystem();
+
 const reactivateTime = 2000;
 const reactivateVariance = 15000;
 
@@ -233,6 +230,7 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
 		}
 		let moment = new Date();
 		device.lastAlarmTime = getAlarmTime(moment.getTime() - 420000 + 30000*i);
+		initialAlarmList.push(device);
 	}
 
 	// if(stuckCertain && stuckList.length == 0) {
@@ -368,14 +366,71 @@ function getFeedbackCode(device) {
 
 	return feedbackCode;
 }
+
 // temporary function for testing feedback gen
 function getDigest() {
+	let digest = {};
+	let digest_content = document.getElementsByClassName('digest')[0].getElementsByClassName('modal-body')[0];
+
 	console.log('____________________');
 	for (let i = 0, l = trackingList.length; i < l; i++) {
 		let device = trackingList[i];
 		let code = getFeedbackCode(device);
+		feedbackList[code].push(device);
 		console.log(device.name + ', status: ' + feedbackStrings[code]);
 	}
+		// work out whether enough time has elapsed since first successful reset
+		// to see reactivations
+		let d = new Date;
+		let masterFip = sysObjectsByCategory['fip'][0];
+		if (masterFip.firstNormalTime) {
+			if (d.getTime() - masterFip.firstNormalTime > reactivateTime + reactivateVariance || scenarioInfo[3] == 0) {
+				digest.waitedLongEnough = true;
+			}
+		} else {
+			// system was never successfully reset?
+		}
+
+		// was the system still in alarm when the scenario ended?
+		if (masterFip.status_internal == 'normal') {
+			digest.systemNormal = true;
+		}
+
+		// enumerate 'correctly-handled' devices
+		digest.numCorrectlyHandled = feedbackList[15].length;
+		if (digest.waitedLongEnough) {
+			digest.numCorrectlyHandled += feedbackList[3].length;
+		} else {
+			digest.numCorrectlyHandledBut = feedbackList[3].length;
+		}
+		console.log(digest);
+		console.log(initialAlarmList.length);
+
+		if (digest.numCorrectlyHandled == initialAlarmList.length) {
+			digest.allCorrectlyHandled = true;
+		} else if (digest.numCorrectlyHandled + feedbackList[3].length == initialAlarmList.length) {
+			digest.allCorrectlyHandledBut = true;
+		}
+
+ 		// this summary construction should happen elsewhere, using the figures in the digest
+		let correctHandlingSummary = document.createElement('p');
+		if (digest.numCorrectlyHandled || digest.numCorrectlyHandledBut) {
+			if (digest.allCorrectlyHandled || digest.allCorrectlyHandledBut) {
+				correctHandlingSummary.innerHTML = 'You correctly handled all alarms on this system';
+				if(digest.allCorrectlyHandledBut) {
+					correctHandlingSummary.innerHTML += '<h3>BUT</h3>You could have waited longer to check for reactivations';
+				}
+			} else {
+				if(!digest.numCorrectlyHandledBut) {digest.numCorrectlyHandledBut = 0;}
+				correctHandlingSummary.innerHTML = 'You correctly handled ' + (digest.numCorrectlyHandled + digest.numCorrectlyHandledBut) + 'alarms on this system.';
+				if(digest.numCorrectlyHandledBut > 0) {
+					correctHandlingSummary.innerHTML += '<br>BUT<br>You could have waited longer to check for reactivation of ' + digest.numCorrectlyHandledBut + ' those alarms.';
+				}
+			}
+
+		}
+		digest_content.appendChild(correctHandlingSummary);
+
 }
 
 
@@ -384,14 +439,11 @@ function buildFips() {
 	let fipList = sysObjectsByCategory['fip'];
 	for(let i = 0, l = fipList.length; i < l; i++){
 		let f = fipList[i];
-		console.log(fipList);
-
 		//provide the FIP a representation in the DOM. NB this will not work in IE
 		let temp = document.getElementsByClassName('template-panel')[0];
 		let clone = temp.content.cloneNode(true);
-		console.log(clone);
 		viewport.appendChild(clone);
-		console.log(document.getElementsByClassName('panel'));
+
 		f.panel = document.getElementsByClassName('panel')[i];
 		f.panel.setAttribute('data-index', i);
 		// displace sub-FIPs by a small amount in x and z directions
@@ -901,8 +953,15 @@ function buildFips() {
 					this.stuck = true;
 					this.mainStatus = false;
 				} else {
-					this.status_internal = 'normal';
-					this.stuck = false;
+						if(this.status_internal != 'normal') {
+						this.status_internal = 'normal';
+						this.stuck = false;
+						if(!this.firstNormalTime) {
+							let d = new Date();
+							this.firstNormalTime = d.getTime();
+							console.log(this.firstNormalTime);
+						}
+					}
 				}
 			if(this.status != 'isol'){
 				if (this.status_internal == 'active'){

@@ -27,7 +27,7 @@
 					</div>
 				</div>
 			</div>
-			<button class='get-digest' onClick='beginEnd(); getDigest();'>End Scenario</button>
+			<button class='get-digest' onClick='beginEnd();'>End Scenario</button>
 			<div class='menu-container'>
 				<div class='menu-header'><h1>Create Scenario</h1></div>
 				<div class='menu-content'>
@@ -99,7 +99,8 @@
 				</div>
 				<div class='modal-body'>
 					<div class='modal-button-container'>
-						<button onClick='this.parentNode.parentNode.parentNode.parentNode.classList.toggle("show"); document.getElementsByClassName("digest")[0].classList.toggle("show");'>Yes</button><button>No</button>
+						<button onClick='getDigest(); hideElement(document.getElementsByClassName("endScenario")[0]); showElement(document.getElementsByClassName("digest")[0]);'>Yes</button>
+						<button onClick='hideElement(document.getElementsByClassName("endScenario")[0])'>No</button>
 					</div>
 				</div>
 			</div>

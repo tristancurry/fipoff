@@ -61,10 +61,10 @@ const deviceImageVersions = {
 
 // at the end of the scenario, the tracked devices are assigned a status code
 const feedbackStrings = [
-	'not dealt with in any way', //0000 0
-	'investigated, without an attempt to reset', //0001 1
+	'not dealt with in any way.', //0000 0
+	'investigated, without an attempt to reset.', //0001 1
 	'reset without investigation. Not Good!', //0010 2 of whole circuit, if conventional
-	'reset after investigation', //0011 3 This is the correct sequence, if there are no reactivations.
+	'reset after investigation.', //0011 3 This is the correct sequence, if there are no reactivations.
 	'imposs', //0100 4
 	'imposs', //0101 5
 	'reset without investigation. Device reactivated, but was not isolated.', //0110 6
@@ -458,6 +458,8 @@ function getDigest() {
 		if (!digest.allCorrectlyHandled || !digest.allCorrectlyHandledBut) {
 			let alarmErrorSummary = document.createElement('p');
 			alarmErrorSummary.innerHTML = '<h3>Errors</h3>'
+			alarmErrorSummary.innerHTML += 'Of ' + initialAlarmList.length + ' alarms:<br>';
+
 			for (let i = 0; i < 16; i++) {
 				if(i != 3 && i != 15) {
 				let num = feedbackList[i].length;
@@ -469,6 +471,8 @@ function getDigest() {
 					}
 				}
 			}
+
+
 			digest_content.appendChild(alarmErrorSummary);
 		}
 
@@ -476,8 +480,8 @@ function getDigest() {
 			let otherErrorSummary = document.createElement('p');
 			otherErrorSummary.innerHTML = '<h3>Other issues</h3>';
 			if(!digest.systemNormal) {otherErrorSummary.innerHTML += 'The system was still in alarm when you left.<br>';}
-			if(!digest.ebOK) {otherErrorSummary.innerHTML += 'Did you remember to deisolate all external bells?';}
-			if(!digest.wsOK) {otherErrorSummary.innerHTML += 'Did you remember to deisolate all warning systems?';}
+			if(!digest.ebOK) {otherErrorSummary.innerHTML += 'Did you de-isolate all external bells?<br>';}
+			if(!digest.wsOK) {otherErrorSummary.innerHTML += 'Some warning systems were left isolated!';}
 
 			digest_content.appendChild(otherErrorSummary);
 		}

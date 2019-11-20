@@ -38,9 +38,6 @@ const systemPaths = {
 	system00c: 'system00/system00c.js'
 }
 
-
-
-
 const deviceStatusStrings = {
 	active: 'Activated',
 	normal: 'Normal'
@@ -62,6 +59,26 @@ const deviceImageVersions = {
 	concealed: 1
 }
 
+// at the end of the scenario, the tracked devices are assigned a status code
+const feedbackStrings = [
+	'not dealt with in any way.', //0000 0
+	'investigated, without an attempt to reset.', //0001 1
+	'reset without investigation. Not Good!', //0010 2 of whole circuit, if conventional
+	'reset after investigation.', //0011 3 This is the correct sequence, if there are no reactivations.
+	'imposs', //0100 4
+	'imposs', //0101 5
+	'reset without investigation. Device reactivated, but was not isolated.', //0110 6
+	'reset after investigation. Device reactivated, but was not isolated.', //0111 7
+	'isolated without investigation or an attempt to reset. Not Good!', //1000 8 also codes for isolation without prior activation...
+	'investigated, but isolated without first attempting to reset.', //1001 9
+	'reset without investigation, then isolated without having reactivated.',//1010 10
+	'reset after investigation, but isolated without having reactivated.',//1011 11
+	'imposs', //1100 12
+	'isolated without having activated.', //1101 13 this state is manually assigned. Shares binary code with 8.
+	'reset without investigation, then isolated upon reactivation. Not Good!', //1110 This is a BAD one! 14
+	'reset after investigation, then isolated upon reactivation.'//1111 This is the most correct action 15
+];
+
 let sysObjects = [];
 let sysObjectsByCategory = {
 	fip: [],
@@ -70,21 +87,21 @@ let sysObjectsByCategory = {
 };
 
 
-let fips = [];
-let circuits = [];
-let dets = [];
-let zones = {};
 
-// when a device that is 'stuck' is reset, it is added to 'stuckList'
-// the time of reset is also stored
-// each update cycle, this time is checked against the current time.
-// if 'enough' time has elapsed, the device is reactivated, triggering an alarm.
-// (Unless it's an MCP, in which case, it's immediately reactivated when stuck)
-let stuckList = [];
+let zones;
+
+let initialAlarmList;
+let stuckList;
+let trackingList;
+let feedbackList;
+
+initialiseSystem();
+
 const reactivateTime = 2000;
 const reactivateVariance = 15000;
+
 //General Utility Functions
-//modify a value if it exceeds limits
+//modify a value if it exceeds specified limits
 function fipoff_constrain(n, min, max){
 	if(n > max){n = max;} else if(n < min){n = min;}
 	return n;
@@ -200,6 +217,11 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
 		let device = list[chosenDevices[i]];
 		device.status = 'alarm';
 		device.status_internal = 'active';
+		if(device.type == 'mcp') {
+			device.stuck = true;
+			device.reactivateTime = 0;
+			stuckList.push(device);
+		}
 		let stuckRoll = Math.random();
 		if((stuckRoll < stuckProb && device.type != 'mcp')|| (i == numAlarms - 1 && stuckCertain && stuckList.length == 0)){
 			device.stuck = true;
@@ -208,6 +230,7 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
 		}
 		let moment = new Date();
 		device.lastAlarmTime = getAlarmTime(moment.getTime() - 420000 + 30000*i);
+		initialAlarmList.push(device);
 	}
 
 	// if(stuckCertain && stuckList.length == 0) {
@@ -223,16 +246,55 @@ function checkStuckList () {
 	let d = new Date();
 	let moment = d.getTime();
 	for (let i = 0, l = stuckList.length; i < l; i++) {
-		if (stuckList[i].lastResetTime) {
-			if (moment - stuckList[i].lastResetTime > stuckList[i].reactivateTime && stuckList[i].type != 'mcp') {
-				if(stuckList[i].status_internal == 'normal' && stuckList[i].status == 'normal') {
-					stuckList[i].status_internal = 'active';
-					stuckList[i].status = 'alarm';
-					stuckList[i].lastAlarmTime = getAlarmTime();
+		let device = stuckList[i];
+		if (device.type != 'mcp') {
+			if (device.lastResetTime) {
+				if (moment - device.lastResetTime > device.reactivateTime && device.stuck) {
+					if(device.status_internal == 'normal' && device.status == 'normal') {
+						device.status_internal = 'active';
+						device.status = 'alarm';
+						device.lastAlarmTime = getAlarmTime();
+						if (!device.hasReactivated) {device.hasReactivated = true;}
+						// if this device is on a conventional circuit, push the hasReactivated to the circuit, too
+						if (device.parent.category == 'circuit' && !device.parent.addressable && !device.parent.hasReactivated) {
+							device.parent.hasReactivated = true;
+						}
+					}
 				}
 			}
 		}
 	}
+}
+
+
+function checkCircuitHasReactivated (circuit) {
+	if (circuit.children) {
+		let numDevices = circuit.children.length;
+		for (let i = 0; i < numDevices; i++) {
+			let thisDevice = circuit.children[i];
+			if (thisDevice.hasReactivated) {
+				if(!circuit.hasReactivated) {circuit.hasReactivated = true;}
+				break;
+			}
+		}
+	}
+}
+
+function checkCircuitHasBeenLookedAt (circuit) {
+	let numDevicesLookedAt = 0;
+	if (circuit.children) {
+			let numDevices = circuit.children.length;
+			for (let i = 0; i < numDevices; i++) {
+				let thisDevice = circuit.children[i];
+				if (thisDevice.hasBeenLookedAt) {numDevicesLookedAt++;}
+			}
+			if (numDevices == numDevicesLookedAt) {
+				return true;
+			} else {
+				return false;
+			}
+	}
+
 }
 
 function getAlarmTime(t) {
@@ -249,14 +311,194 @@ function getAlarmTime(t) {
 	return [alarmTime, alarmString];
 }
 
+function trackActiveDevices (list) {
+	for (let i = 0, l = list.length; i < l; i++) {
+		if (list[i].status_internal == 'active') {
+			trackingList.push(list[i]);
+		}
+	}
+};
+
+function sortByAlarmTime (list) {
+	//produce separate list of devices, sorted in order of lastActivationTime (earliest to latest);
+	let sortList = [];
+	for (let i = 0, l = list.length; i<l; i++) {
+		sortList[i] = list[i];
+	}
+	sortList.sort (
+		function(a,b) {
+				return a.lastAlarmTime[0] - b.lastAlarmTime[0];
+		}
+	);
+
+	// grab any chunk of devices with 'recent' alarm times (e.g. last day)
+	// and put this at the start of the list...
+	// work backwards from the end of the sorted list, moving elements from the end to the beginning
+	// until the lastAlarmTime starts getting too old.
+
+	let recentAlarms = [];
+
+	for (let l = sortList.length, i = l - 1; i >= 0; i--) {
+		let d = new Date();
+		if (d.getTime() - sortList[i].lastAlarmTime[0] < alarmRecencyThreshold) {
+			recentAlarms.push(sortList[i]);
+		}
+	}
+
+	for (let i = 0, l = recentAlarms.length; i < l; i++) {
+		sortList.pop();
+		sortList.unshift(recentAlarms[i]);
+	}
+	return sortList;
+}
+
+function getFeedbackCode(device) {
+	let binaryString = '';
+	if (device.hasBeenIsolated) {binaryString += '1';} else {binaryString += '0';}
+	if (device.hasReactivated) {binaryString += '1';} else {binaryString += '0';}
+	if (device.hasBeenReset) {binaryString += '1';} else {binaryString += '0';}
+	if (device.category == 'circuit' && checkCircuitHasBeenLookedAt(device) && !device.hasBeenLookedAt) {device.hasBeenLookedAt = true;}
+	if (device.hasBeenLookedAt) {binaryString += '1';} else {binaryString += '0';}
+
+	console.log(binaryString);
+	let feedbackCode = parseInt(binaryString, 2);
+	if (feedbackCode == 8 && device.hasNoReason) {feedbackCode = 13;}
+
+	return feedbackCode;
+}
+
+// temporary function for testing feedback gen
+function getDigest() {
+	let digest = {};
+	let digest_content = document.getElementsByClassName('digest')[0].getElementsByClassName('modal-body')[0];
+
+	console.log('____________________');
+	for (let i = 0, l = trackingList.length; i < l; i++) {
+		let device = trackingList[i];
+		let code = getFeedbackCode(device);
+		feedbackList[code].push(device);
+		console.log(device.name + ', status: ' + feedbackStrings[code]);
+	}
+		// work out whether enough time has elapsed since first successful reset
+		// to see reactivations
+		let d = new Date;
+		let masterFip = sysObjectsByCategory['fip'][0];
+		if (masterFip.firstNormalTime) {
+			if (d.getTime() - masterFip.firstNormalTime > reactivateTime + reactivateVariance || scenarioInfo[3] == 0) {
+				digest.waitedLongEnough = true;
+			}
+		} else {
+			// system was never successfully reset?
+		}
+
+		// was the system still in alarm when the scenario ended?
+		if (masterFip.status_internal == 'normal') {
+			digest.systemNormal = true;
+		}
+
+
+		// were the external bell and warning system for EACH FIP isolated when you left?
+		digest.ebOK = true;
+		digest.wsOK = true;
+		for(let i = 0, l = sysObjectsByCategory['fip'].length; i < l; i++) {
+			let thisFip = sysObjectsByCategory['fip'][i];
+			if (thisFip.ebIsol && digest.ebOK) {digest.ebOK = false;}
+			if (thisFip.wsIsol && digest.wsOK) {digest.wsOK = false;}
+		}
+
+		// enumerate 'correctly-handled' devices
+		digest.numCorrectlyHandled = feedbackList[15].length;
+		if (digest.waitedLongEnough) {
+			digest.numCorrectlyHandled += feedbackList[3].length;
+		} else {
+			digest.numCorrectlyHandledBut = feedbackList[3].length;
+		}
+		console.log(digest);
+		console.log(initialAlarmList.length);
+
+		if (digest.numCorrectlyHandled == initialAlarmList.length) {
+			digest.allCorrectlyHandled = true;
+		} else if (digest.numCorrectlyHandled + feedbackList[3].length == initialAlarmList.length) {
+			digest.allCorrectlyHandledBut = true;
+		}
+
+ 		// this summary construction should happen elsewhere, using the figures in the digest
+		let correctHandlingSummary = document.createElement('p');
+		if (digest.numCorrectlyHandled > 0 || digest.numCorrectlyHandledBut > 0) {
+			if (digest.allCorrectlyHandled || digest.allCorrectlyHandledBut) {
+				correctHandlingSummary.innerHTML = 'You correctly handled all alarms on this system';
+				if(digest.allCorrectlyHandledBut) {
+					correctHandlingSummary.innerHTML += ', but you could have waited longer to check for reactivations';
+				}
+				correctHandlingSummary.innerHTML +='.';
+			} else {
+				if(!digest.numCorrectlyHandledBut) {digest.numCorrectlyHandledBut = 0;}
+				let numOK = digest.numCorrectlyHandled + digest.numCorrectlyHandledBut;
+				correctHandlingSummary.innerHTML = 'You correctly handled ' + numOK + ' alarm';
+				if(numOK > 1) {correctHandlingSummary.innerHTML += 's';}
+				correctHandlingSummary.innerHTML += ' of ' + initialAlarmList.length + ' on this system';
+				if(digest.numCorrectlyHandledBut > 0) {
+					correctHandlingSummary.innerHTML += ', but you could have waited longer to check for reactivation of ';
+					if(numOK > 1) {correctHandlingSummary.innerHTML += digest.numCorrectlyHandledBut + ' of those alarms';}
+					else {correctHandlingSummary.innerHTML += 'that alarm';}
+				}
+				correctHandlingSummary.innerHTML += '.';
+			}
+
+		} else {
+			if(trackingList.length == 0) {
+				correctHandlingSummary.innerHTML = 'There were no initial alarms on this system.'
+			}	else {
+				correctHandlingSummary.innerHTML = 'You handled no alarms correctly.'
+			}
+		}
+		digest_content.appendChild(correctHandlingSummary);
+
+		// next go through all of the alarm codes to itemise each error:
+		if (!digest.allCorrectlyHandled || !digest.allCorrectlyHandledBut) {
+			let alarmErrorSummary = document.createElement('p');
+			alarmErrorSummary.innerHTML = '<h3>Errors</h3>'
+			alarmErrorSummary.innerHTML += 'Of ' + initialAlarmList.length + ' alarms:<br>';
+
+			for (let i = 0; i < 16; i++) {
+				if(i != 3 && i != 15 && i != 13) {
+				let num = feedbackList[i].length;
+					if(num > 0) {
+						alarmErrorSummary.innerHTML += num;
+						if(num == 1) {alarmErrorSummary.innerHTML += ' was ';}
+						else {alarmErrorSummary.innerHTML += ' were ';}
+						alarmErrorSummary.innerHTML += feedbackStrings[i] + '<br>';
+					}
+				}
+			}
+
+
+			digest_content.appendChild(alarmErrorSummary);
+		}
+
+		if (!digest.systemNormal || !digest.ebOK || !digest.wsOK || feedbackList[13].length > 0) {
+			let otherErrorSummary = document.createElement('p');
+			otherErrorSummary.innerHTML = '<h3>Other issues</h3>';
+			if (!digest.systemNormal) {otherErrorSummary.innerHTML += 'The system was still in alarm when you left.<br>';}
+			if (!digest.ebOK) {otherErrorSummary.innerHTML += 'Did you de-isolate all external bells?<br>';}
+			if (!digest.wsOK) {otherErrorSummary.innerHTML += 'Some warning systems were left isolated!<br>';}
+			if (feedbackList[13].length > 0) {
+				otherErrorSummary.innerHTML += 'You isolated ';
+				if (feedbackList[13].length == 1) {otherErrorSummary.innerHTML += 'a device, even though it was ';}
+				else {otherErrorSummary.innerHTML += feedbackList[13].length + ' devices, even though they were ';}
+				otherErrorSummary.innerHTML += 'not activated.'
+			}
+
+			digest_content.appendChild(otherErrorSummary);
+		}
+}
+
+
 function buildFips() {
 	//for each fip in the list of fips...
 	let fipList = sysObjectsByCategory['fip'];
 	for(let i = 0, l = fipList.length; i < l; i++){
 		let f = fipList[i];
-
-
-
 		//provide the FIP a representation in the DOM. NB this will not work in IE
 		let temp = document.getElementsByClassName('template-panel')[0];
 		let clone = temp.content.cloneNode(true);
@@ -307,8 +549,12 @@ function buildFips() {
 
 
 		let blockplan_pages = f.blockplan_details['pages'];
+		if (blockplan_pages.length < 2) {
+			f.blockplan.getElementsByClassName('blockplan-prev')[0].style.display = 'none';
+			f.blockplan.getElementsByClassName('blockplan-next')[0].style.display = 'none';
+		}
 
-		for(let i = 0, l = blockplan_pages.length; i < l; i++){
+		for (let i = 0, l = blockplan_pages.length; i < l; i++) {
 			let temp_page = document.createElement('div');
 			temp_page.className = 'blockplan-page';
 			let thisPageBg = new Image().src = f.blockplan_details['pages'][i];
@@ -410,6 +656,10 @@ function buildFips() {
 				} else	if (device.category == 'det') {
 					f.blockplan_displayed_device = device;
 					f.updateDeviceImagePath(device);
+					if ((device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) || (device.parent.category == 'circuit' && !device.parent.addressable && device.parent.status_internal == 'active' && (device.parent.status == 'alarm' || device.parent.status == 'acked')))
+					 && !device.hasBeenReset && !device.hasBeenLookedAt){
+						device.hasBeenLookedAt = true;
+					}
 
 					if(device.type == 'mcp'){
 						f.blockplan_card_elements['MCPOptions'].classList.add('show');
@@ -481,6 +731,7 @@ function buildFips() {
 							device.stuck = false;
 						} else if(t.className == 'device-activate'){
 							if(device.status_internal != 'active'){
+								if(!device.hasBeenLookedAt) {device.hasBeenLookedAt = true;}
 								device.status_internal = 'active';
 								if(device.status != 'isol'){
 									device.status = 'alarm';
@@ -726,7 +977,7 @@ function buildFips() {
 
 			}
 
-			this.sortedDeviceList = this.sortByAlarmTime(list);
+			this.sortedDeviceList = sortByAlarmTime(list);
 
 			for(let i = 0, l = f.sortedDeviceList.length; i < l; i++){
 					let device = f.sortedDeviceList[i];
@@ -754,12 +1005,6 @@ function buildFips() {
 					break;
 				}
 			}
-
-
-
-
-
-
 			//handling statuses: this.status is what's checked by any upstream FIPs. actually, just set activated and stuck
 			//TODO: think about what to do if this input is isolated at the upstream FIP - will the applied status conflict with this in some way?
 
@@ -772,8 +1017,15 @@ function buildFips() {
 					this.stuck = true;
 					this.mainStatus = false;
 				} else {
-					this.status_internal = 'normal';
-					this.stuck = false;
+						if(this.status_internal != 'normal') {
+						this.status_internal = 'normal';
+						this.stuck = false;
+						if(!this.firstNormalTime) {
+							let d = new Date();
+							this.firstNormalTime = d.getTime();
+							console.log(this.firstNormalTime);
+						}
+					}
 				}
 			if(this.status != 'isol'){
 				if (this.status_internal == 'active'){
@@ -850,6 +1102,7 @@ function buildFips() {
 				if(this.warnSys.classList.contains('flashing')){this.warnSys.classList.toggle('flashing')};
 			}
 
+
 			//TODO: refactor the conditional toggling of classes into a toggleClass function (args are the element, and the className)
 			//TODO: put this repeated stuff into a function used to activate/deactivate auxiliary systems
 		};
@@ -888,43 +1141,7 @@ function buildFips() {
 			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
 	};
 
-	f.sortByAlarmTime = function(list){
 
-		//produce separate list of devices, sorted in order of lastActivationTime (earliest to latest);
-		let sortList = [];
-
-		for(let i = 0, l = list.length; i<l; i++){
-			sortList[i] = list[i];
-		}
-
-		sortList.sort(
-			function(a,b) {
-					return a.lastAlarmTime[0] - b.lastAlarmTime[0];
-			}
-		);
-
-		// grab any chunk of devices with 'recent' alarm times (e.g. last day)
-		// and put this at the start of the list...
-		// work backwards from the end of the sorted list, moving elements from the end to the beginning
-		// until the lastAlarmTime starts getting too old.
-
-		let recentAlarms = [];
-		for (let l = sortList.length, i = l - 1; i >= 0; i--) {
-			let d = new Date();
-			if (d.getTime() - sortList[i].lastAlarmTime[0] < alarmRecencyThreshold) {
-				recentAlarms.push(sortList[i]);
-			}
-		}
-
-		for (let i = 0, l = recentAlarms.length; i < l; i++) {
-			sortList.pop();
-			sortList.unshift(recentAlarms[i]);
-		}
-
-		return sortList;
-
-
-	}
 
 	f.findNext = function(status){
 		let list = this.addressableDeviceList;
@@ -1183,7 +1400,7 @@ function buildFips() {
 	};
 
 	f.handleIsolate = function(){
-		if(this.confirmState == 'none' && !this.mainStatus){
+		if(this.confirmState == 'none' && this.addressableDeviceList[this.currentIndex].status != 'isol' &&!this.mainStatus){
 			//put system in state where it's waiting for the user to confirm the isolation.
 			this.confirmState = 'isol';
 		} else if(this.confirmState == 'single' || this.confirmState == 'multi' || this.confirmState == 'isol'){
@@ -1195,6 +1412,20 @@ function buildFips() {
 
 	f.isolateDevice = function(device){
 		device.status = 'isol';
+		if (!device.hasBeenIsolated) {device.hasBeenIsolated = true;}
+		// if not already being tracked, please add it to the tracking list
+		// if it's added to the tracking list, flag this too: lateAddition or freakIsolation
+		// in other words, the end dialogue will ask why the user isolated this device.
+		let checkIfPresent = function(d){
+			if(d == device){
+				return d;
+			}
+		};
+		let check = trackingList.filter(checkIfPresent);
+		if(check.length == 0){
+			device.hasNoReason = true;
+			trackingList.push(device);
+		}
 	};
 
 	f.resetDevice = function(device){
@@ -1209,13 +1440,19 @@ function buildFips() {
 		}
 		let d = new Date();
 		device.lastResetTime = d.getTime();
-		if((device.type != 'mcp' || (device.type == 'mcp' && !device.stuck)) && (device.status == 'alarm' || device.status == 'acked')){
+		if (!device.hasBeenReset) {device.hasBeenReset = true;}
+		if ((device.type != 'mcp' || (device.type == 'mcp' && !device.stuck)) && (device.status == 'alarm' || device.status == 'acked')) {
 			device.status = 'normal';
 			device.status_internal = 'normal';
-		} else if (device.stuck && (device.status == 'alarm' || device.status == 'acked') && device.type == 'mcp'){
+		} else if (device.stuck && (device.status == 'alarm' || device.status == 'acked') && device.type == 'mcp') {
 			device.status = 'alarm';
 			device.status_internal = 'active';
 			device.lastAlarmTime = f.getAlarmTime();
+			if (!device.hasReactivated) {device.hasReactivated = true;}
+			// if this device is on a conventional circuit, push the hasReactivated to the circuit, too
+			if (device.parent.category == 'circuit' && !device.parent.addressable && !device.parent.hasReactivated) {
+				device.parent.hasReactivated = true;
+			}
 
 
 		}

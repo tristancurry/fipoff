@@ -18,9 +18,16 @@
 
 	<div onclick='void(0);'>
 		<div class='viewport'>
-			<!-- <div class='title-screen'>
-				Welcome to fipoff
-			</div> -->
+			<div class='title-screen'>
+				<div class='title-screen-content'>
+					<h1>Welcome to fipoff</h1>
+					<div class='title-screen-button-container'>
+						<button onClick='openMenu();'>Start</button>
+						<button>About</button>
+					</div>
+				</div>
+			</div>
+			<button class='get-digest' onClick='beginEnd();'>End Scenario</button>
 			<div class='menu-container'>
 				<div class='menu-header'><h1>Create Scenario</h1></div>
 				<div class='menu-content'>
@@ -75,7 +82,7 @@
 </div>
 
 
-			<div class='update modal'>
+			<div class='update'>
 				<div class='update-content'>
 					<p>New version available!</p>
 					<div class='button-container'>
@@ -83,8 +90,37 @@
 					<button onclick='toggleDisplay(document.getElementsByClassName("update")[0])'>DISMISS</button>
 				</div>
 			</div>
-
 		</div>
+
+		<div class='modal endScenario'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+					<h2>End Scenario?</h2>
+				</div>
+				<div class='modal-body'>
+					<div class='modal-button-container'>
+						<button onClick='getDigest(); hideElement(document.getElementsByClassName("endScenario")[0]); showElement(document.getElementsByClassName("digest")[0]);'>Yes</button>
+						<button onClick='hideElement(document.getElementsByClassName("endScenario")[0])'>No</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class='modal digest'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+					<h2>Scenario Feedback</h2>
+				</div>
+				<div class='modal-body'>
+				</div>
+				<div class='model-footer'>
+					<div class='modal-button-container'>
+						<button onclick='restartScenario();'>Restart Scenario</button><button onclick='quitToTitle()'>Quit to Title</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 	</div>
 
 	<!-- TEMPLATES for SYSTEM COMPONENTS -->

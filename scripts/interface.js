@@ -11,11 +11,12 @@ let systemMenu = ['system00', 'system00c'];
 let locationMenu = [false, true];
 let faultMenu = [0, 0.02, 0.15, 1];
 
+const titleScreen = document.getElementsByClassName('title-screen')[0];
 const menuContainer = document.getElementsByClassName('menu-container')[0];
 const menuPages = menuContainer.getElementsByClassName('menu-page');
 
-menuPages[0].classList.add('returnRight');
-menuPages[0].classList.toggle('show');
+titleScreen.classList.add('show');
+
 
 const summary = menuPages[menuPages.length - 1].getElementsByClassName('menu-summary')[0];
 const summaryLines = summary.getElementsByTagName('span');
@@ -99,14 +100,6 @@ function handleMenuInteraction(target) {
 		currentMenuPage = 1;
 	}
 
-	// if a selector is clicked on...
-	// 1.store the appropriate string and associated variable value
-	// 2.append the string the the appropriate span in the 'summary' page
-	// and anywhere else this info will be useful
-	// 3.trigger the disappearance of this page, and the appearance of the next
-	// unless we are on the summary page.
-	// 4.make the 'back' button in the footer do the correct thing
-	// 5.make the 'start scenario' button appear or disappear as necessary
 	if(target.classList.contains('menu-option-text')) {
 		handleMenuInteraction(target.parentNode);
 
@@ -118,9 +111,9 @@ function handleMenuInteraction(target) {
 				scenarioInfo[currentMenuPage] = selection;
 				selections[currentMenuPage] = target.getElementsByClassName('menu-option-text')[0].innerHTML;
 				summaryLines[currentMenuPage].innerHTML = selections[currentMenuPage];
-				let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
+				let thisPage = menuPages[currentMenuPage];
 
-				let theseOptions = target.parentNode.parentNode.getElementsByClassName('menu-option');
+				let theseOptions = thisPage.getElementsByClassName('menu-option');
 				for (let i = 0, l = theseOptions.length; i < l; i++) {
 					theseOptions[i].classList.remove('menu-selected');
 				}
@@ -145,10 +138,10 @@ function handleMenuInteraction(target) {
 					nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage + 1];
 					currentMenuPage++;
 				}
-				toggleDisplay(thisPage);
+				hideElement(thisPage);
 				nextPage.classList.remove('returnLeft');
 				nextPage.classList.add('returnRight');
-				toggleDisplay(nextPage);
+				showElement(nextPage);
 				thisPage.classList.remove('returnRight');
 				thisPage.classList.add('returnLeft');
 				 // hopefully this will be done with a nice animation
@@ -164,10 +157,9 @@ function handleMenuInteraction(target) {
 	}
 
 	if(target.classList.contains('menu-back')) {
+		let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
+		let nextPage;
 		if (currentMenuPage > 0) {
-			let thisPage = menuContainer.getElementsByClassName('menu-page')[currentMenuPage];
-			let nextPage;
-
 			if (currentMenuPage == 4 && scenarioInfo[1] == 0) {
 				nextPage = 	menuContainer.getElementsByClassName('menu-page')[1];
 				currentMenuPage = 1;
@@ -178,12 +170,16 @@ function handleMenuInteraction(target) {
 				nextPage = 	menuContainer.getElementsByClassName('menu-page')[currentMenuPage - 1];
 				currentMenuPage--;
 			}
-			toggleDisplay(thisPage);
-			toggleDisplay(nextPage);
-			// actually,this button should never be disabled...
-			if(currentMenuPage == 0) {target.classList.remove('show');}
-			//menuContainer.getElementsByClassName('menu-start')[0].setAttribute('disabled','disabled');
+		} else {
+			// go back to title screen
+			nextPage = titleScreen;
+			currentMenuPage = -1;
+
 		}
+
+		hideElement(thisPage);
+		showElement(nextPage);
+		if(currentMenuPage == -1) {hideElement(menuContainer);}
 	}
 
 	if (target.classList.contains('menu-start')) {
@@ -196,57 +192,7 @@ function handleMenuInteraction(target) {
 			let thisSystemPath = systemDir + systemPaths[systemMenu[parseInt(scenarioInfo[0])]];
 			loadScript(thisSystemPath).then(
 				function(){
-					buildSystem(system);
-					buildZoneLists();
-					buildFips();
-					menuContainer.style.display = 'none';
-
-					let devList = sysObjectsByCategory['det'];
-
-					let alarmChoice = parseInt(scenarioInfo[1]);
-					let numAlarms = 0;
-					switch(alarmChoice){
-						case 0:
-							numAlarms = 0;
-							break;
-						case 1:
-							numAlarms = 1;
-							break;
-						case 2:
-							numAlarms = 2;
-							break;
-						case 3:
-							numAlarms = Math.round(Math.floor(3*Math.random()) + 2.9);
-							break;
-						case 4:
-							numAlarms = Math.round(Math.floor(8*Math.random()) + 5.9);
-							break;
-					}
-
-					let stuckProb = faultMenu[parseInt(scenarioInfo[3])];
-
-					if (numAlarms > 0) {
-						triggerRandomAlarms(devList, numAlarms, locationMenu[scenarioInfo[2]], stuckProb);
-					}
-
-					let fipList = sysObjectsByCategory['fip'];
-					// needed to loop backwards so that the alarm counts were correct for FIPs closer to the main FirePanel
-					// TODO: make the title of the blockplan depend on a variable stored with the FIP, not the entire system
-					for (let l = fipList.length, i = l - 1; i >= 0; i--) {
-						let thisFip = fipList[i];
-
-						 thisFip.assignStatusIds();
-						 thisFip.displayStatus();
-
-
-						for (let i = 0, l = thisFip.deviceList.length; i < l; i++){
-							thisFip.updateDeviceImagePath(thisFip.deviceList[i]);
-						}
-						//keep the clock running. When we have multiple FIPs, do them all at once
-						//TODO: make it so that there is only one setInterval, with one function that updates all FIP displays.
-						window.setInterval(function(){checkStuckList(); thisFip.update();}, 500);
-					}
-
+					beginScenario();
 			}).catch(function(){console.log('whoops')});
 			// Hide the menu system.
 			// Reset the menu system to the start page.
@@ -258,8 +204,17 @@ function handleMenuInteraction(target) {
 
 
 
+
 function toggleDisplay(elm){
 	elm.classList.toggle('show');
+}
+
+function showElement(elm){
+	elm.classList.add('show');
+}
+
+function hideElement(elm){
+	elm.classList.remove('show');
 }
 
 function loadScript(url) {
@@ -281,4 +236,148 @@ function loadScript(url) {
 		document.getElementsByTagName('body')[0].appendChild(elm);
 
 	});
+}
+
+function openMenu() {
+	hideElement(titleScreen);
+	titleScreen.classList.add('returnLeft');
+	menuPages[0].classList.add('returnRight');
+	showElement(menuPages[0]);
+	showElement(menuContainer);
+	currentMenuPage = 0;
+
+}
+
+function beginScenario () {
+	buildSystem(system);
+	buildZoneLists();
+	buildFips();
+	hideElement(menuContainer);
+
+	let devList = sysObjectsByCategory['det'];
+
+	let alarmChoice = parseInt(scenarioInfo[1]);
+	let numAlarms = 0;
+	switch(alarmChoice){
+		case 0:
+			numAlarms = 0;
+			break;
+		case 1:
+			numAlarms = 1;
+			break;
+		case 2:
+			numAlarms = 2;
+			break;
+		case 3:
+			numAlarms = Math.round(Math.floor(3*Math.random()) + 2.9);
+			break;
+		case 4:
+			numAlarms = Math.round(Math.floor(8*Math.random()) + 5.9);
+			break;
+	}
+
+	let stuckProb = faultMenu[parseInt(scenarioInfo[3])];
+
+	if (numAlarms > 0) {
+		triggerRandomAlarms(devList, numAlarms, locationMenu[scenarioInfo[2]], stuckProb);
+	}
+
+	let fipList = sysObjectsByCategory['fip'];
+	// needed to loop backwards so that the alarm counts were correct for FIPs closer to the main FirePanel
+	// TODO: make the title of the blockplan depend on a variable stored with the FIP, not the entire system
+	for (let l = fipList.length, i = l - 1; i >= 0; i--) {
+		let thisFip = fipList[i];
+
+		 thisFip.assignStatusIds();
+		 trackActiveDevices(thisFip.addressableDeviceList);
+		 thisFip.displayStatus();
+
+
+		for (let i = 0, l = thisFip.deviceList.length; i < l; i++){
+			thisFip.updateDeviceImagePath(thisFip.deviceList[i]);
+		}
+		//keep the clock running. When we have multiple FIPs, do them all at once
+		//TODO: make it so that there is only one setInterval, with one function that updates all FIP displays.
+		window.setInterval(function(){checkStuckList(); thisFip.update();}, 500);
+	}
+	showElement(document.getElementsByClassName('get-digest')[0]);
+}
+
+function beginEnd() {
+	document.getElementsByClassName('endScenario')[0].classList.toggle('show');
+
+}
+
+function initialiseSystem() {
+	// 1. remove the fips from the DOM
+	if (document.getElementsByClassName('panel-backdrop')) {
+		let panels = document.getElementsByClassName('panel-backdrop');
+		for (let i = 0, l = panels.length; i < l; i++) {
+			viewport.removeChild(panels[i]);
+		}
+	}
+	// 2. may need to clear sysObjectsByCategory
+	if (sysObjectsByCategory) {
+		sysObjectsByCategory = {
+			fip: [],
+			circuit: [],
+			det: []
+		};
+
+		initialAlarmList = [];
+		stuckList = [];
+		trackingList = [];
+		feedbackList = [];
+		for (let i = 0; i < 16; i++) {
+			feedbackList[i] = [];
+		}
+		zones = {};
+		document.getElementsByClassName('digest')[0].getElementsByClassName('modal-body')[0].innerHTML = '';
+	}
+}
+
+function restartScenario () {
+	// regenerate the existing scenario with the same selections
+
+	initialiseSystem();
+	// build system with same selections as before
+	beginScenario ();
+	// hide modal
+	hideElement(document.getElementsByClassName('digest')[0]);
+}
+function replayScenario () {
+	// regenerate the existing scenario with same devices and stuckparams
+	// need to keep stuckList, sysObs
+	// need the list of all devices in alarm at scenario start
+	// clear every device's last alarm time, hasBeens etc
+	// clear trackingList, then re-seed it with the alarmed devices
+	// close all open elements
+}
+
+function quitToTitle () {
+	// 1. perform tasks 1-3  of restartScenario
+	initialiseSystem ();
+	// 2. clear user selections - restore menu system to mint condition
+	currentMenuPage = 0;
+	scenarioInfo = [0,0,0,0]; //system, activationNum, activationLoc, Faults
+	selections = [];
+	for (let i = 0, l = summaryLines.length; i < l; i++) {
+		summaryLines[i].innerHTML = '';
+	}
+	hideElement(menuContainer);
+	summary.classList.remove('returnLeft');
+	summary.classList.add('returnRight');
+	for (let i = 0, l = menuPages.length; i < l; i++) {
+		hideElement(menuPages[i]);
+		menuPages[i].classList.remove('returnLeft');
+		menuPages[i].classList.add('returnRight');
+		let thisPageOptions = menuPages[i].getElementsByClassName('menu-option');
+		for (let j = 0, m = thisPageOptions.length; j < m; j++){
+			thisPageOptions[j].classList.remove('menu-selected');
+		}
+	}
+	// 3. render title screen visible
+	hideElement(document.getElementsByClassName('digest')[0]);
+	hideElement(document.getElementsByClassName('get-digest')[0]);
+	showElement(titleScreen);
 }

@@ -406,10 +406,13 @@ div {
 	position: fixed;
 	height: 100%;
 	width: 100%;
-	background-color: pink;
+	background-image: url(../images/bgtest.png);
 }
 
-
+@keyframes bgslide {
+  from {transform: translateY(100px); opacity: 0;}
+  to {transform: translateY(0px); opacity: 1;}
+}
 
 .menu-container {
 	height: 100%;

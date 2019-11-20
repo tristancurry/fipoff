@@ -545,8 +545,12 @@ function buildFips() {
 
 
 		let blockplan_pages = f.blockplan_details['pages'];
+		if (blockplan_pages.length < 2) {
+			f.blockplan.getElementsByClassName('blockplan-prev')[0].style.display = 'none';
+			f.blockplan.getElementsByClassName('blockplan-next')[0].style.display = 'none';
+		}
 
-		for(let i = 0, l = blockplan_pages.length; i < l; i++){
+		for (let i = 0, l = blockplan_pages.length; i < l; i++) {
 			let temp_page = document.createElement('div');
 			temp_page.className = 'blockplan-page';
 			let thisPageBg = new Image().src = f.blockplan_details['pages'][i];

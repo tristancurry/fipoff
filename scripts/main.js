@@ -461,7 +461,7 @@ function getDigest() {
 			alarmErrorSummary.innerHTML += 'Of ' + initialAlarmList.length + ' alarms:<br>';
 
 			for (let i = 0; i < 16; i++) {
-				if(i != 3 && i != 15) {
+				if(i != 3 && i != 15 && i != 13) {
 				let num = feedbackList[i].length;
 					if(num > 0) {
 						alarmErrorSummary.innerHTML += num;
@@ -476,17 +476,21 @@ function getDigest() {
 			digest_content.appendChild(alarmErrorSummary);
 		}
 
-		if (!digest.systemNormal || !digest.ebOK || !digest.wsOK) {
+		if (!digest.systemNormal || !digest.ebOK || !digest.wsOK || feedbackList[13].length > 0) {
 			let otherErrorSummary = document.createElement('p');
 			otherErrorSummary.innerHTML = '<h3>Other issues</h3>';
-			if(!digest.systemNormal) {otherErrorSummary.innerHTML += 'The system was still in alarm when you left.<br>';}
-			if(!digest.ebOK) {otherErrorSummary.innerHTML += 'Did you de-isolate all external bells?<br>';}
-			if(!digest.wsOK) {otherErrorSummary.innerHTML += 'Some warning systems were left isolated!';}
+			if (!digest.systemNormal) {otherErrorSummary.innerHTML += 'The system was still in alarm when you left.<br>';}
+			if (!digest.ebOK) {otherErrorSummary.innerHTML += 'Did you de-isolate all external bells?<br>';}
+			if (!digest.wsOK) {otherErrorSummary.innerHTML += 'Some warning systems were left isolated!<br>';}
+			if (feedbackList[13].length > 0) {
+				otherErrorSummary.innerHTML += 'You isolated ';
+				if (feedbackList[13].length == 1) {otherErrorSummary.innerHTML += 'a device, even though it was ';}
+				else {otherErrorSummary.innerHTML += feedbackList[13].length + ' devices, even though they were ';}
+				otherErrorSummary.innerHTML += 'not activated.'
+			}
 
 			digest_content.appendChild(otherErrorSummary);
 		}
-
-
 }
 
 
@@ -1396,7 +1400,7 @@ function buildFips() {
 	};
 
 	f.handleIsolate = function(){
-		if(this.confirmState == 'none' && !this.mainStatus){
+		if(this.confirmState == 'none' && this.addressableDeviceList[this.currentIndex].status != 'isol' &&!this.mainStatus){
 			//put system in state where it's waiting for the user to confirm the isolation.
 			this.confirmState = 'isol';
 		} else if(this.confirmState == 'single' || this.confirmState == 'multi' || this.confirmState == 'isol'){

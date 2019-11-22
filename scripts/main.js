@@ -35,7 +35,8 @@ const systemDir = 'systems/';
 
 const systemPaths = {
 	system00: 'system00/system00.js',
-	system00c: 'system00/system00c.js'
+	system00c: 'system00/system00c.js',
+	abstractSimple: 'abstract/abstractSimple/abstractSimple.js'
 }
 
 const deviceStatusStrings = {

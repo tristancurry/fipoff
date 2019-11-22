@@ -7,7 +7,7 @@ let scenarioInfo = [0,0,0,0]; //system, activationNum, activationLoc, Faults
 
 let selections = []
 
-let systemMenu = ['system00', 'system00c'];
+let systemMenu = ['system00', 'system00c', 'abstractSimple'];
 let locationMenu = [false, true];
 let faultMenu = [0, 0.02, 0.15, 1];
 

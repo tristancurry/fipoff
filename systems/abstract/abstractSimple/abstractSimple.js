@@ -1,5 +1,5 @@
 system = {
-	name: 'Abstract Simp;',
+	name: 'Abstract Simple',
 	category: 'system',
 	children: [
 		{

@@ -63,7 +63,7 @@ system = {
 				},
 
 				{
-					name: 'Loop 2',
+					name: 'Zone 2',
 					category: 'circuit',
 					addressable: false,
 					colour: 'cyan',

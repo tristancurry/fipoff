@@ -396,7 +396,7 @@ function getDigest() {
 		let d = new Date;
 		let masterFip = sysObjectsByCategory['fip'][0];
 		if (masterFip.firstNormalTime) {
-			if (d.getTime() - masterFip.firstNormalTime > reactivateTime + reactivateVariance || scenarioInfo[3] == 0) {
+			if (d.getTime() - masterFip.firstNormalTime > reactivateTime + reactivateVariance || scenarioInfo[3] == 0 || scenarioInfo[1] == 0 && initialAlarmList[0].hasReactivated) {
 				digest.waitedLongEnough = true;
 			}
 		} else {
@@ -467,7 +467,7 @@ function getDigest() {
 		digest_content.appendChild(correctHandlingSummary);
 
 		// next go through all of the alarm codes to itemise each error:
-		if (!digest.allCorrectlyHandled || !digest.allCorrectlyHandledBut) {
+		if (!digest.allCorrectlyHandled && !digest.allCorrectlyHandledBut) {
 			let alarmErrorSummary = document.createElement('p');
 			alarmErrorSummary.innerHTML = '<h3>Errors</h3>'
 			alarmErrorSummary.innerHTML += 'Of ' + initialAlarmList.length + ' alarms:<br>';

@@ -289,7 +289,6 @@ function beginScenario () {
 		let thisFip = fipList[i];
 
 		 thisFip.assignStatusIds();
-		 trackActiveDevices(thisFip.addressableDeviceList);
 		 thisFip.displayStatus();
 
 
@@ -300,6 +299,7 @@ function beginScenario () {
 		//TODO: make it so that there is only one setInterval, with one function that updates all FIP displays.
 		window.setInterval(function(){checkStuckList(); thisFip.update();}, 500);
 	}
+	trackActiveDevices(initialAlarmList);
 	showElement(document.getElementsByClassName('get-digest')[0]);
 }
 

@@ -231,7 +231,18 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
 		}
 		let moment = new Date();
 		device.lastAlarmTime = getAlarmTime(moment.getTime() - 420000 + 30000*i);
-		initialAlarmList.push(device);
+		if (device.parent.addressable) {initialAlarmList.push(device);}
+		else {
+			let checkIfPresent = function(circuit){
+				if(circuit == device.parent){
+					return circuit;
+				}
+			};
+			let check = initialAlarmList.filter(checkIfPresent);
+			if(check.length == 0){
+				initialAlarmList.push(device.parent);
+			}
+		}
 	}
 
 	// if(stuckCertain && stuckList.length == 0) {

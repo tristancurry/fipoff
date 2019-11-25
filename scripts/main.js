@@ -662,10 +662,14 @@ function buildFips() {
 					} else {
 						device.panel.parentNode.parentNode.classList.toggle('show');
 						device.panel.parentNode.style.top = event.pageY + 'px';
+						if ((device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) || (device.parent.category == 'circuit' && !device.parent.addressable && device.parent.status_internal == 'active' && (device.parent.status == 'alarm' || device.parent.status == 'acked')))
+						 && !device.hasBeenReset && !device.hasBeenLookedAt){
+							device.hasBeenLookedAt = true;
+						}
 
 					}
 
-				} else	if (device.category == 'det') {
+				} else if (device.category == 'det') {
 					f.blockplan_displayed_device = device;
 					f.updateDeviceImagePath(device);
 					if ((device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) || (device.parent.category == 'circuit' && !device.parent.addressable && device.parent.status_internal == 'active' && (device.parent.status == 'alarm' || device.parent.status == 'acked')))

@@ -312,7 +312,7 @@ function initialiseSystem() {
 	// 1. remove the fips from the DOM
 	if (document.getElementsByClassName('panel-backdrop')) {
 		let panels = document.getElementsByClassName('panel-backdrop');
-		for (let i = 0, l = panels.length; i < l; i++) {
+		for (let l = panels.length, i = l - 1; i >= 0; i--) {
 			viewport.removeChild(panels[i]);
 		}
 	}

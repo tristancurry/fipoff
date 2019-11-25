@@ -8,7 +8,7 @@ system = {
 			type: 'fip',
 			blockplan_details: {
 				pages: ['abstractSimple.png'],
-				dimensions: {x:'600px',y:'600px'},
+				dimensions: {x:'800px',y:'600px'},
 				detector_dimensions: {x:'60px', y:'60px'},
 				fip_dimensions: {x:'90px', y: '60px'},
 
@@ -31,7 +31,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x: '102px', y:'130px'}
+							pos: {x: '116px', y:'130px'}
 						},
 						{
 							name: 'AZ1-002-P',
@@ -39,7 +39,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x: '102px', y:'234px'}
+							pos: {x: '116px', y:'234px'}
 						},
 						{
 							name: 'AZ1-003-P',
@@ -47,7 +47,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x: '102px', y:'338px'},
+							pos: {x: '116px', y:'338px'},
 							concealed: true
 						},
 						{
@@ -56,7 +56,7 @@ system = {
 							type: 'thermal',
 							subtype: 'th',
 							addressable: true,
-							pos: {x: '102px', y:'442px'}
+							pos: {x: '116px', y:'442px'}
 						},
 					]
 
@@ -76,14 +76,14 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							pos: {x: '353px', y:'131px'}
+							pos: {x: '367px', y:'131px'}
 						},
 						{
 							name: 'AZ2-002-P',
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							pos: {x: '353px', y:'235px'},
+							pos: {x: '367px', y:'235px'},
 							concealed: true
 						},
 						{
@@ -91,14 +91,14 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							pos: {x: '353px', y:'339px'}
+							pos: {x: '367px', y:'339px'}
 						},
 						{
 							name: 'AZ2-004-P',
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							pos: {x: '353px', y:'443px'}
+							pos: {x: '367px', y:'443px'}
 						},
 
 					]

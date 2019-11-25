@@ -15,7 +15,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="abstractSimple.svg">
+   sodipodi:docname="abstractSimple.svg"
+   inkscape:export-filename="W:\Windows Users\tristanm\Documents\GitHub\fipoff\abstractSimple.png"
+   inkscape:export-xdpi="192"
+   inkscape:export-ydpi="192">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -25,9 +28,9 @@
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
      inkscape:cx="151.01965"
-     inkscape:cy="-193.19987"
+     inkscape:cy="-274.01207"
      inkscape:document-units="mm"
-     inkscape:current-layer="g10383-5"
+     inkscape:current-layer="g4236-7"
      showgrid="false"
      inkscape:window-width="1920"
      inkscape:window-height="1001"
@@ -42,7 +45,8 @@
      inkscape:guide-bbox="true"
      inkscape:snap-nodes="true"
      inkscape:object-paths="true"
-     inkscape:snap-midpoints="true" />
+     inkscape:snap-midpoints="true"
+     inkscape:snap-global="false" />
   <defs
      id="defs2" />
   <metadata
@@ -60,14 +64,15 @@
   <g
      id="layer1"
      inkscape:groupmode="layer"
-     inkscape:label="background">
+     inkscape:label="background"
+     sodipodi:insensitive="true">
     <rect
        y="281.15146"
        x="0"
        height="158.75"
-       width="158.75"
+       width="211.66667"
        id="rect815"
-       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+       style="opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.30551448;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
        inkscape:export-xdpi="192"
        inkscape:export-ydpi="192" />
   </g>
@@ -264,7 +269,7 @@
      inkscape:label="circuit01">
     <g
        id="g10365"
-       transform="translate(-13.979006,222.65171)">
+       transform="translate(-10.274837,222.65171)">
       <g
          id="g4236-7"
          style="display:inline;opacity:1;stroke:#ff00ff"
@@ -297,7 +302,7 @@
            id="flowPara6321">AZ1-001-P</flowPara></flowRoot>    </g>
     <g
        id="g10374"
-       transform="translate(-13.979006,208.81133)">
+       transform="translate(-10.274837,208.81133)">
       <g
          transform="matrix(0.75046576,0,0,0.75046576,-227.81412,-13.485203)"
          style="display:inline;opacity:1;stroke:#ff00ff"
@@ -330,7 +335,7 @@
            id="flowPara6321-5">AZ1-002-P</flowPara></flowRoot>    </g>
     <g
        id="g10383"
-       transform="translate(-10.829157,200.20726)">
+       transform="translate(-7.1249898,200.20726)">
       <g
          id="g3933-4-6-2-3"
          transform="matrix(0.317625,0,0,0.317625,-100.30956,-134.87997)"
@@ -363,7 +368,7 @@
            id="flowPara6321-5-8">AZ1-003-P</flowPara></flowRoot>    </g>
     <g
        id="g10392"
-       transform="translate(-16.071661,187.14809)">
+       transform="translate(-12.367492,187.14809)">
       <g
          transform="matrix(0.31537706,0,0,0.31537706,-64.69689,-92.030551)"
          id="use3985-3-5-1"
@@ -399,19 +404,26 @@
        id="rect10583-8"
        width="65.20089"
        height="143.25298"
-       x="2.4780006"
+       x="6.1821675"
        y="290.55255" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:125%;font-family:'Wingdings 3';-inkscape-font-specification:'Wingdings 3, ';letter-spacing:0px;word-spacing:0px;display:inline;opacity:1;fill:#ff00ff;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="48.460075"
+       x="52.164246"
        y="296.5343"
        id="text10614-6"><tspan
          sodipodi:role="line"
          id="tspan10612-4"
-         x="48.460075"
+         x="52.164246"
          y="296.5343"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888903px;font-family:sans-serif;-inkscape-font-specification:sans-serif;opacity:1;stroke-width:0.26458332px">Zone 1</tspan></text>
+    <rect
+       style="opacity:1;fill:#000000;fill-opacity:0;stroke:#ffa500;stroke-width:0.79374999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect941"
+       width="140.09476"
+       height="151.58733"
+       x="2.6008499"
+       y="285.92105" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -420,7 +432,7 @@
      style="display:inline">
     <g
        id="g10365-2"
-       transform="translate(52.28022,207.20098)">
+       transform="translate(55.984389,207.20098)">
       <g
          id="g4236-7-7"
          style="display:inline;opacity:1;stroke:#00ffff"
@@ -453,7 +465,7 @@
            id="flowPara6321-7">AZ2-001-P</flowPara></flowRoot>    </g>
     <g
        id="g10383-5"
-       transform="translate(55.430067,173.08352)">
+       transform="translate(59.134236,173.08352)">
       <g
          id="g3933-4-6-2-3-6"
          transform="matrix(0.317625,0,0,0.317625,-100.30956,-134.87997)"
@@ -497,7 +509,7 @@
          style="opacity:1;stroke-width:0.26458332px" /></text>
     <g
        id="g10374-4-0"
-       transform="translate(52.28022,236.78362)">
+       transform="translate(55.984389,236.78362)">
       <g
          transform="matrix(0.75046576,0,0,0.75046576,-227.81412,-13.485203)"
          style="display:inline;opacity:1;stroke:#00ffff"
@@ -530,7 +542,7 @@
            id="flowPara6321-5-3-2">AZ2-003-P</flowPara></flowRoot>    </g>
     <g
        id="g10374-4-0-9"
-       transform="translate(52.28022,264.33163)">
+       transform="translate(55.984389,264.33163)">
       <g
          transform="matrix(0.75046576,0,0,0.75046576,-227.81412,-13.485203)"
          style="display:inline;opacity:1;stroke:#00ffff"
@@ -564,7 +576,7 @@
     <g
        id="g5159-1-7-8"
        style="display:inline;opacity:1"
-       transform="matrix(0.80259199,0,0,0.80259199,-102.88156,-285.08499)">
+       transform="matrix(0.80259199,0,0,0.80259199,-99.177376,-285.08499)">
       <rect
          style="opacity:1;fill:none;stroke:#00ffff;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
          id="rect5153-6-6-7"
@@ -586,7 +598,7 @@
     </g>
     <path
        style="opacity:1;fill:none;fill-rule:evenodd;stroke:#00ffff;stroke-width:1.05833328;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:4.23333308, 1.05833327;stroke-dashoffset:0;stroke-opacity:1"
-       d="m 94.150749,323.82618 c -19.81212,0 -19.9889,27.54802 0,27.54802 m 14.374151,0 c 21.12153,0 21.17817,27.54801 0,27.54801 m -14.374151,0 c -18.77631,0 -20.187607,27.54802 0,27.54802"
+       d="m 97.854918,323.82618 c -19.81212,0 -19.9889,27.54802 0,27.54802 m 14.374172,0 c 21.12153,0 21.17817,27.54801 0,27.54801 m -14.374172,0 c -18.77631,0 -20.187607,27.54802 0,27.54802"
        id="path10581"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc" />
@@ -595,7 +607,7 @@
        id="rect10583"
        width="65.20089"
        height="143.25298"
-       x="68.737221"
+       x="72.441391"
        y="290.55255" />
     <flowRoot
        xml:space="preserve"
@@ -624,12 +636,12 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:125%;font-family:'Wingdings 3';-inkscape-font-specification:'Wingdings 3, ';letter-spacing:0px;word-spacing:0px;opacity:1;fill:#00ffff;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="71.161194"
+       x="74.865364"
        y="296.48605"
        id="text10614"><tspan
          sodipodi:role="line"
          id="tspan10612"
-         x="71.161194"
+         x="74.865364"
          y="296.48605"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.93888903px;font-family:sans-serif;-inkscape-font-specification:sans-serif;opacity:1;stroke-width:0.26458332px">Zone 2</tspan></text>
   </g>

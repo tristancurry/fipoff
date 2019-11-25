@@ -8,7 +8,7 @@ let system = {
 			type: 'fip',
 			blockplan_details: {
 				pages: ['abstractSimple.png'],
-				dimensions: {x:'600px',y:'600px'},
+				dimensions: {x:'800px',y:'600px'},
 				detector_dimensions: {x:'60px', y:'60px'},
 				fip_dimensions: {x:'90px', y: '60px'},
 
@@ -35,7 +35,7 @@ let system = {
 								detector_dimensions: {x:'20px', y:'20px'},
 								fip_dimensions: {x:'30px', y: '20px'},
 							},
-							pos: {x: '102px', y:'130px'},
+							pos: {x: '116px', y:'130px'},
 							children: [
 								{
 									name: 'Loop 1',
@@ -74,7 +74,7 @@ let system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x: '102px', y:'234px'}
+							pos: {x: '116px', y:'234px'}
 						},
 						{
 							name: 'AZ1-003-P',
@@ -82,7 +82,7 @@ let system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x: '102px', y:'338px'},
+							pos: {x: '116px', y:'338px'},
 							concealed: true
 						},
 						{
@@ -91,7 +91,7 @@ let system = {
 							type: 'thermal',
 							subtype: 'th',
 							addressable: true,
-							pos: {x: '102px', y:'442px'}
+							pos: {x: '116px', y:'442px'}
 						},
 					]
 
@@ -116,7 +116,7 @@ let system = {
 								detector_dimensions: {x:'20px', y:'20px'},
 								fip_dimensions: {x:'30px', y: '20px'},
 							},
-							pos: {x: '353px', y:'131px'},
+							pos: {x: '367px', y:'131px'},
 							children: [
 								{
 									name: 'Zone 1',
@@ -150,7 +150,7 @@ let system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							pos: {x: '353px', y:'235px'},
+							pos: {x: '367px', y:'235px'},
 							concealed: true
 						},
 						{
@@ -158,14 +158,14 @@ let system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							pos: {x: '353px', y:'339px'}
+							pos: {x: '367px', y:'339px'}
 						},
 						{
 							name: 'AZ2-004-P',
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							pos: {x: '353px', y:'443px'}
+							pos: {x: '367px', y:'443px'}
 						},
 
 					]

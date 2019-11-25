@@ -8,7 +8,10 @@ let urlsToCache = [
 	'scripts/interface.js',
 	'systems/system00/system00.js',
 	'systems/system00/system00c.js',
-	'images/devices.png'
+	'images/devices.png',
+	'abstractSimple.png',
+	'blockplanA_addr.png',
+	'blockplanA_conv.png',
 
 ];
 

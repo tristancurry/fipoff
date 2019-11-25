@@ -1,4 +1,4 @@
-const system = {
+let system = {
 	name: 'Abstract Complex',
 	category: 'system',
 	children: [

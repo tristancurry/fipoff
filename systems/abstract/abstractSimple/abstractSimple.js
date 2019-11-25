@@ -1,5 +1,5 @@
-let system = {
-	name: 'Abstract Complex',
+system = {
+	name: 'Abstract Simple',
 	category: 'system',
 	children: [
 		{
@@ -26,48 +26,13 @@ let system = {
 					page_number: 1,
 					children:[
 						{
-							name: 'AZ1-001-FIP Panel West',
-							category: 'fip',
-							type: 'fip',
-							blockplan_details: {
-								pages: ['blockplanA_addr.png'],
-								dimensions: {x:'1100px',y:'800px'},
-								detector_dimensions: {x:'20px', y:'20px'},
-								fip_dimensions: {x:'30px', y: '20px'},
-							},
-							pos: {x: '116px', y:'130px'},
-							children: [
-								{
-									name: 'Loop 1',
-									category: 'circuit',
-									colour: 'magenta',
-									addressable: true,
-									loop: 1,
-									zone: 1,
-									page_number: 1,
-									children:[
-										{
-											name: 'Front door',
-											category: 'det',
-											type: 'smoke',
-											subtype: 'pe',
-											addressable: true,
-											pos: {x: '309px', y:'610px'}
-										},
-										{
-											name: 'Station office',
-											category: 'det',
-											type: 'smoke',
-											subtype: 'pe',
-											addressable: true,
-											pos: {x: '230px', y:'699px'}
-										},
-									]
-								},
-							]
-
+							name: 'AZ1-001-P',
+							category: 'det',
+							type: 'smoke',
+							subtype: 'pe',
+							addressable: true,
+							pos: {x: '116px', y:'130px'}
 						},
-
 						{
 							name: 'AZ1-002-P',
 							category: 'det',
@@ -107,43 +72,11 @@ let system = {
 					page_number: 1,
 					children:[
 						{
-							name: 'AZ2-001-FIP Indicator Panel East',
-							category: 'fip',
-							type: 'fip',
-							blockplan_details: {
-								pages: ['blockplanA_conv.png'],
-								dimensions: {x:'1100px',y:'800px'},
-								detector_dimensions: {x:'20px', y:'20px'},
-								fip_dimensions: {x:'30px', y: '20px'},
-							},
-							pos: {x: '367px', y:'131px'},
-							children: [
-								{
-									name: 'Zone 1',
-									category: 'circuit',
-									colour: 'magenta',
-									loop: 1,
-									zone: 1,
-									page_number: 1,
-									children:[
-										{
-											name: 'Front door',
-											category: 'det',
-											type: 'smoke',
-											subtype: 'pe',
-											pos: {x: '309px', y:'610px'}
-										},
-										{
-											name: 'Station office',
-											category: 'det',
-											type: 'smoke',
-											subtype: 'pe',
-
-											pos: {x: '230px', y:'699px'}
-										},
-									],
-								},
-							],
+							name: 'AZ2-001-P',
+							category: 'det',
+							type: 'smoke',
+							subtype: 'pe',
+							pos: {x: '367px', y:'131px'}
 						},
 						{
 							name: 'AZ2-002-P',

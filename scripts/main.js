@@ -1284,9 +1284,10 @@ function buildFips() {
 		if(this.confirmState == 'none'){
 			//display this alarm's number
 			//display how many other alarms there are, or, if some have been acknowledged, display this number
-			if(this.ackedCount > 0){
-				this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
-			} else if (this.alarmCount > 0){
+			// if(this.ackedCount > 0){
+			// 	this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
+			// } else 
+			if (this.alarmCount > 0){
 				switch(this.conventional){
 					case true :
 						this.displayLines[3].innerHTML = 'Zone alarm ';

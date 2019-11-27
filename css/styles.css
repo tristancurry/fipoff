@@ -329,12 +329,12 @@ div {
 	z-index:1;
 	width: 240px;
 	height: 0px;
-	overflow: hidden;
+	/* overflow: hidden; */
 	border: 2px solid orange;
 	background-color: rgba(255,255,0,0.8);
 	color: black;
 	opacity:0;
-	transition: opacity 0.25s; */
+	/* transition: opacity 0.25s; */ */
 }
 
 .device-image {
@@ -735,7 +735,7 @@ div {
 }
 
 .show-flash {
-	animation: flashon 0.25s 1;
+	animation: flashon 0.1s 1;
 	animation-fill-mode: forwards;
 }
 

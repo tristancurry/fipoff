@@ -1,9 +1,9 @@
 system = {
-	name: 'System 00',
+	name: 'Station 33',
 	category: 'system',
 	children: [
 		{
-			name: 'Master FIP',
+			name: 'Main FIP',
 			category: 'fip',
 			type: 'fip',
 			blockplan_details: {

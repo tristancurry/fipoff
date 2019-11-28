@@ -34,9 +34,10 @@ const imageDir = 'images/';
 const systemDir = 'systems/';
 
 const systemPaths = {
-	system00: 'system00/system00.js',
-	system00c: 'system00/system00c.js',
-	abstractSimple: 'abstract/abstractSimple/abstractComplex.js'
+	station33a: 'station33/station33a.js',
+	station33c: 'station33/station33c.js',
+	abstractSimple: 'abstract/abstractSimple/abstractSimple.js',
+	abstractComplex: 'abstract/abstractComplex/abstractComplex.js',
 }
 
 const deviceStatusStrings = {
@@ -661,7 +662,7 @@ function buildFips() {
 						closeElements(device.panel.parentNode);
 					} else {
 						device.panel.parentNode.parentNode.classList.toggle('show');
-						device.panel.parentNode.style.top = event.pageY + 'px';
+						device.panel.parentNode.style.top = '0px';
 						if ((device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) || (device.parent.category == 'circuit' && !device.parent.addressable && device.parent.status_internal == 'active' && (device.parent.status == 'alarm' || device.parent.status == 'acked')))
 						 && !device.hasBeenReset && !device.hasBeenLookedAt){
 							device.hasBeenLookedAt = true;

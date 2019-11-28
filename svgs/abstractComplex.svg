@@ -29,15 +29,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="534.88025"
-     inkscape:cy="-377.30708"
+     inkscape:cx="414.08805"
+     inkscape:cy="-102.89282"
      inkscape:document-units="px"
-     inkscape:current-layer="svg8"
+     inkscape:current-layer="g5283-0-2-9-6-7"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1001"
-     inkscape:window-x="-9"
-     inkscape:window-y="-9"
+     inkscape:window-width="1366"
+     inkscape:window-height="745"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:snap-bbox="true"
      inkscape:snap-bbox-edge-midpoints="false"
@@ -45,7 +45,7 @@
      inkscape:bbox-nodes="true"
      showguides="false"
      inkscape:guide-bbox="true"
-     inkscape:snap-nodes="false"
+     inkscape:snap-nodes="true"
      inkscape:object-paths="true"
      inkscape:snap-midpoints="false"
      inkscape:snap-global="true"
@@ -90,7 +90,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1450,13 +1450,13 @@
      inkscape:groupmode="layer"
      id="g3421"
      inkscape:label="westBldg"
-     style="display:none"
+     style="display:inline"
      sodipodi:insensitive="true">
     <g
        id="g3117"
        inkscape:groupmode="layer"
        inkscape:label="background"
-       style="display:inline;opacity:0.99">
+       style="display:inline;opacity:0.98999999">
       <rect
          y="281.94522"
          x="0"
@@ -1793,11 +1793,11 @@
       </g>
     </g>
     <g
-       sodipodi:insensitive="true"
        inkscape:groupmode="layer"
        id="g3297"
        inkscape:label="circuit02"
-       style="display:inline">
+       style="display:inline"
+       sodipodi:insensitive="true">
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:125%;font-family:'Wingdings 3';-inkscape-font-specification:'Wingdings 3, ';letter-spacing:0px;word-spacing:0px;opacity:1;fill:#00ffff;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1924,25 +1924,11 @@
        inkscape:groupmode="layer"
        id="g3419"
        inkscape:label="circuit01"
-       style="display:inline;filter:url(#filter1976)">
+       style="display:inline;filter:url(#filter1976)"
+       sodipodi:insensitive="true">
       <g
          id="g3313"
          transform="translate(172.65635,265.55625)">
-        <g
-           id="g3303"
-           style="display:inline;opacity:1;stroke:#ff00ff"
-           transform="matrix(0.50031051,0,0,0.50031051,-329.75153,32.332284)">
-          <path
-             inkscape:connector-curvature="0"
-             id="path3299"
-             d="m 359.3562,197.79282 h 19.15353 v 19.15352 H 359.3562 Z"
-             style="opacity:1;fill:none;stroke:#ff00ff;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1" />
-          <path
-             inkscape:connector-curvature="0"
-             id="path3301"
-             d="m 369.89817,199.3262 -5.01907,5.01907 1.02955,1.02956 5.01907,5.01907 -3.98952,3.9895 1.02955,1.02957 5.01908,-5.01907 -1.02955,-1.02956 -5.01908,-5.01907 3.98952,-3.98952 z"
-             style="opacity:1;fill:#ff00ff;fill-opacity:1;fill-rule:nonzero;stroke:none" />
-        </g>
         <flowRoot
            transform="matrix(0.26458333,0,0,0.26458333,-197.73903,-43.856559)"
            style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:32px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:sans-serif;letter-spacing:0px;word-spacing:0px;opacity:1;fill:#ff00ff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -2115,7 +2101,7 @@
                width="277.082"
                id="rect3377" /></flowRegion><flowPara
              style="font-size:18.66666603px;opacity:1"
-             id="flowPara3381">AZ1-008-P</flowPara></flowRoot>      </g>
+             id="flowPara3381">AZ1-007-P</flowPara></flowRoot>      </g>
       <g
          id="g3401"
          transform="translate(218.69393,242.41791)"
@@ -2149,7 +2135,7 @@
                width="277.082"
                id="rect3393" /></flowRegion><flowPara
              style="font-size:18.66666603px;opacity:1"
-             id="flowPara3397">AZ1-007-P</flowPara></flowRoot>      </g>
+             id="flowPara3397">AZ1-006-P</flowPara></flowRoot>      </g>
       <g
          id="g3417"
          transform="translate(218.69393,219.27958)"
@@ -2183,7 +2169,22 @@
                width="277.082"
                id="rect3409" /></flowRegion><flowPara
              style="font-size:18.66666603px;opacity:1"
-             id="flowPara3413">AZ1-006-P</flowPara></flowRoot>      </g>
+             id="flowPara3413">AZ1-005-P</flowPara></flowRoot>      </g>
+      <g
+         id="g3303"
+         style="display:inline;opacity:1;stroke:#ff00ff;filter:url(#filter1976)"
+         transform="matrix(0.50031052,0,0,0.50031052,-157.09518,297.88853)">
+        <path
+           inkscape:connector-curvature="0"
+           id="path3299"
+           d="m 359.3562,197.79282 h 19.15353 v 19.15352 H 359.3562 Z"
+           style="opacity:1;fill:none;stroke:#ff00ff;stroke-width:2;stroke-linecap:butt;stroke-miterlimit:4;stroke-dashoffset:0;stroke-opacity:1" />
+        <path
+           inkscape:connector-curvature="0"
+           id="path3301"
+           d="m 369.89817,199.3262 -5.01907,5.01907 1.02955,1.02956 5.01907,5.01907 -3.98952,3.9895 1.02955,1.02957 5.01908,-5.01907 -1.02955,-1.02956 -5.01908,-5.01907 3.98952,-3.98952 z"
+           style="opacity:1;fill:#ff00ff;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+      </g>
     </g>
   </g>
   <g
@@ -2487,8 +2488,7 @@
        inkscape:groupmode="layer"
        id="g5381"
        inkscape:label="circuit02"
-       style="display:inline"
-       sodipodi:insensitive="true">
+       style="display:inline">
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.46666622px;line-height:125%;font-family:'Wingdings 3';-inkscape-font-specification:'Wingdings 3, ';letter-spacing:0px;word-spacing:0px;opacity:1;fill:#00ffff;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"

@@ -1,9 +1,9 @@
 system = {
-	name: 'System 00c',
+	name: 'Station 33',
 	category: 'system',
 	children: [
 		{
-			name: 'Master FIP',
+			name: 'Main FIP',
 			category: 'fip',
 			type: 'fip',
 			blockplan_details: {
@@ -11,8 +11,8 @@ system = {
 				dimensions: {x:'1100px',y:'800px'},
 				detector_dimensions: {x:'20px', y:'20px'},
 				fip_dimensions: {x:'30px', y: '20px'},
-				
-				
+
+
 			},
 
 			children: [
@@ -36,7 +36,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '230px', y:'699px'}
 						},
 						{
@@ -44,7 +44,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '199px', y:'699px'},
 							concealed: true
 						},
@@ -53,7 +53,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '139px', y:'658px'}
 						},
 						{
@@ -61,7 +61,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '102px', y:'697px'}
 						},
 						{
@@ -69,7 +69,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '99px', y:'639px'}
 						},
 						{
@@ -77,7 +77,7 @@ system = {
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
-							
+
 							pos: {x: '49px', y:'538px'}
 						},
 						{
@@ -85,7 +85,7 @@ system = {
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
-							
+
 							pos: {x: '122px', y:'534px'}
 						},
 						{
@@ -93,7 +93,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '120px', y:'558px'},
 							concealed: true
 						},
@@ -102,7 +102,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '188px', y:'609px'},
 						},
 						{
@@ -110,7 +110,7 @@ system = {
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
-							
+
 							pos: {x: '228px', y:'559px'}
 						},
 						{
@@ -118,7 +118,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '263px', y:'560px'},
 						},
 						{
@@ -126,7 +126,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '320px', y:'558px'},
 						},
 						{
@@ -134,7 +134,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '257px', y:'492px'},
 							concealed: true
 						},
@@ -143,13 +143,13 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '259px', y:'464px'},
 						},
 					]
-					
+
 				},
-				
+
 				{
 					name: 'Zone 2',
 					category: 'circuit',
@@ -163,7 +163,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '349px', y:'326px'}
 						},
 						{
@@ -171,7 +171,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '243px', y:'276px'},
 							concealed: true
 						},
@@ -180,7 +180,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '243px', y:'309px'}
 						},
 						{
@@ -188,7 +188,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '153px', y:'300px'}
 						},
 						{
@@ -196,7 +196,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '93px', y:'298px'}
 						},
 						{
@@ -204,7 +204,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '35px', y:'300px'}
 						},
 						{
@@ -212,7 +212,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '88px', y:'250px'}
 						},
 						{
@@ -220,7 +220,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '141px', y:'251px'},
 							concealed: true
 						},
@@ -229,7 +229,7 @@ system = {
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
-							
+
 							pos: {x: '65px', y:'189px'},
 						},
 						{
@@ -237,15 +237,15 @@ system = {
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
-							
+
 							pos: {x: '135px', y:'189px'},
-						},						
+						},
 						{
 							name: 'Crew quarters north, bedroom 3',
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '37px', y:'77px'},
 						},
 						{
@@ -253,7 +253,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '94px', y:'78px'},
 						},
 						{
@@ -261,7 +261,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '88px', y:'127px'},
 						},
 						{
@@ -269,7 +269,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '152px', y:'126px'},
 							concealed: true
 						},
@@ -278,7 +278,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '154px', y:'76px'},
 						},
 						{
@@ -286,7 +286,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '202px', y:'137px'},
 						},
 						{
@@ -294,7 +294,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '288px', y:'123px'},
 						},
 						{
@@ -302,7 +302,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '290px', y:'157px'},
 							concealed: true,
 						},
@@ -311,13 +311,13 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x: '347px', y:'159px'},
 						},
 					]
-					
+
 				},
-			
+
 				{
 					name: 'Zone 3',
 					category: 'circuit',
@@ -339,7 +339,7 @@ system = {
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
-							
+
 							pos: {x:'443px', y: '260px'},
 						},
 						{
@@ -347,7 +347,7 @@ system = {
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
-							
+
 							pos: {x:'443px', y: '397px'},
 						},
 						{
@@ -355,15 +355,15 @@ system = {
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
-							
+
 							pos: {x:'436px', y: '545px'},
-						},						
+						},
 						{
 							name: 'Engine bay outer, SE corner',
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
-							
+
 							pos: {x:'546px', y: '257px'},
 						},
 						{
@@ -371,7 +371,7 @@ system = {
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
-							
+
 							pos: {x:'546px', y: '120px'},
 						},
 						{
@@ -379,7 +379,7 @@ system = {
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
-							
+
 							pos: {x:'546px', y: '397px'},
 						},
 						{
@@ -387,12 +387,12 @@ system = {
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
-							
+
 							pos: {x:'545px', y: '548px'},
-						},						
+						},
 					]
 				},
-			
+
 				{
 					name: 'Zone 4',
 					category: 'circuit',
@@ -406,7 +406,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x:'668px', y: '606px'},
 							concealed: true
 						},
@@ -415,7 +415,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x:'663px', y:'555px'}
 						},
 						{
@@ -423,17 +423,17 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x:'663px', y:'420px'},
 							concealed: true
 						},
-						
+
 								{
 							name: 'Community room north',
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x:'662px', y: '391px'}
 						},
 						{
@@ -441,7 +441,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x:'663px', y:'272px'}
 						},
 						{
@@ -449,7 +449,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x:'716px', y:'273px'}
 						},
 						{
@@ -457,7 +457,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x:'689px', y: '175px'},
 							concealed: true
 						},
@@ -466,7 +466,7 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x:'696px', y:'121px'},
 							concealed: true
 						},
@@ -475,13 +475,13 @@ system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							
+
 							pos: {x:'757px', y:'88px'}
 						},
-						
+
 					]
 				},
 			]
 		}
-	]	
+	]
 };

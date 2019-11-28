@@ -7,9 +7,9 @@ let system = {
 			category: 'fip',
 			type: 'fip',
 			blockplan_details: {
-				pages: ['abstractSimple.png'],
+				pages: ['abstractComplex_main_contents.png', 'abstractComplex_main_p2.png', 'abstractComplex_main_p3.png'],
 				dimensions: {x:'800px',y:'600px'},
-				detector_dimensions: {x:'60px', y:'60px'},
+				detector_dimensions: {x:'40px', y:'40px'},
 				fip_dimensions: {x:'90px', y: '60px'},
 
 
@@ -17,22 +17,22 @@ let system = {
 			//note there is also a MCP located at the panel...
 			children: [
 				{
-					name: 'Loop 1',
+					name: 'Zone 2',
 					category: 'circuit',
-					colour: 'magenta',
+					colour: 'cyan',
 					addressable: true,
-					loop: 1,
-					zone: 1,
-					page_number: 1,
+					loop: 2,
+					zone: 2,
+					page_number: 3,
 					children:[
 						{
 							name: 'AZ1-001-FIP Panel West',
 							category: 'fip',
 							type: 'fip',
 							blockplan_details: {
-								pages: ['blockplanA_addr.png'],
-								dimensions: {x:'1100px',y:'800px'},
-								detector_dimensions: {x:'20px', y:'20px'},
+								pages: ['abstractComplex_west.png'],
+								dimensions: {x:'750px',y:'600px'},
+								detector_dimensions: {x:'40px', y:'40px'},
 								fip_dimensions: {x:'30px', y: '20px'},
 							},
 							pos: {x: '116px', y:'130px'},
@@ -98,25 +98,25 @@ let system = {
 				},
 
 				{
-					name: 'Zone 2',
+					name: 'Zone 3',
 					category: 'circuit',
 					addressable: false,
-					colour: 'cyan',
-					loop: 2,
-					zone: 2,
-					page_number: 1,
+					colour: 'green',
+					loop: 3,
+					zone: 3,
+					page_number: 3,
 					children:[
 						{
 							name: 'AZ2-001-FIP Indicator Panel East',
 							category: 'fip',
 							type: 'fip',
 							blockplan_details: {
-								pages: ['blockplanA_conv.png'],
-								dimensions: {x:'1100px',y:'800px'},
-								detector_dimensions: {x:'20px', y:'20px'},
+								pages: ['abstractComplex_east.png'],
+								dimensions: {x:'850px',y:'700px'},
+								detector_dimensions: {x:'40px', y:'40px'},
 								fip_dimensions: {x:'30px', y: '20px'},
 							},
-							pos: {x: '367px', y:'131px'},
+							pos: {x: '367px', y:'130px'},
 							children: [
 								{
 									name: 'Zone 1',

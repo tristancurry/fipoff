@@ -36,7 +36,7 @@ const systemDir = 'systems/';
 const systemPaths = {
 	system00: 'system00/system00.js',
 	system00c: 'system00/system00c.js',
-	abstractSimple: 'abstract/abstractSimple/abstractSimple.js'
+	abstractSimple: 'abstract/abstractSimple/abstractComplex.js'
 }
 
 const deviceStatusStrings = {
@@ -1286,7 +1286,7 @@ function buildFips() {
 			//display how many other alarms there are, or, if some have been acknowledged, display this number
 			// if(this.ackedCount > 0){
 			// 	this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
-			// } else 
+			// } else
 			if (this.alarmCount > 0){
 				switch(this.conventional){
 					case true :

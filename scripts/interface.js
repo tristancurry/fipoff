@@ -188,8 +188,8 @@ function handleMenuInteraction(target) {
 			// parameters supplied by the menu selections made by the
 			// user.
 
-
-			let thisSystemPath = systemDir + systemPaths[systemMenu[parseInt(scenarioInfo[0])]];
+			let systemString = systemMenu[parseInt(scenarioInfo[0])];
+			let thisSystemPath = systemDir + systemPaths[systemString] + systemString + '.js';
 			loadScript(thisSystemPath).then(
 				function(){
 					beginScenario();

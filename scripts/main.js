@@ -1153,8 +1153,16 @@ function buildFips() {
 			let d = new Date();
 			this.descLine.innerHTML = 'FirePanel 3000';
 			this.typeLine.innerHTML = provideTimeString(d);
-			this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
-			this.displayLines[2].innerHTML = 'Ph: 0444 444444';
+			if (f.message) {
+				this.displayLines[1].innerHTML = f.message;
+			} else {
+				this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
+			}
+			if (f.contact) {
+				this.displayLines[2].innerHTML = f.contact;
+			} else {
+				this.displayLines[2].innerHTML = 'Ph: 0444 444444';
+			}
 			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
 	};
 
@@ -1604,7 +1612,8 @@ function createSystemObjects(node, parent){
 	//establish identifiers
 	if(node.name){o.name = node.name;}
 
-
+	if(node.message){o.message = node.message};
+	if(node.contact){o.contact = node.contact};
 
 
 	if(node.blockplan_details){

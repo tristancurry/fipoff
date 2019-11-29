@@ -74,7 +74,7 @@ div {
 
 .panel {
 	--theme-color-bright: orange;
-	--theme-color-dark: black;
+	--theme-color-panel: black;
 	--theme-color-bezel: blue;
 	position:relative;
 	width: 800px;
@@ -83,7 +83,7 @@ div {
 	margin: 20px;
 	border: 1px solid var(--theme-color-bright);
 	color: var(--theme-color-bright);
-	background-color: var(--theme-color-dark);
+	background-color: var(--theme-color-panel);
 }
 
 .panel-fff {
@@ -334,7 +334,7 @@ div {
 }
 
 .device-container {
-	--zone-background-color: yellow;
+	--zone-background-color: rgba(255, 235, 59, 0.75);
 	--zone-border-color: rgb(230,150,0);
 	--zone-text-color: black;
 	--zone-text-background-color: rgb(255,255,150);

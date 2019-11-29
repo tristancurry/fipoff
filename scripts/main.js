@@ -61,6 +61,37 @@ const deviceImageVersions = {
 	concealed: 1
 }
 
+const zoneThemes = [
+	{
+		name: 'magenta',
+		zoneBackgroundColor: 'rgba(255, 0, 255, 0.75)',
+		zoneBorderColor: '#920580',
+		zoneTextColor: '#0cf6ff',
+		zoneTextBackgroundColor: '#920580',
+	},
+	{
+		name: 'cyan',
+		zoneBackgroundColor: 'rgba(0, 255, 255, 0.75)',
+		zoneBorderColor: '#057992',
+		zoneTextColor: '#060349',
+		zoneTextBackgroundColor: '#35f7ff',
+	},
+	{
+		name: 'green',
+		zoneBackgroundColor: 'rgba(0, 255, 0, 0.75)',
+		zoneBorderColor: '#006500',
+		zoneTextColor: '#000000',
+		zoneTextBackgroundColor: '#00ff11',
+	},
+	{
+		name: 'red',
+		zoneBackgroundColor: 'rgba(255, 0, 0, 0.75)',
+		zoneBorderColor: '#600000',
+		zoneTextColor: '#FFEE00',
+		zoneTextBackgroundColor: '#600000',
+	},
+];
+
 // at the end of the scenario, the tracked devices are assigned a status code
 const feedbackStrings = [
 	'not dealt with in any way.', //0000 0

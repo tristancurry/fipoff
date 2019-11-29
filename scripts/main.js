@@ -81,6 +81,9 @@ const feedbackStrings = [
 	'reset after investigation, then isolated upon reactivation.'//1111 This is the most correct action 15
 ];
 
+const fip_default_message = 'Serviced by the good people at Stn 33';
+const fip_default_contact = 'Ph: 0444 444 444';
+
 let sysObjects = [];
 let sysObjectsByCategory = {
 	fip: [],
@@ -1156,12 +1159,12 @@ function buildFips() {
 			if (f.message) {
 				this.displayLines[1].innerHTML = f.message;
 			} else {
-				this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
+				this.displayLines[1].innerHTML = fip_default_message;
 			}
 			if (f.contact) {
 				this.displayLines[2].innerHTML = f.contact;
 			} else {
-				this.displayLines[2].innerHTML = 'Ph: 0444 444444';
+				this.displayLines[2].innerHTML = fip_default_contact;
 			}
 			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
 	};

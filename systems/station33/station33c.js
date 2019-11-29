@@ -327,15 +327,15 @@ system = {
 					page_number: 1,
 					children:[
 						{
-							name: 'Engine bay outer, NW corner',
+							name: 'Engine bay (north), NW corner',
 							category: 'det',
-							type: 'mcp',
-							subtype: 'mcp',
+							type: 'thermal',
+							subtype: 'th',
 							addressable:true,
 							pos: {x:'443px', y: '125px'},
 						},
 						{
-							name: 'Engine bay outer, SW corner',
+							name: 'Engine bay (north), SW corner',
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
@@ -343,7 +343,7 @@ system = {
 							pos: {x:'443px', y: '260px'},
 						},
 						{
-							name: 'Engine bay inner, NW corner',
+							name: 'Engine bay (south), NW corner',
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
@@ -351,7 +351,7 @@ system = {
 							pos: {x:'443px', y: '397px'},
 						},
 						{
-							name: 'Engine bay inner, SW corner',
+							name: 'Engine bay (south), SW corner',
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
@@ -359,7 +359,7 @@ system = {
 							pos: {x:'436px', y: '545px'},
 						},
 						{
-							name: 'Engine bay outer, SE corner',
+							name: 'Engine bay (north), SE corner',
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
@@ -367,7 +367,7 @@ system = {
 							pos: {x:'546px', y: '257px'},
 						},
 						{
-							name: 'Engine bay outer, NE corner',
+							name: 'Engine bay (north), NE corner',
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
@@ -375,7 +375,7 @@ system = {
 							pos: {x:'546px', y: '120px'},
 						},
 						{
-							name: 'Engine bay inner, NE corner',
+							name: 'Engine bay (south), NE corner',
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',
@@ -383,7 +383,7 @@ system = {
 							pos: {x:'546px', y: '397px'},
 						},
 						{
-							name: 'Engine bay inner, SE corner',
+							name: 'Engine bay (south), SE corner',
 							category: 'det',
 							type: 'thermal',
 							subtype: 'th',

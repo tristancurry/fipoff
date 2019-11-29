@@ -3,6 +3,13 @@
 	src: url(nokiafc22.ttf);
 }
 
+:root {
+	--annunciator-alarm-color: #FF0000;
+	--annunciator-isol-color: #FFEE00;
+	--unlit-color: #111122;
+}
+
+
 * {
 	margin: 0;
 	padding: 0;
@@ -66,13 +73,17 @@ div {
 }
 
 .panel {
+	--theme-color-bright: orange;
+	--theme-color-dark: black;
+	--theme-color-bezel: blue;
 	position:relative;
 	width: 800px;
 	min-width:650px;
 	height: 400px;
 	margin: 20px;
-	border: 1px solid orange;
-	background-color: black;
+	border: 1px solid var(--theme-color-bright);
+	color: var(--theme-color-bright);
+	background-color: var(--theme-color-dark);
 }
 
 .panel-fff {
@@ -118,8 +129,7 @@ div {
 
 .panel-annunciators div {
 	flex-grow:1;
-	border: 1px solid orange;
-	color: orange;
+	border: 1px solid;
 	text-align: center;
 }
 
@@ -139,15 +149,15 @@ div {
 }
 
 .panel-annunciators .alarm {
-	background-color: #FF0000;
+	background-color: var(--annunciator-alarm-color);
 }
 
 .panel-annunciators .isol {
-	background-color: #FFEE00;
+	background-color: var(--annunciator-isol-color);
 }
 
 .panel .unlit {
-	background-color: #111122;
+	background-color: var(--unlit-color);
 }
 
 .panel .flashing {
@@ -182,9 +192,9 @@ div {
 	width: 90%;
 	min-width:410px;
 	height:80%;
-	border:5px solid blue;
+	border:5px solid var(--theme-color-bezel);
 	border-radius: 10px;
-	background-color: blue;
+	background-color: var(--theme-color-bezel);
 }
 
 .panel-display {
@@ -202,7 +212,6 @@ div {
 	padding: 10px;
 	font-family: lcd_font;
 	font-size: 16px;
-	//text-shadow: 1px 1px 10px #223322;
 	color: #224422;
 	text-align:left;
 }
@@ -226,9 +235,9 @@ div {
 .panel-controls button {
 	width: calc(100% * 1/7);
 	vertical-align:top;
-	border: 1px solid orange;
+	border: 1px solid var(--theme-color-bright);
 	background: none;
-	color: orange;
+	color: var(--theme-color-bright);
 	font-size: 0.9rem;
 	white-space: normal;
 }
@@ -253,9 +262,9 @@ div {
 	height: 50px;
 	text-align: center;
 	font-size: 30px;
-	border: 2px solid orange;
+	border: 2px solid;
 	border-radius:25px;
-	background-color: #FF0000;
+	background-color: var(--unlit-color);
 }
 
 
@@ -266,16 +275,18 @@ div {
 
 .blockplan-view {
 	top: 140px;
-	background-color: #111122;
+	background-color: var(--unlit-color);
 }
 
 
 
 .blockplan {
+	--theme-color-bright: orange;
 	position: relative;
 	top: -50px;
 	margin-left:20px;
-	border: 2px solid orange;
+	border: 2px solid var(--theme-color-bright);
+	color: var(--theme-color-bright);
 	display: none;
 }
 
@@ -323,6 +334,10 @@ div {
 }
 
 .device-container {
+	--zone-background-color: yellow;
+	--zone-border-color: rgb(230,150,0);
+	--zone-text-color: black;
+	--zone-text-background-color: rgb(255,255,150);
 	position: absolute;
 	right: 20px;
 	top: 40px;
@@ -330,9 +345,9 @@ div {
 	width: 240px;
 	height: 0px;
 	/* overflow: hidden; */
-	border: 2px solid orange;
-	background-color: rgba(255,255,0,0.8);
-	color: black;
+	border: 2px solid var(--theme-color-bright);
+	background-color: var(--zone-background-color);
+	color: var(--zone-text-color);
 	opacity:0;
 	/* transition: opacity 0.25s; */ */
 }
@@ -342,28 +357,28 @@ div {
 	margin-top:5px;
 	width:200px;
 	height:150px;
-	background-color:white;
+	/* background-color:white; */
 }
 
 .device-body {
 	width:95%;
 	padding:5px;
 	margin:auto;
-	border: 2px solid orange;
+	border: 2px solid var(--zone-border-color);
 }
 
 .device-info {
 	width:210px;
 	margin:auto;
 	margin-top:5px;
-	background-color:snow;
+	background-color: var(--zone-text-background-color);
 }
 
 .device-options {
 	width:210px;
 	margin:auto;
 	margin-top:5px;
-	background-color:gray;
+	/* background-color:gray; */
 }
 
 .device-options-mcp {
@@ -384,8 +399,8 @@ div {
 	border-radius: 15px;
 	font-size: 24px;
 	text-align: center;
-	background-color: black;
-	color: orange;
+	background-color: var(--unlit-color);
+	color: var(--theme-color-bright);
 	cursor: pointer;
 	user-select: none;
 	-webkit-user-select: none;

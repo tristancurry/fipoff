@@ -1648,6 +1648,7 @@ function createSystemObjects(node, parent){
 
 	if(node.message){o.message = node.message};
 	if(node.contact){o.contact = node.contact};
+	if(node.colour){o.colour = node.colour};
 
 
 	if(node.blockplan_details){

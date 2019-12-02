@@ -7,7 +7,7 @@ let scenarioInfo = [0,0,0,0]; //system, activationNum, activationLoc, Faults
 
 let selections = []
 
-let systemMenu = ['system00', 'system00c'];
+let systemMenu = ['station33a', 'station33c', 'abstractSimple', 'abstractComplex'];
 let locationMenu = [false, true];
 let faultMenu = [0, 0.02, 0.15, 1];
 
@@ -188,8 +188,8 @@ function handleMenuInteraction(target) {
 			// parameters supplied by the menu selections made by the
 			// user.
 
-
-			let thisSystemPath = systemDir + systemPaths[systemMenu[parseInt(scenarioInfo[0])]];
+			let systemString = systemMenu[parseInt(scenarioInfo[0])];
+			let thisSystemPath = systemDir + systemPaths[systemString] + systemString + '.js';
 			loadScript(thisSystemPath).then(
 				function(){
 					beginScenario();
@@ -289,7 +289,6 @@ function beginScenario () {
 		let thisFip = fipList[i];
 
 		 thisFip.assignStatusIds();
-		 trackActiveDevices(thisFip.addressableDeviceList);
 		 thisFip.displayStatus();
 
 
@@ -300,6 +299,7 @@ function beginScenario () {
 		//TODO: make it so that there is only one setInterval, with one function that updates all FIP displays.
 		window.setInterval(function(){checkStuckList(); thisFip.update();}, 500);
 	}
+	trackActiveDevices(initialAlarmList);
 	showElement(document.getElementsByClassName('get-digest')[0]);
 }
 
@@ -312,7 +312,7 @@ function initialiseSystem() {
 	// 1. remove the fips from the DOM
 	if (document.getElementsByClassName('panel-backdrop')) {
 		let panels = document.getElementsByClassName('panel-backdrop');
-		for (let i = 0, l = panels.length; i < l; i++) {
+		for (let l = panels.length, i = l - 1; i >= 0; i--) {
 			viewport.removeChild(panels[i]);
 		}
 	}

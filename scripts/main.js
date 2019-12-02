@@ -34,8 +34,10 @@ const imageDir = 'images/';
 const systemDir = 'systems/';
 
 const systemPaths = {
-	system00: 'system00/system00.js',
-	system00c: 'system00/system00c.js'
+	station33a: 'station33/',
+	station33c: 'station33/',
+	abstractSimple: 'abstract/abstractSimple/',
+	abstractComplex: 'abstract/abstractComplex/',
 }
 
 const deviceStatusStrings = {
@@ -59,6 +61,37 @@ const deviceImageVersions = {
 	concealed: 1
 }
 
+const zoneThemes = [
+	{
+		name: 'magenta',
+		zoneBackgroundColor: 'rgba(255, 0, 255, 0.75)',
+		zoneBorderColor: '#920580',
+		zoneTextColor: '#0cf6ff',
+		zoneTextBackgroundColor: '#920580',
+	},
+	{
+		name: 'cyan',
+		zoneBackgroundColor: 'rgba(0, 255, 255, 0.75)',
+		zoneBorderColor: '#057992',
+		zoneTextColor: '#060349',
+		zoneTextBackgroundColor: '#35f7ff',
+	},
+	{
+		name: 'green',
+		zoneBackgroundColor: 'rgba(0, 255, 0, 0.75)',
+		zoneBorderColor: '#006500',
+		zoneTextColor: '#000000',
+		zoneTextBackgroundColor: '#00ff11',
+	},
+	{
+		name: 'red',
+		zoneBackgroundColor: 'rgba(255, 0, 0, 0.75)',
+		zoneBorderColor: '#600000',
+		zoneTextColor: '#FFEE00',
+		zoneTextBackgroundColor: '#600000',
+	},
+];
+
 // at the end of the scenario, the tracked devices are assigned a status code
 const feedbackStrings = [
 	'not dealt with in any way.', //0000 0
@@ -78,6 +111,9 @@ const feedbackStrings = [
 	'reset without investigation, then isolated upon reactivation. Not Good!', //1110 This is a BAD one! 14
 	'reset after investigation, then isolated upon reactivation.'//1111 This is the most correct action 15
 ];
+
+const fip_default_message = 'Serviced by the good people at Stn 33';
+const fip_default_contact = 'Ph: 0444 444 444';
 
 let sysObjects = [];
 let sysObjectsByCategory = {
@@ -230,7 +266,18 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
 		}
 		let moment = new Date();
 		device.lastAlarmTime = getAlarmTime(moment.getTime() - 420000 + 30000*i);
-		initialAlarmList.push(device);
+		if (device.parent.addressable) {initialAlarmList.push(device);}
+		else {
+			let checkIfPresent = function(circuit){
+				if(circuit == device.parent){
+					return circuit;
+				}
+			};
+			let check = initialAlarmList.filter(checkIfPresent);
+			if(check.length == 0){
+				initialAlarmList.push(device.parent);
+			}
+		}
 	}
 
 	// if(stuckCertain && stuckList.length == 0) {
@@ -384,7 +431,7 @@ function getDigest() {
 		let d = new Date;
 		let masterFip = sysObjectsByCategory['fip'][0];
 		if (masterFip.firstNormalTime) {
-			if (d.getTime() - masterFip.firstNormalTime > reactivateTime + reactivateVariance || scenarioInfo[3] == 0) {
+			if (d.getTime() - masterFip.firstNormalTime > reactivateTime + reactivateVariance || scenarioInfo[3] == 0 || scenarioInfo[1] == 0 && initialAlarmList[0].hasReactivated) {
 				digest.waitedLongEnough = true;
 			}
 		} else {
@@ -455,7 +502,7 @@ function getDigest() {
 		digest_content.appendChild(correctHandlingSummary);
 
 		// next go through all of the alarm codes to itemise each error:
-		if (!digest.allCorrectlyHandled || !digest.allCorrectlyHandledBut) {
+		if (!digest.allCorrectlyHandled && !digest.allCorrectlyHandledBut) {
 			let alarmErrorSummary = document.createElement('p');
 			alarmErrorSummary.innerHTML = '<h3>Errors</h3>'
 			alarmErrorSummary.innerHTML += 'Of ' + initialAlarmList.length + ' alarms:<br>';
@@ -557,7 +604,7 @@ function buildFips() {
 		for (let i = 0, l = blockplan_pages.length; i < l; i++) {
 			let temp_page = document.createElement('div');
 			temp_page.className = 'blockplan-page';
-			let thisPageBg = new Image().src = f.blockplan_details['pages'][i];
+			let thisPageBg = new Image().src = systemDir + systemPaths[systemMenu[parseInt(scenarioInfo[0])]] + f.blockplan_details['pages'][i];
 			temp_page.style.backgroundImage = 'url(' + thisPageBg + ')';
 			if(i == 0){temp_page.classList.add('show');}
 			f.blockplan.getElementsByClassName('blockplan-content')[0].appendChild(temp_page);
@@ -649,11 +696,15 @@ function buildFips() {
 						closeElements(device.panel.parentNode);
 					} else {
 						device.panel.parentNode.parentNode.classList.toggle('show');
-						device.panel.parentNode.style.top = event.pageY + 'px';
+						device.panel.parentNode.style.top = '0px';
+						if ((device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) || (device.parent.category == 'circuit' && !device.parent.addressable && device.parent.status_internal == 'active' && (device.parent.status == 'alarm' || device.parent.status == 'acked')))
+						 && !device.hasBeenReset && !device.hasBeenLookedAt){
+							device.hasBeenLookedAt = true;
+						}
 
 					}
 
-				} else	if (device.category == 'det') {
+				} else if (device.category == 'det') {
 					f.blockplan_displayed_device = device;
 					f.updateDeviceImagePath(device);
 					if ((device.status_internal == 'active' && (device.status == 'alarm' || device.status == 'acked' ) || (device.parent.category == 'circuit' && !device.parent.addressable && device.parent.status_internal == 'active' && (device.parent.status == 'alarm' || device.parent.status == 'acked')))
@@ -1136,8 +1187,16 @@ function buildFips() {
 			let d = new Date();
 			this.descLine.innerHTML = 'FirePanel 3000';
 			this.typeLine.innerHTML = provideTimeString(d);
-			this.displayLines[1].innerHTML = 'Serviced by the good people at Stn 33';
-			this.displayLines[2].innerHTML = 'Ph: 0444 444444';
+			if (f.message) {
+				this.displayLines[1].innerHTML = f.message;
+			} else {
+				this.displayLines[1].innerHTML = fip_default_message;
+			}
+			if (f.contact) {
+				this.displayLines[2].innerHTML = f.contact;
+			} else {
+				this.displayLines[2].innerHTML = fip_default_contact;
+			}
 			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
 	};
 
@@ -1268,9 +1327,10 @@ function buildFips() {
 		if(this.confirmState == 'none'){
 			//display this alarm's number
 			//display how many other alarms there are, or, if some have been acknowledged, display this number
-			if(this.ackedCount > 0){
-				this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
-			} else if (this.alarmCount > 0){
+			// if(this.ackedCount > 0){
+			// 	this.displayLines[3].innerHTML = 'Acked alarms ' + this.ackedCount + ' of ' + this.alarmCount;
+			// } else
+			if (this.alarmCount > 0){
 				switch(this.conventional){
 					case true :
 						this.displayLines[3].innerHTML = 'Zone alarm ';
@@ -1586,7 +1646,9 @@ function createSystemObjects(node, parent){
 	//establish identifiers
 	if(node.name){o.name = node.name;}
 
-
+	if(node.message){o.message = node.message};
+	if(node.contact){o.contact = node.contact};
+	if(node.colour){o.colour = node.colour};
 
 
 	if(node.blockplan_details){

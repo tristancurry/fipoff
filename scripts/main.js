@@ -101,29 +101,45 @@ const fipThemes = {
 		bright: 'orange',
 		panel: 'black',
 		bezel: 'blue',
+		lcdBright: '#ccff99',
+		lcdDark: '#666633',
+		lcdText: '#224422'
 	},
 	magenta: {
 		bright: 'magenta',
 		panel: '#1d001d',
 		bezel: 'magenta',
+		lcdBright: '#ff7af2',
+		lcdDark: '#55014a',
+		lcdText: '#360143'
 	},
 	cyan: {
 		bright: 'cyan',
 		panel: '#011414',
 		bezel: 'cyan',
+		lcdBright: '#1ba7ff',
+		lcdDark: '#0c034f',
+		lcdText: '#060445'
 	},
 	green: {
 		bright: '#00ff00',
-		panel: '#061401',
+		panel: '#010D03',
 		bezel: '#00ff00',
+		lcdBright: '#1BFF7A',
+		lcdDark: '#114100',
+		lcdText: '#032815'
 	},
 	red: {
 		bright: 'red',
 		panel: '#140101',
 		bezel: 'orange',
+		lcdBright: '#FF681B',
+		lcdDark: '#800000',
+		lcdText: '#450404'
 	},
-
 };
+
+
 
 // at the end of the scenario, the tracked devices are assigned a status code
 const feedbackStrings = [
@@ -632,6 +648,10 @@ function buildFips() {
 			f.panel.style.setProperty('--theme-color-bright', theme.bright);
 			f.panel.style.setProperty('--theme-color-panel', theme.panel);
 			f.panel.style.setProperty('--theme-color-bezel', theme.bezel);
+			f.panel.style.setProperty('--theme-lcd-bright', theme.lcdBright);
+			f.panel.style.setProperty('--theme-lcd-dark', theme.lcdDark);
+			f.panel.style.setProperty('--theme-lcd-text', theme.lcdText);
+
 			f.blockplan.style.setProperty('--theme-color-bright', theme.bright);
 		}
 
@@ -737,7 +757,7 @@ function buildFips() {
 				let device = f.deviceList[id];
 				if (device.parent) {
 					let colour;
-					if (device.parent.colour) {colour = device.parent.colour} else {colour = colorList[device.parent.loop];}
+					if (device.parent.colour) {colour = device.parent.colour} else {colour = colorList[device.parent.loop%colorList.length];}
 						if (zoneThemes[colour]) {
 							let theme = zoneThemes[colour];
 							f.blockplan_card.style.setProperty('--zone-background-color', theme.zoneBackgroundColor);

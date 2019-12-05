@@ -7,6 +7,7 @@
 	--annunciator-alarm-color: #FF0000;
 	--annunciator-isol-color: #FFEE00;
 	--unlit-color: #111122;
+	--menu-button-color: #8888ee;
 }
 
 
@@ -40,7 +41,16 @@ body {
 
 button {
 	border:none;
-     cursor: pointer;
+    cursor: pointer;
+		background-color: var(--menu-button-color);
+		color: white;
+		font-size: 20px;
+	 	cursor: pointer;
+		padding: 3px;
+	 	align-items: center;
+	 	justify-content: center;
+	 	text-align: center;
+
      user-select:none;
      -webkit-user-select:none;
      -moz-user-select:none;
@@ -48,7 +58,6 @@ button {
 }
 
 .viewport {
-	position:fixed;
 	display: flex;
 	width: 100%;
 	height:100%;
@@ -435,7 +444,6 @@ div {
 	height: 100%;
 	width: 100%;
 	display: none;
-	flex-direction: column;
 	color: white;
 }
 
@@ -453,7 +461,6 @@ div {
 .menu-content {
 	display: flex;
 	flex-direction: row;
-	height:75%;
 }
 
 .menu-page {
@@ -466,11 +473,8 @@ div {
 .menu-selector {
 	margin: auto;
 	width: 75%;
-	height: 100%;
 	display: flex;
 	flex-direction: column;
-	max-height: 400px;
-	min-height: 100px;
 	padding: 1%;
 	user-select: none;
 	-moz-user-select: none;
@@ -482,7 +486,7 @@ div {
 	margin: 3px;
 	display:flex;
 	flex-grow: 1;
-	max-height: 150px;
+	min-height: 75px;
 	color: white;
 }
 
@@ -490,9 +494,9 @@ div {
 .menu-option {
 	display:flex;
 	flex-grow: 1;
-
+	min-width: 150px;
 	max-width: 200px;
-	background-color: #8888ee;
+	background-color: var(--menu-button-color);
 	color: white;
 	cursor: pointer;
 
@@ -513,7 +517,7 @@ div {
 .menu-option-desc {
 	display: flex;
 	flex-grow: 1;
-	max-width:60%;
+	min-width:70%;
 	padding: 5px;
 	border: 1px dashed white;
 	font-size: 18px;
@@ -567,7 +571,7 @@ div {
 }
 
 .menu-back {
-	background-color: #8888ee;
+	background-color: var(--menu-button-color);
 }
 .menu-start {
 	background-color: #22AA22;
@@ -769,7 +773,7 @@ div {
 }
 
 .exitLeft, .returnLeft, .exitRight, .returnRight {
-	position: relative;
+	/* position: relative; */
 	animation-fill-mode: forwards;
 
 	animation-duration: 0.4s;

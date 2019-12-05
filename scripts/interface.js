@@ -197,6 +197,8 @@ function handleMenuInteraction(target) {
 			// Hide the menu system.
 			// Reset the menu system to the start page.
 			// Reset the selection styles in the menu system (ready for next time)
+			// Re-disabled the start button!
+			target.setAttribute('disabled','');
 
 		}
 	}

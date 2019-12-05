@@ -101,7 +101,7 @@
 				</div>
 				<div class='modal-body'>
 					<div class='modal-button-container'>
-						<button onClick='getDigest(); hideElement(document.getElementsByClassName("endScenario")[0]); showElement(document.getElementsByClassName("digest")[0]);'>Yes</button>
+						<button onClick='getDigest(); hideElement(document.getElementsByClassName("endScenario")[0]); showElement(document.getElementsByClassName("digest")[0]); hideElement(document.getElementsByClassName("get-digest")[0])'>Yes</button>
 						<button onClick='hideElement(document.getElementsByClassName("endScenario")[0])'>No</button>
 					</div>
 				</div>
@@ -117,7 +117,8 @@
 				</div>
 				<div class='model-footer'>
 					<div class='modal-button-container'>
-						<button onclick='restartScenario();'>Restart Scenario</button><button onclick='quitToTitle()'>Quit to Title</button>
+						<button onclick='restartScenario();'>Restart Scenario</button>
+						<button onclick='quitToTitle()'>Quit to Title</button>
 					</div>
 				</div>
 			</div>

@@ -85,12 +85,15 @@ div {
 	--theme-color-bright: orange;
 	--theme-color-panel: black;
 	--theme-color-bezel: blue;
+	--theme-color-lcd-bright: #ccff99;
+	--theme-color-lcd-dark: #666633;
+	--theme-color-lcd-text: #224422;
 	position:relative;
 	width: 800px;
 	min-width:650px;
 	height: 400px;
 	margin: 20px;
-	border: 1px solid var(--theme-color-bright);
+	border: 4px solid var(--theme-color-bright);
 	color: var(--theme-color-bright);
 	background-color: var(--theme-color-panel);
 }
@@ -104,7 +107,7 @@ div {
 	width: 90%;
 	min-width:580px;
 	height: 90%;
-	border: 4px solid red;
+	border: 8px solid red;
 	border-radius: 25px;
 }
 
@@ -212,7 +215,7 @@ div {
 	left: 5px;
 	height:calc(100% - 10px);
 	width:calc(100% - 10px);
-	background-image: linear-gradient(to bottom right, #ccff99, #666633);
+	background-image: linear-gradient(to bottom right, var(--theme-color-lcd-bright), var(--theme-color-lcd-dark));
 	box-shadow: 2px 2px 5px 5px rgba(0,0,0,0.7) inset;
 	border:none;
 }
@@ -221,7 +224,7 @@ div {
 	padding: 10px;
 	font-family: lcd_font;
 	font-size: 16px;
-	color: #224422;
+	color: var(--theme-color-lcd-text);
 	text-align:left;
 }
 
@@ -374,6 +377,10 @@ div {
 	padding:5px;
 	margin:auto;
 	border: 2px solid var(--zone-border-color);
+}
+
+.device-header {
+	font-weight:bold;
 }
 
 .device-info {

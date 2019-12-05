@@ -61,36 +61,69 @@ const deviceImageVersions = {
 	concealed: 1
 }
 
-const zoneThemes = [
-	{
-		name: 'magenta',
+const colorList = ['default', 'magenta', 'cyan', 'green', 'red'];
+
+const zoneThemes = {
+	magenta: {
 		zoneBackgroundColor: 'rgba(255, 0, 255, 0.75)',
 		zoneBorderColor: '#920580',
 		zoneTextColor: '#0cf6ff',
 		zoneTextBackgroundColor: '#920580',
 	},
-	{
-		name: 'cyan',
+	cyan: {
 		zoneBackgroundColor: 'rgba(0, 255, 255, 0.75)',
 		zoneBorderColor: '#057992',
 		zoneTextColor: '#060349',
 		zoneTextBackgroundColor: '#35f7ff',
 	},
-	{
-		name: 'green',
+	green: {
 		zoneBackgroundColor: 'rgba(0, 255, 0, 0.75)',
 		zoneBorderColor: '#006500',
 		zoneTextColor: '#000000',
 		zoneTextBackgroundColor: '#00ff11',
 	},
-	{
-		name: 'red',
+	red: {
 		zoneBackgroundColor: 'rgba(255, 0, 0, 0.75)',
 		zoneBorderColor: '#600000',
 		zoneTextColor: '#FFEE00',
 		zoneTextBackgroundColor: '#600000',
 	},
-];
+	default: {
+		zoneBackgroundColor: 'rgba(255, 235, 59, 0.75)',
+		zoneBorderColor: 'rgb(230,150,0)',
+		zoneTextColor: 'black',
+		zoneTextBackgroundColor: 'rgb(255,255,150)',
+	}
+};
+
+const fipThemes = {
+	default: {
+		bright: 'orange',
+		panel: 'black',
+		bezel: 'blue',
+	},
+	magenta: {
+		bright: 'magenta',
+		panel: '#1d001d',
+		bezel: 'magenta',
+	},
+	cyan: {
+		bright: 'cyan',
+		panel: '#011414',
+		bezel: 'cyan',
+	},
+	green: {
+		bright: '#00ff00',
+		panel: '#061401',
+		bezel: '#00ff00',
+	},
+	red: {
+		bright: 'red',
+		panel: '#140101',
+		bezel: 'orange',
+	},
+
+};
 
 // at the end of the scenario, the tracked devices are assigned a status code
 const feedbackStrings = [
@@ -552,6 +585,7 @@ function buildFips() {
 		viewport.appendChild(clone);
 
 		f.panel = document.getElementsByClassName('panel')[i];
+
 		f.panel.setAttribute('data-index', i);
 		// displace sub-FIPs by a small amount in x and z directions
 		f.panel.parentNode.style.left = i*15 + 'px';
@@ -589,6 +623,17 @@ function buildFips() {
 		f.blockplan.style.width = f.blockplan_details['dimensions'].x;
 		f.blockplan.getElementsByClassName('blockplan-content')[0].style.height = f.blockplan_details['dimensions'].y;
 
+		//apply theme colours
+		if (f.parent) {
+			let colour;
+			if (f.parent.colour) {colour = f.parent.colour;} else {colour = 'default';}
+			let theme = fipThemes[colour];
+			console.log(theme);
+			f.panel.style.setProperty('--theme-color-bright', theme.bright);
+			f.panel.style.setProperty('--theme-color-panel', theme.panel);
+			f.panel.style.setProperty('--theme-color-bezel', theme.bezel);
+			f.blockplan.style.setProperty('--theme-color-bright', theme.bright);
+		}
 
 		//now we have a blockplan in the DOM, we can do the other blockplanny stuff, based on the blockplan_details stored with the FIP
 
@@ -690,6 +735,18 @@ function buildFips() {
 				let fipIndex = parseInt(f.blockplan.getAttribute('data-index'));
 				let id = parseInt(t.getAttribute('data-index'));
 				let device = f.deviceList[id];
+				if (device.parent) {
+					let colour;
+					if (device.parent.colour) {colour = device.parent.colour} else {colour = colorList[device.parent.loop];}
+						if (zoneThemes[colour]) {
+							let theme = zoneThemes[colour];
+							f.blockplan_card.style.setProperty('--zone-background-color', theme.zoneBackgroundColor);
+							f.blockplan_card.style.setProperty('--zone-border-color', theme.zoneBorderColor);
+							f.blockplan_card.style.setProperty('--zone-text-color', theme.zoneTextColor);
+							f.blockplan_card.style.setProperty('--zone-text-background-color', theme.zoneTextBackgroundColor);
+						}
+				}
+
 
 				if (device.category == 'fip') {
 					if (device.panel.parentNode.parentNode.classList.contains('show')) {

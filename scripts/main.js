@@ -648,9 +648,9 @@ function buildFips() {
 			f.panel.style.setProperty('--theme-color-bright', theme.bright);
 			f.panel.style.setProperty('--theme-color-panel', theme.panel);
 			f.panel.style.setProperty('--theme-color-bezel', theme.bezel);
-			f.panel.style.setProperty('--theme-lcd-bright', theme.lcdBright);
-			f.panel.style.setProperty('--theme-lcd-dark', theme.lcdDark);
-			f.panel.style.setProperty('--theme-lcd-text', theme.lcdText);
+			f.panel.style.setProperty('--theme-color-lcd-bright', theme.lcdBright);
+			f.panel.style.setProperty('--theme-color-lcd-dark', theme.lcdDark);
+			f.panel.style.setProperty('--theme-color-lcd-text', theme.lcdText);
 
 			f.blockplan.style.setProperty('--theme-color-bright', theme.bright);
 		}

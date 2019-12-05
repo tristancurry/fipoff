@@ -141,7 +141,7 @@ div {
 
 .panel-annunciators div {
 	flex-grow:1;
-	border: 1px solid;
+	border: 2px solid;
 	text-align: center;
 }
 
@@ -247,7 +247,8 @@ div {
 .panel-controls button {
 	width: calc(100% * 1/7);
 	vertical-align:top;
-	border: 1px solid var(--theme-color-bright);
+	border: 2px solid var(--theme-color-bright);
+	border-radius: 10px;
 	background: none;
 	color: var(--theme-color-bright);
 	font-size: 0.9rem;
@@ -308,7 +309,7 @@ div {
 	height: 100%;
 	background: no-repeat;
 	background-size: cover;
-	/* border: 2px solid orange; */
+	border: 2px solid var(--theme-color-bright);
 	display: none;
 }
 
@@ -411,7 +412,7 @@ div {
 	position:absolute;
 	width: 30px;
 	height: 30px;
-	border: 2px solid orange;
+	border: 2px solid var(--theme-color-bright);
 	border-radius: 15px;
 	font-size: 24px;
 	text-align: center;

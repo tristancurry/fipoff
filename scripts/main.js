@@ -65,10 +65,10 @@ const colorList = ['default', 'magenta', 'cyan', 'green', 'red'];
 
 const zoneThemes = {
 	magenta: {
-		zoneBackgroundColor: 'rgba(255, 0, 255, 0.75)',
+		zoneBackgroundColor: 'rgba(255, 221, 238, 0.75)',
 		zoneBorderColor: '#920580',
-		zoneTextColor: '#0cf6ff',
-		zoneTextBackgroundColor: '#920580',
+		zoneTextColor: '#240088',
+		zoneTextBackgroundColor: '#c784bf',
 	},
 	cyan: {
 		zoneBackgroundColor: 'rgba(0, 255, 255, 0.75)',
@@ -77,16 +77,16 @@ const zoneThemes = {
 		zoneTextBackgroundColor: '#35f7ff',
 	},
 	green: {
-		zoneBackgroundColor: 'rgba(0, 255, 0, 0.75)',
+		zoneBackgroundColor: 'rgba(163, 255, 163, 0.75)',
 		zoneBorderColor: '#006500',
 		zoneTextColor: '#000000',
-		zoneTextBackgroundColor: '#00ff11',
+		zoneTextBackgroundColor: '#59dc62',
 	},
 	red: {
-		zoneBackgroundColor: 'rgba(255, 0, 0, 0.75)',
+		zoneBackgroundColor: 'rgba(255, 81, 81, 0.75)',
 		zoneBorderColor: '#600000',
 		zoneTextColor: '#FFEE00',
-		zoneTextBackgroundColor: '#600000',
+		zoneTextBackgroundColor: '#aa1a1a',
 	},
 	default: {
 		zoneBackgroundColor: 'rgba(255, 235, 59, 0.75)',
@@ -117,17 +117,17 @@ const fipThemes = {
 		bright: 'cyan',
 		panel: '#011414',
 		bezel: 'cyan',
-		lcdBright: '#1ba7ff',
-		lcdDark: '#0c034f',
+		lcdBright: '#aee2e3',
+		lcdDark: '#056172',
 		lcdText: '#060445'
 	},
 	green: {
 		bright: '#00ff00',
-		panel: '#010D03',
+		panel: '#002913',
 		bezel: '#00ff00',
-		lcdBright: '#1BFF7A',
-		lcdDark: '#114100',
-		lcdText: '#032815'
+		lcdBright: '#ccff99',
+		lcdDark: '#006c00',
+		lcdText: '#013519'
 	},
 	red: {
 		bright: 'red',
@@ -739,7 +739,7 @@ function buildFips() {
 					}
 				} else {
 				//if we are not at a boundary, enable both buttons
-					nextButton.removeAttribute('disabled');
+					prevButton.removeAttribute('disabled');
 					nextButton.removeAttribute('disabled');
 				}
 			}

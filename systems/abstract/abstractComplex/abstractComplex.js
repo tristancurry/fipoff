@@ -134,7 +134,7 @@ let system = {
 								{
 									name: 'Loop 2',
 									category: 'circuit',
-									colour: 'cyan',
+									colour: 'green',
 									addressable: true,
 									loop: 2,
 									zone: 2,

@@ -264,7 +264,7 @@ div {
 	font-size: 30px;
 	border: 2px solid;
 	border-radius:25px;
-	background-color: var(--unlit-color);
+	background-color: var(--annunciator-alarm-color);
 }
 
 

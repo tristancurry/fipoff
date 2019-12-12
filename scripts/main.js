@@ -1708,7 +1708,7 @@ function buildFips() {
 				closeElements(f.blockplan);
 			} else {
 				f.blockplan.classList.toggle('show');
-				f.blockplan.scrollIntoView({behavior: 'smooth'});
+				//f.blockplan.scrollIntoView({behavior: 'smooth'});
 			}
 		}
 	});

@@ -1,13 +1,10 @@
-@font-face {
-	font-family: lcd_font;
-	src: url(nokiafc22.ttf);
-}
 
 :root {
 	--annunciator-alarm-color: #FF0000;
 	--annunciator-isol-color: #FFEE00;
 	--unlit-color: #111122;
 	--menu-button-color: #8888ee;
+	--menu-button-hover-color: #6666cc;
 }
 
 
@@ -15,6 +12,11 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
+}
+
+@font-face {
+	font-family: lcd_font;
+	src: url(nokiafc22.ttf);
 }
 
 .test {
@@ -343,7 +345,6 @@ div {
 
 .device-detector, .device-fip {
 	position:absolute;
-	background-color: rgba(255,100,0,0.5);
 }
 
 .device-container {
@@ -860,8 +861,6 @@ div {
 
 
 
-
-
 /*Mobile-portrait style */
 @media only screen and (max-width: 700px),(orientation: portrait){
 
@@ -870,28 +869,21 @@ div {
 
 /*Landscape - tablet style*/
 @media only screen and (min-width: 420px) {
-	/* .viewport {
-		flex-direction:row;
+
+/* hover states for panel buttons, menu buttons/selectors, detectors in blockplans etc */
+	button:hover, .menu-option:hover {
+		background-color: var(--menu-button-hover-color);
 	}
 
-	.modal-content {
-		max-width:800px;
+	.panel-controls button:hover, .blockplan-view:hover, .interface-button:hover {
+		background-color: var(--theme-color-bright);
+		color: black;
+		//color: var(--theme-color-panel);
 	}
 
-	.modal-body {
-		text-align: center;
-		font-size: 1.1rem;
-		display: flex;
-		flex-direction: row;
+	.device-detector:hover, .device-fip:hover {
+		background-color: var(--theme-color-bright);
+		opacity: 0.3;
 	}
-
-	.modal-section {
-		margin-left:20px;
-	}
-
-	.modal h3 {
-		text-align:center;
-	} */
-
 
 }

@@ -30,7 +30,7 @@ let system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							pos: {x: '145px', y:'277px'}
+							pos: {x: '145px', y:'275px'}
 						},
 
 						{
@@ -38,7 +38,7 @@ let system = {
 							category: 'det',
 							type: 'smoke',
 							subtype: 'pe',
-							pos: {x: '290px', y:'277px'}
+							pos: {x: '290px', y:'275px'}
 						},
 					]
 				},
@@ -62,7 +62,7 @@ let system = {
 								detector_dimensions: {x:'40px', y:'40px'},
 								fip_dimensions: {x:'30px', y: '20px'},
 							},
-							pos: {x: '71px', y:'278px'},
+							pos: {x: '71px', y:'272px'},
 							children: [
 								{
 									name: 'Loop 1',

@@ -4,6 +4,7 @@
 	<title>Fipoff FIP Simulation</title>
 	<meta http-equiv='Content-Type' content='text/html'; charset='UTF-8'>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<meta name="format-detection" content="telephone=no"/>
 	<meta name='theme-color' content='#6d3300'>
 	<meta name='Description' content='About: Simulator for learning about installed fire safety systems, Author:Tristan Miller'>
 	<link rel='manifest' href='manifest.json' />
@@ -20,8 +21,12 @@
 		<div class='viewport'>
 			<div class='title-screen'>
 				<div class='title-screen-content'>
-					<h1>Welcome to fipoff</h1>
-					<div class='title-screen-button-container'>
+					<div class='title-screen-titles'>
+						<h2>welcome to</h2>
+						<h1>fipoff</h1>
+						<h2>alarm system simulation</h2>
+					</div>
+					<div class='button-container'>
 						<button onClick='openMenu();'>Start</button>
 						<button>About</button>
 					</div>
@@ -136,7 +141,7 @@
 			<span class='interface-button closeBox'>&times</span>
 			<span class ='extBell unlit'>🔔</span>
 			<span class ='warnSys unlit'>🏃</span>
-			<span class ='blockplan-view'>📖</span>
+			<button class ='blockplan-view'>View Block Plan</button>
 			<div class='panel-fff'>
 				<div class='panel-inner'>
 						<div class='panel-upper'>
@@ -196,8 +201,8 @@
 					</div>
 				</div>
 			</div>
-			<button class='interface-button blockplan-prev'>◀</button>
-			<button class='interface-button blockplan-next'>▶</button>
+			<button class='interface-button blockplan-prev'><</button>
+			<button class='interface-button blockplan-next'>></button>
 			<div class='blockplan-footer'>will contain page number</div>
 		</div>
 	</template>

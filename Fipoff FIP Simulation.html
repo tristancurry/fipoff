@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<!-- saved from url=(0059)file:///C:/Users/Tristan/Documents/GitHub/fipoff/index.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Fipoff FIP Simulation</title>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="theme-color" content="#6d3300">
+	<meta name="Description" content="About: Simulator for learning about installed fire safety systems, Author:Tristan Miller">
+	<link rel="manifest" href="file:///C:/Users/Tristan/Documents/GitHub/fipoff/manifest.json">
+	<link rel="stylesheet" type="text/css" href="./Fipoff FIP Simulation_files/styles.css">
+</head>
+
+<body>
+	<script type="text/javascript" src="./Fipoff FIP Simulation_files/swHandling.js.download"></script>
+	<div class="font-preload" style="opacity: 0">
+		<span style="font-family: lcd_font, Arial, sans-serif;"></span>
+	</div>
+
+	<div onclick="void(0);">
+		<div class="viewport">
+			<div class="title-screen returnLeft">
+				<div class="title-screen-content">
+					<div class="title-screen-titles">
+						<h2>welcome to</h2>
+						<h1>fipoff</h1>
+						<h2>alarm system simulation</h2>
+					</div>
+					<div class="button-container">
+						<button onclick="openMenu();">Start</button>
+						<button>About</button>
+					</div>
+				</div>
+			</div>
+			<button class="get-digest show" onclick="beginEnd();">End Scenario</button>
+			<div class="menu-container">
+				<div class="menu-header"><h1>Create Scenario</h1></div>
+				<div class="menu-content">
+					<div class="menu-page returnLeft">
+						<h2>Choose System</h2>
+						<div class="menu-selector">
+							<div class="menu-option-container"><div class="menu-option" data-index="0"><div class="menu-option-text">Station 33a</div></div><div class="menu-option-desc">Small facility with about fifty addressable devices across four zones.</div></div>
+							<div class="menu-option-container"><div class="menu-option" data-index="1"><div class="menu-option-text">Station 33c</div></div><div class="menu-option-desc">Small facility with a conventional system containing about fifty devices across four zones.</div></div>
+							<div class="menu-option-container"><div class="menu-option" data-index="2"><div class="menu-option-text">Simple</div></div><div class="menu-option-desc">Simplified system with two circuits of four detectors each. One circuit is addressable, the other conventional.</div></div>
+							<div class="menu-option-container"><div class="menu-option menu-selected" data-index="3"><div class="menu-option-text">Complex</div></div><div class="menu-option-desc">Simplified version of a multi-building facility with sub-FIPs.</div></div>
+						</div>
+					</div>
+					<div class="menu-page returnLeft">
+						<h2>Select Alarm Activations</h2>
+						<div class="menu-selector">
+							<div class="menu-option-container"><div class="menu-option menu-selected" data-index="0"><div class="menu-option-text">None</div></div><div class="menu-option-desc">No devices will be activated!</div></div>
+							<div class="menu-option-container"><div class="menu-option" data-index="1"><div class="menu-option-text">One</div></div><div class="menu-option-desc">Exactly one device will activate.</div></div>
+							<div class="menu-option-container"><div class="menu-option" data-index="2"><div class="menu-option-text">A couple</div></div><div class="menu-option-desc">Exactly two devices will activate.</div></div>
+							<div class="menu-option-container"><div class="menu-option" data-index="3"><div class="menu-option-text">A few</div></div><div class="menu-option-desc">Somewhere between three and five devices will activate.</div></div>
+							<div class="menu-option-container"><div class="menu-option" data-index="4"><div class="menu-option-text">Lots</div></div><div class="menu-option-desc">An unreasonable number of devices will activate.</div></div>
+						</div>
+					</div>
+					<div class="menu-page returnRight">
+					<h2>Select Alarm Locations</h2>
+					<div class="menu-selector">
+						<div class="menu-option-container"><div class="menu-option" data-index="0"><div class="menu-option-text">Random</div></div><div class="menu-option-desc">Activations will happen at random locations.</div></div>
+						<div class="menu-option-container"><div class="menu-option" data-index="1"><div class="menu-option-text">Clustered</div></div><div class="menu-option-desc">Activations will be grouped together, where possible.</div></div>
+					</div>
+				</div>
+					<div class="menu-page returnRight">
+						<h2>Select Faults</h2>
+						<div class="menu-selector">
+							<div class="menu-option-container"><div class="menu-option" data-index="0"><div class="menu-option-text">None</div></div><div class="menu-option-desc">All devices will behave themselves.</div></div>
+							<div class="menu-option-container"><div class="menu-option" data-index="1"><div class="menu-option-text">Possible</div></div><div class="menu-option-desc">There is a small chance that a device will misbehave.</div></div>
+							<div class="menu-option-container"><div class="menu-option" data-index="2"><div class="menu-option-text">Likely</div></div><div class="menu-option-desc">You may find some surprises waiting when you attempt a reset.</div></div>
+							<div class="menu-option-container"><div class="menu-option" data-index="3"><div class="menu-option-text">At least one</div></div><div class="menu-option-desc">At least one device will be troublesome.</div></div>
+						</div>
+					</div>
+					<div class="menu-page returnRight show">
+						<h2>Summary</h2>
+							<div class="menu-summary returnRight">
+								<p>System:<span>Complex</span></p>
+								<p>Alarm activations:<span>None</span></p>
+								<p>Alarm locations:<span>N/A</span></p>
+								<p>Faults:<span>N/A</span></p>
+							</div>
+					</div>
+				</div>
+
+				<div class="menu-footer">
+						<button class="menu-back show">Back</button>
+						<button class="menu-start" autocomplete="off" disabled="">Start Scenario</button>
+				</div>
+</div>
+
+
+			<div class="update">
+				<div class="update-content">
+					<p>New version available!</p>
+					<div class="button-container">
+					<button id="updateBtn">INSTALL</button>
+					<button onclick="toggleDisplay(document.getElementsByClassName(&quot;update&quot;)[0])">DISMISS</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal endScenario">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2>End Scenario?</h2>
+				</div>
+				<div class="modal-body">
+					<div class="modal-button-container">
+						<button onclick="getDigest(); hideElement(document.getElementsByClassName(&quot;endScenario&quot;)[0]); showElement(document.getElementsByClassName(&quot;digest&quot;)[0]); hideElement(document.getElementsByClassName(&quot;get-digest&quot;)[0])">Yes</button>
+						<button onclick="hideElement(document.getElementsByClassName(&quot;endScenario&quot;)[0])">No</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal digest">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2>Scenario Feedback</h2>
+				</div>
+				<div class="modal-body"></div>
+				<div class="model-footer">
+					<div class="modal-button-container">
+						<button onclick="restartScenario();">Restart Scenario</button>
+						<button onclick="quitToTitle()">Quit to Title</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	
+		
+	
+		<div class="panel-backdrop show" style="background-image: linear-gradient(to right bottom, black, orange);">
+		<div class="panel-container" style="left: 0px; z-index: 0;">
+		<div class="panel" data-index="0">
+			<span class="panel-title">FirePanel 3000</span>
+			<span class="interface-button closeBox" style="display: none;">×</span>
+			<span class="extBell unlit">🔔</span>
+			<span class="warnSys unlit">🏃</span>
+			<button class="blockplan-view">View Block Plan</button>
+			<div class="panel-fff">
+				<div class="panel-inner">
+						<div class="panel-upper">
+							<div class="panel-annunciators">
+								<div class="annunciator">ALARM<div class="lamp alarm unlit"></div></div>
+								<div class="annunciator">ISOL<div class="lamp isol unlit"></div></div>
+								<div class="annunciator">FAULT<div class="lamp fault unlit"></div></div>
+							</div>
+							<div class="panel-display-container">
+								<div class="panel-display-bezel">
+									<div class="panel-display">
+										<div class="panel-display-content">
+											<div class="display-line zero"><span class="left-info">FirePanel 3000</span><span class="right-info">13/12/2019 11:20:19</span></div>
+											<div class="display-line one">Serviced by the good people at Stn 33</div>
+											<div class="display-line two">Ph: 0444 444 444</div>
+											<div class="display-line three">System NORMAL</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel-lower">
+							<div class="panel-controls">
+								<button><div class="lamp ebIsol unlit"></div>External Bell Isolate</button>
+								<button><div class="lamp wsIsol unlit"></div>Warning System Isolate</button>
+								<button>Prev</button>
+								<button>Next</button>
+								<button>Acknowledge</button>
+								<button>Reset</button>
+								<button>Isolate</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+		<div class="blockplan show" data-index="0" style="width: 800px;">
+			<span class="interface-button closeBox">×</span>
+			<div class="blockplan-header"><span class="blockplan-title">Complex System - Main FIP</span><span class="interface-button closeBox">×</span></div>
+			<div class="blockplan-content" style="height: 600px;">
+			<div class="blockplan-page show" style="background-image: url(&quot;systems/abstract/abstractComplex/abstractComplex_main_contents.png&quot;);"></div><div class="blockplan-page" style="background-image: url(&quot;systems/abstract/abstractComplex/abstractComplex_main_p2.png&quot;);"><div class="device-detector" data-index="0" style="width: 40px; height: 40px; left: 145px; top: 275px;"></div><div class="device-detector" data-index="1" style="width: 40px; height: 40px; left: 290px; top: 275px;"></div></div><div class="blockplan-page" style="background-image: url(&quot;systems/abstract/abstractComplex/abstractComplex_main_p3.png&quot;);"><div class="device-fip" data-index="2" style="width: 90px; height: 60px; left: 71px; top: 272px;"></div><div class="device-fip" data-index="3" style="width: 90px; height: 60px; left: 492px; top: 344px;"></div></div></div>
+			<div class="device-container">
+				<div class="device-header"><span class="device-type">Device Type (e.g. Smoke, thermal, FIP)</span><span class="interface-button closeBox">×</span></div>
+				<div class="device-body">
+					<div class="device-image" title="image of device type sourced from a library of images" style="background-image: url(&quot;images/devices.png&quot;); background-position: -1000px 0px;"></div>
+					<div class="device-info">
+						<div class="device-info-desc">Description: <span></span></div>
+						<div class="device-info-zone">Zone: <span></span><br>Device: <span></span></div>
+						<div class="device-info-status">Status: <span></span></div>
+						<div class="device-options">
+							<div class="device-options-mcp"><button class="device-reset">R E S E T</button><br><button class="device-activate">PRESS TO  ACTIVATE</button></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<button class="interface-button blockplan-prev" disabled="disabled">&lt;</button>
+			<button class="interface-button blockplan-next" style="
+    font-size: 18px;
+">&gt;</button>
+			<div class="blockplan-footer">Page 1 of 3</div>
+		</div>
+	</div>
+	</div>
+	
+		<div class="panel-backdrop">
+		<div class="panel-container" style="left: 15px; z-index: 1;">
+		<div class="panel" data-index="1" style="--theme-color-bright:cyan; --theme-color-panel:#011414; --theme-color-bezel:cyan; --theme-color-lcd-bright:#aee2e3; --theme-color-lcd-dark:#056172; --theme-color-lcd-text:#060445;">
+			<span class="panel-title">FirePanel 3000</span>
+			<span class="interface-button closeBox">×</span>
+			<span class="extBell unlit">🔔</span>
+			<span class="warnSys unlit">🏃</span>
+			<button class="blockplan-view">View Block Plan</button>
+			<div class="panel-fff">
+				<div class="panel-inner">
+						<div class="panel-upper">
+							<div class="panel-annunciators">
+								<div class="annunciator">ALARM<div class="lamp alarm unlit"></div></div>
+								<div class="annunciator">ISOL<div class="lamp isol unlit"></div></div>
+								<div class="annunciator">FAULT<div class="lamp fault unlit"></div></div>
+							</div>
+							<div class="panel-display-container">
+								<div class="panel-display-bezel">
+									<div class="panel-display">
+										<div class="panel-display-content">
+											<div class="display-line zero"><span class="left-info">FirePanel 3000</span><span class="right-info">13/12/2019 11:20:19</span></div>
+											<div class="display-line one">Serviced by the good people at Stn 33</div>
+											<div class="display-line two">Ph: 0444 444 444</div>
+											<div class="display-line three">System NORMAL</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel-lower">
+							<div class="panel-controls">
+								<button><div class="lamp ebIsol unlit"></div>External Bell Isolate</button>
+								<button><div class="lamp wsIsol unlit"></div>Warning System Isolate</button>
+								<button>Prev</button>
+								<button>Next</button>
+								<button>Acknowledge</button>
+								<button>Reset</button>
+								<button>Isolate</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+		<div class="blockplan" data-index="1" style="width: 750px; --theme-color-bright:cyan;">
+			<span class="interface-button closeBox">×</span>
+			<div class="blockplan-header"><span class="blockplan-title">Complex System - FIP West Building</span><span class="interface-button closeBox">×</span></div>
+			<div class="blockplan-content" style="height: 600px;">
+			<div class="blockplan-page show" style="background-image: url(&quot;systems/abstract/abstractComplex/abstractComplex_west.png&quot;);"><div class="device-detector" data-index="0" style="width: 40px; height: 40px; left: 85px; top: 435px;"></div><div class="device-detector" data-index="1" style="width: 40px; height: 40px; left: 85px; top: 348px;"></div><div class="device-detector" data-index="2" style="width: 40px; height: 40px; left: 85px; top: 260px;"></div><div class="device-detector" data-index="3" style="width: 40px; height: 40px; left: 85px; top: 170px;"></div><div class="device-detector" data-index="4" style="width: 40px; height: 40px; left: 258px; top: 259px;"></div><div class="device-detector" data-index="5" style="width: 40px; height: 40px; left: 258px; top: 347px;"></div><div class="device-detector" data-index="6" style="width: 40px; height: 40px; left: 258px; top: 434px;"></div><div class="device-detector" data-index="7" style="width: 40px; height: 40px; left: 272px; top: 101px;"></div><div class="device-detector" data-index="8" style="width: 40px; height: 40px; left: 406px; top: 101px;"></div></div></div>
+			<div class="device-container">
+				<div class="device-header"><span class="device-type">Device Type (e.g. Smoke, thermal, FIP)</span><span class="interface-button closeBox">×</span></div>
+				<div class="device-body">
+					<div class="device-image" title="image of device type sourced from a library of images" style="background-image: url(&quot;images/devices.png&quot;); background-position: -1400px 0px;"></div>
+					<div class="device-info">
+						<div class="device-info-desc">Description: <span></span></div>
+						<div class="device-info-zone">Zone: <span></span><br>Device: <span></span></div>
+						<div class="device-info-status">Status: <span></span></div>
+						<div class="device-options">
+							<div class="device-options-mcp"><button class="device-reset">R E S E T</button><br><button class="device-activate">PRESS TO  ACTIVATE</button></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<button class="interface-button blockplan-prev" disabled="disabled" style="display: none;">&lt;</button>
+			<button class="interface-button blockplan-next" disabled="disabled" style="display: none;">&gt;</button>
+			<div class="blockplan-footer">Page 1 of 1</div>
+		</div>
+	</div>
+	</div>
+	
+		<div class="panel-backdrop">
+		<div class="panel-container" style="left: 30px; z-index: 2;">
+		<div class="panel" data-index="2" style="--theme-color-bright:#00ff00; --theme-color-panel:#002913; --theme-color-bezel:#00ff00; --theme-color-lcd-bright:#ccff99; --theme-color-lcd-dark:#006c00; --theme-color-lcd-text:#013519;">
+			<span class="panel-title">FirePanel 3000</span>
+			<span class="interface-button closeBox">×</span>
+			<span class="extBell unlit">🔔</span>
+			<span class="warnSys unlit">🏃</span>
+			<button class="blockplan-view">View Block Plan</button>
+			<div class="panel-fff">
+				<div class="panel-inner">
+						<div class="panel-upper">
+							<div class="panel-annunciators">
+								<div class="annunciator">ALARM<div class="lamp alarm unlit"></div></div>
+								<div class="annunciator">ISOL<div class="lamp isol unlit"></div></div>
+								<div class="annunciator">FAULT<div class="lamp fault unlit"></div></div>
+							</div>
+							<div class="panel-display-container">
+								<div class="panel-display-bezel">
+									<div class="panel-display">
+										<div class="panel-display-content">
+											<div class="display-line zero"><span class="left-info">FirePanel 3000</span><span class="right-info">13/12/2019 11:20:19</span></div>
+											<div class="display-line one">Serviced by the good people at Stn 33</div>
+											<div class="display-line two">Ph: 0444 444 444</div>
+											<div class="display-line three">System NORMAL</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel-lower">
+							<div class="panel-controls">
+								<button><div class="lamp ebIsol unlit"></div>External Bell Isolate</button>
+								<button><div class="lamp wsIsol unlit"></div>Warning System Isolate</button>
+								<button>Prev</button>
+								<button>Next</button>
+								<button>Acknowledge</button>
+								<button>Reset</button>
+								<button>Isolate</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		
+		<div class="blockplan" data-index="2" style="width: 850px; --theme-color-bright:#00ff00;">
+			<span class="interface-button closeBox">×</span>
+			<div class="blockplan-header"><span class="blockplan-title">Complex System - FIP East Building</span><span class="interface-button closeBox">×</span></div>
+			<div class="blockplan-content" style="height: 700px;">
+			<div class="blockplan-page show" style="background-image: url(&quot;systems/abstract/abstractComplex/abstractComplex_east.png&quot;);"><div class="device-detector" data-index="0" style="width: 40px; height: 40px; left: 242px; top: 495px;"></div><div class="device-detector" data-index="1" style="width: 40px; height: 40px; left: 367px; top: 387px;"></div><div class="device-detector" data-index="2" style="width: 40px; height: 40px; left: 367px; top: 185px;"></div><div class="device-detector" data-index="3" style="width: 40px; height: 40px; left: 115px; top: 495px;"></div><div class="device-detector" data-index="4" style="width: 40px; height: 40px; left: 367px; top: 495px;"></div><div class="device-detector" data-index="5" style="width: 40px; height: 40px; left: 367px; top: 293px;"></div><div class="device-detector" data-index="6" style="width: 40px; height: 40px; left: 367px; top: 92px;"></div></div></div>
+			<div class="device-container">
+				<div class="device-header"><span class="device-type">Device Type (e.g. Smoke, thermal, FIP)</span><span class="interface-button closeBox">×</span></div>
+				<div class="device-body">
+					<div class="device-image" title="image of device type sourced from a library of images" style="background-image: url(&quot;images/devices.png&quot;); background-position: -1000px 0px;"></div>
+					<div class="device-info">
+						<div class="device-info-desc">Description: <span></span></div>
+						<div class="device-info-zone">Zone: <span></span><br>Device: <span></span></div>
+						<div class="device-info-status">Status: <span></span></div>
+						<div class="device-options">
+							<div class="device-options-mcp"><button class="device-reset">R E S E T</button><br><button class="device-activate">PRESS TO  ACTIVATE</button></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<button class="interface-button blockplan-prev" disabled="disabled" style="display: none;">&lt;</button>
+			<button class="interface-button blockplan-next" disabled="disabled" style="display: none;">&gt;</button>
+			<div class="blockplan-footer">Page 1 of 1</div>
+		</div>
+	</div>
+	</div>
+	</div>
+
+	<!-- TEMPLATES for SYSTEM COMPONENTS -->
+
+	<template class="template-panel"></template>
+
+	<template class="template-blockplan"></template>
+
+
+
+
+	<script type="text/javascript" src="./Fipoff FIP Simulation_files/interface.js.download"></script>
+		<script type="text/javascript" src="./Fipoff FIP Simulation_files/main.js.download"></script>
+
+
+
+</div><script async="" id="activeSystem" type="text/javascript" src="./Fipoff FIP Simulation_files/station33a.js.download"></script><script async="" id="activeSystem" type="text/javascript" src="./Fipoff FIP Simulation_files/abstractComplex.js.download"></script></body></html>

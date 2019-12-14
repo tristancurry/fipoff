@@ -122,7 +122,7 @@ let system = {
 											pos: {x: '258px', y:'347px'}
 										},
 										{
-											name: 'AZ1-006-P',
+											name: 'AZ1-007-P',
 											category: 'det',
 											type: 'smoke',
 											subtype: 'pe',

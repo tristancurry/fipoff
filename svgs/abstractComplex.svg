@@ -28,16 +28,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="237.95608"
-     inkscape:cy="-186.44183"
+     inkscape:zoom="0.82587862"
+     inkscape:cx="276.20064"
+     inkscape:cy="-152.3807"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g3117"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1001"
-     inkscape:window-x="-9"
-     inkscape:window-y="-9"
+     inkscape:window-width="1366"
+     inkscape:window-height="745"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:snap-bbox="true"
      inkscape:snap-bbox-edge-midpoints="false"
@@ -562,7 +562,7 @@
      inkscape:groupmode="layer"
      id="layer5"
      inkscape:label="sitePlan"
-     style="display:inline"
+     style="display:none"
      sodipodi:insensitive="true">
     <g
        id="layer1"
@@ -1449,8 +1449,7 @@
      inkscape:groupmode="layer"
      id="g3421"
      inkscape:label="westBldg"
-     style="display:none"
-     sodipodi:insensitive="true">
+     style="display:inline">
     <g
        id="g3117"
        inkscape:groupmode="layer"
@@ -1465,7 +1464,7 @@
          style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.79374999;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          inkscape:export-xdpi="192"
          inkscape:export-ydpi="192"
-         inkscape:export-filename="W:\Windows Users\tristanm\Documents\GitHub\fipoff\systems\abstract\abstractComplex\abstractComplex_west.png" />
+         inkscape:export-filename="C:\Users\Tristan\Documents\GitHub\fipoff\systems\abstract\abstractComplex\abstractComplex_west.png" />
     </g>
     <g
        inkscape:groupmode="layer"
@@ -1882,7 +1881,7 @@
                width="277.082"
                id="rect3271" /></flowRegion><flowPara
              style="font-size:18.66666603px;opacity:1"
-             id="flowPara3275">AZ1-001-T</flowPara></flowRoot>      </g>
+             id="flowPara3275">AZ2-002-T</flowPara></flowRoot>      </g>
       <g
          style="display:inline;opacity:1;filter:url(#filter1976)"
          transform="translate(28.436976,91.856618)"

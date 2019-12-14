@@ -916,13 +916,42 @@ div {
 
 
 /*Mobile-portrait style */
-@media only screen and (max-width: 700px),(orientation: portrait){
+@media only screen and (max-width: 799px),(orientation: portrait){
+	.title-screen-content {
+		top: auto;
+	}
 
+	.title-screen-titles {
+		padding: 20px;
+		max-height: 20%;
+	}
+
+	.title-screen h1 {
+		font-size: 72px;
+	}
 
 }
 
-/*Landscape - tablet style*/
-@media only screen and (min-width: 420px) {
+/* Mobile-landscape style */
+@media only screen and (max-width: 799px),(orientation: landscape){
+	.title-screen-content {
+		top: auto;
+	}
+
+	.title-screen-titles {
+		padding: 20px;
+		max-height: 20%;
+	}
+
+	.title-screen h1 {
+		font-size: 72px;
+	}
+
+}
+
+
+/*Desktop  style*/
+@media only screen and (min-width: 800px) {
 
 /* hover states for panel buttons, menu buttons/selectors, detectors in blockplans etc */
 	button:hover, .menu-option:hover {

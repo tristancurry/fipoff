@@ -7,6 +7,10 @@
 //GLOBALS
 
 
+const thisVersion = '1.0';
+let versionDiv = document.getElementById('version');
+versionDiv.innerHTML = 'Version ' + thisVersion;
+
 
 
 const types = {

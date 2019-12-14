@@ -42,9 +42,11 @@ viewport.addEventListener('click', function(event) {
 		 closeElements(t.parentNode.parentNode);
 	}
 
-	if(t.classList.contains('menu-option') || t.classList.contains('menu-option-text') || t.classList.contains('menu-back')||t.classList.contains('menu-start')) {
+	if (t.classList.contains('menu-option') || t.classList.contains('menu-option-text') || t.classList.contains('menu-back')||t.classList.contains('menu-start')) {
 		handleMenuInteraction(t, event);
 	}
+
+	if (t.classList.contains('about')) {hideElement(t);}
 
 });
 

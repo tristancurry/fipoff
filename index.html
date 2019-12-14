@@ -28,7 +28,7 @@
 					</div>
 					<div class='button-container'>
 						<button onClick='openMenu();'>Start</button>
-						<button>About</button>
+						<button onclick='showElement(document.getElementsByClassName("about")[0])'>About</button>
 					</div>
 				</div>
 			</div>
@@ -95,6 +95,25 @@
 					<div class='button-container'>
 					<button id='updateBtn'>INSTALL</button>
 					<button onclick='toggleDisplay(document.getElementsByClassName("update")[0])'>DISMISS</button>
+				</div>
+			</div>
+		</div>
+
+		<div class='modal about'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+					<h2>About Fipoff</h2>
+				</div>
+				<div class='modal-body'>
+					<p>Fipoff is a flexible fire alarm system simulator for firefighters.</p>
+					<p>It is designed for users to be able to apply it in many different ways - its main job is to serve up plausible scenarios with systems that behave as expected.</p>
+
+					<p><div id='version'></div></p>
+					<div class='logo'></div>
+					<p>Created by Tristan Miller (D Shift), 2019. </p>
+					<p>Thanks to many people in the Northern command for testing and feedback ❤️</p>
+					<p><a href='mailto:tristan.miller@sa.gov.au'>tristan.miller@sa.gov.au</a></p>
+					<button onclick='hideElement(document.getElementsByClassName("about")[0])'>Okay!</button>
 				</div>
 			</div>
 		</div>

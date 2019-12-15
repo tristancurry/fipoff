@@ -273,7 +273,6 @@ div {
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	-ms-user-select: none;
-	cursor: pointer;
 	position:absolute;
 	left: 800px;
 	width: 50px;
@@ -292,6 +291,7 @@ div {
 	width:auto;
 	color: inherit;
 	border-color: inherit;
+	cursor: pointer;
 }
 
 .warnSys {

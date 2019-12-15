@@ -340,20 +340,14 @@ div {
 
 }
 
-.blockplan-next, .blockplan-prev {
-	background: none;
-	top: 50%;
-	width: 60px;
-	height: 60px;
-	font-size: 14px;
-}
+
 
 .blockplan-prev {
-	left: -15px;
+	left: -25px;
 }
 
 .blockplan-next {
-	right: -15px;
+	right: -25px;
 }
 
 .device-detector, .device-fip {
@@ -442,6 +436,13 @@ div {
 .interface-button[disabled] {
 	border-color: gray;
 	color: gray;
+}
+
+.blockplan-next, .blockplan-prev {
+	top: 50%;
+	width: 60px;
+	height: 60px;
+	font-size: 14px;
 }
 
 .closeBox {

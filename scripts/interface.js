@@ -42,9 +42,11 @@ viewport.addEventListener('click', function(event) {
 		 closeElements(t.parentNode.parentNode);
 	}
 
-	if(t.classList.contains('menu-option') || t.classList.contains('menu-option-text') || t.classList.contains('menu-back')||t.classList.contains('menu-start')) {
+	if (t.classList.contains('menu-option') || t.classList.contains('menu-option-text') || t.classList.contains('menu-back')||t.classList.contains('menu-start')) {
 		handleMenuInteraction(t, event);
 	}
+
+	if (t.classList.contains('about')) {hideElement(t);}
 
 });
 
@@ -197,6 +199,8 @@ function handleMenuInteraction(target) {
 			// Hide the menu system.
 			// Reset the menu system to the start page.
 			// Reset the selection styles in the menu system (ready for next time)
+			// Re-disabled the start button!
+			target.setAttribute('disabled','');
 
 		}
 	}
@@ -284,7 +288,6 @@ function beginScenario () {
 
 	let fipList = sysObjectsByCategory['fip'];
 	// needed to loop backwards so that the alarm counts were correct for FIPs closer to the main FirePanel
-	// TODO: make the title of the blockplan depend on a variable stored with the FIP, not the entire system
 	for (let l = fipList.length, i = l - 1; i >= 0; i--) {
 		let thisFip = fipList[i];
 

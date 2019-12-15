@@ -1,11 +1,12 @@
 //main.js - main program code
 
 
-//TODO: build start screen interface around this - option to launch with random alarm
-//TODO: have some kind of 'end scenario' button where it checks the state of the system and what you looked at (e.g. did you open the block plan? did you inspect the nominated detector / zone?, did you leave the external bell and warning system isolated?)
-
 //GLOBALS
 
+
+const thisVersion = '1.0';
+let versionDiv = document.getElementById('version');
+versionDiv.innerHTML = 'Version ' + thisVersion;
 
 
 
@@ -61,36 +62,85 @@ const deviceImageVersions = {
 	concealed: 1
 }
 
-const zoneThemes = [
-	{
-		name: 'magenta',
-		zoneBackgroundColor: 'rgba(255, 0, 255, 0.75)',
+const colorList = ['default', 'magenta', 'cyan', 'green', 'red'];
+
+const zoneThemes = {
+	magenta: {
+		zoneBackgroundColor: 'rgba(255, 221, 238, 0.75)',
 		zoneBorderColor: '#920580',
-		zoneTextColor: '#0cf6ff',
-		zoneTextBackgroundColor: '#920580',
+		zoneTextColor: '#240088',
+		zoneTextBackgroundColor: '#c784bf',
 	},
-	{
-		name: 'cyan',
+	cyan: {
 		zoneBackgroundColor: 'rgba(0, 255, 255, 0.75)',
 		zoneBorderColor: '#057992',
 		zoneTextColor: '#060349',
 		zoneTextBackgroundColor: '#35f7ff',
 	},
-	{
-		name: 'green',
-		zoneBackgroundColor: 'rgba(0, 255, 0, 0.75)',
+	green: {
+		zoneBackgroundColor: 'rgba(163, 255, 163, 0.75)',
 		zoneBorderColor: '#006500',
 		zoneTextColor: '#000000',
-		zoneTextBackgroundColor: '#00ff11',
+		zoneTextBackgroundColor: '#59dc62',
 	},
-	{
-		name: 'red',
-		zoneBackgroundColor: 'rgba(255, 0, 0, 0.75)',
+	red: {
+		zoneBackgroundColor: 'rgba(255, 81, 81, 0.75)',
 		zoneBorderColor: '#600000',
 		zoneTextColor: '#FFEE00',
-		zoneTextBackgroundColor: '#600000',
+		zoneTextBackgroundColor: '#aa1a1a',
 	},
-];
+	default: {
+		zoneBackgroundColor: 'rgba(255, 235, 59, 0.75)',
+		zoneBorderColor: 'rgb(230,150,0)',
+		zoneTextColor: 'black',
+		zoneTextBackgroundColor: 'rgb(255,255,150)',
+	}
+};
+
+const fipThemes = {
+	default: {
+		bright: 'orange',
+		panel: 'black',
+		bezel: 'blue',
+		lcdBright: '#ccff99',
+		lcdDark: '#666633',
+		lcdText: '#224422'
+	},
+	magenta: {
+		bright: 'magenta',
+		panel: '#1d001d',
+		bezel: 'magenta',
+		lcdBright: '#ff7af2',
+		lcdDark: '#55014a',
+		lcdText: '#360143'
+	},
+	cyan: {
+		bright: 'cyan',
+		panel: '#011414',
+		bezel: 'cyan',
+		lcdBright: '#aee2e3',
+		lcdDark: '#056172',
+		lcdText: '#060445'
+	},
+	green: {
+		bright: '#00ff00',
+		panel: '#002913',
+		bezel: '#00ff00',
+		lcdBright: '#ccff99',
+		lcdDark: '#006c00',
+		lcdText: '#013519'
+	},
+	red: {
+		bright: 'red',
+		panel: '#140101',
+		bezel: 'orange',
+		lcdBright: '#FF681B',
+		lcdDark: '#800000',
+		lcdText: '#450404'
+	},
+};
+
+
 
 // at the end of the scenario, the tracked devices are assigned a status code
 const feedbackStrings = [
@@ -247,7 +297,7 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
 		}
 	}
 
-	//TODO: this alarm activation needs to be bundled into a function, which also adds the activation date...
+
 
 	for(let i = 0; i < numAlarms; i++){
 		let device = list[chosenDevices[i]];
@@ -407,7 +457,6 @@ function getFeedbackCode(device) {
 	if (device.category == 'circuit' && checkCircuitHasBeenLookedAt(device) && !device.hasBeenLookedAt) {device.hasBeenLookedAt = true;}
 	if (device.hasBeenLookedAt) {binaryString += '1';} else {binaryString += '0';}
 
-	console.log(binaryString);
 	let feedbackCode = parseInt(binaryString, 2);
 	if (feedbackCode == 8 && device.hasNoReason) {feedbackCode = 13;}
 
@@ -419,12 +468,10 @@ function getDigest() {
 	let digest = {};
 	let digest_content = document.getElementsByClassName('digest')[0].getElementsByClassName('modal-body')[0];
 
-	console.log('____________________');
 	for (let i = 0, l = trackingList.length; i < l; i++) {
 		let device = trackingList[i];
 		let code = getFeedbackCode(device);
 		feedbackList[code].push(device);
-		console.log(device.name + ', status: ' + feedbackStrings[code]);
 	}
 		// work out whether enough time has elapsed since first successful reset
 		// to see reactivations
@@ -460,8 +507,7 @@ function getDigest() {
 		} else {
 			digest.numCorrectlyHandledBut = feedbackList[3].length;
 		}
-		console.log(digest);
-		console.log(initialAlarmList.length);
+
 
 		if (digest.numCorrectlyHandled == initialAlarmList.length) {
 			digest.allCorrectlyHandled = true;
@@ -552,6 +598,7 @@ function buildFips() {
 		viewport.appendChild(clone);
 
 		f.panel = document.getElementsByClassName('panel')[i];
+
 		f.panel.setAttribute('data-index', i);
 		// displace sub-FIPs by a small amount in x and z directions
 		f.panel.parentNode.style.left = i*15 + 'px';
@@ -580,7 +627,6 @@ function buildFips() {
 
 
 		//create the associated blockplan
-		//TODO- might be worth creating this as a separate object within the FIP, with own methods etc.
 		temp = document.getElementsByClassName('template-blockplan')[0];
 		clone = temp.content.cloneNode(true);
 		f.panel.parentNode.appendChild(clone);
@@ -589,6 +635,19 @@ function buildFips() {
 		f.blockplan.style.width = f.blockplan_details['dimensions'].x;
 		f.blockplan.getElementsByClassName('blockplan-content')[0].style.height = f.blockplan_details['dimensions'].y;
 
+		//apply theme colours
+		if (f.parent) {
+			let colour;
+			if (f.parent.colour) {colour = f.parent.colour;} else {colour = 'default';}
+			let theme = fipThemes[colour];
+			f.panel.style.setProperty('--theme-color-bright', theme.bright);
+			f.panel.style.setProperty('--theme-color-panel', theme.panel);
+			f.panel.style.setProperty('--theme-color-bezel', theme.bezel);
+			f.panel.style.setProperty('--theme-color-lcd-bright', theme.lcdBright);
+			f.panel.style.setProperty('--theme-color-lcd-dark', theme.lcdDark);
+			f.panel.style.setProperty('--theme-color-lcd-text', theme.lcdText);
+			f.blockplan.style.setProperty('--theme-color-bright', theme.bright);
+		}
 
 		//now we have a blockplan in the DOM, we can do the other blockplanny stuff, based on the blockplan_details stored with the FIP
 
@@ -611,7 +670,6 @@ function buildFips() {
 		}
 
 		f.blockplan_card = f.blockplan.getElementsByClassName('device-container')[0];
-		//TODO: find a way to make this stick to the window (and appear at a fixed position within the visible window)
 		f.blockplan_card_elements = {
 			header:	f.blockplan_card.getElementsByClassName('device-header')[0],
 			title: f.blockplan_card.getElementsByClassName('device-type')[0],
@@ -674,7 +732,7 @@ function buildFips() {
 					}
 				} else {
 				//if we are not at a boundary, enable both buttons
-					nextButton.removeAttribute('disabled');
+					prevButton.removeAttribute('disabled');
 					nextButton.removeAttribute('disabled');
 				}
 			}
@@ -690,6 +748,18 @@ function buildFips() {
 				let fipIndex = parseInt(f.blockplan.getAttribute('data-index'));
 				let id = parseInt(t.getAttribute('data-index'));
 				let device = f.deviceList[id];
+				if (device.parent) {
+					let colour;
+					if (device.parent.colour) {colour = device.parent.colour} else {colour = colorList[device.parent.loop%colorList.length];}
+						if (zoneThemes[colour]) {
+							let theme = zoneThemes[colour];
+							f.blockplan_card.style.setProperty('--zone-background-color', theme.zoneBackgroundColor);
+							f.blockplan_card.style.setProperty('--zone-border-color', theme.zoneBorderColor);
+							f.blockplan_card.style.setProperty('--zone-text-color', theme.zoneTextColor);
+							f.blockplan_card.style.setProperty('--zone-text-background-color', theme.zoneTextBackgroundColor);
+						}
+				}
+
 
 				if (device.category == 'fip') {
 					if (device.panel.parentNode.parentNode.classList.contains('show')) {
@@ -835,8 +905,7 @@ function buildFips() {
 						temp.style.width = f.blockplan_details['fip_dimensions'].x;
 						temp.style.height = f.blockplan_details['fip_dimensions'].y;
 						temp.classList.add('device-fip');
-					} //TODO: add conditional here, to handle FIPs on the blockplan
-					//needs data-index - this is the same as the device's position in the FIP's deviceList
+					}
 					temp.setAttribute('data-index', currentDeviceIndex);
 					currentDeviceIndex++;
 					//needs position
@@ -953,6 +1022,11 @@ function buildFips() {
 				let device = this.blockplan_displayed_device;
 				if(device.status_internal){
 					this.blockplan_card_elements['status'].innerHTML = deviceStatusStrings[device.status_internal];
+					if(device.status_internal == 'active') {
+						f.blockplan_card_elements['status'].classList.add('red-highlight');
+					} else {
+						f.blockplan_card_elements['status'].classList.remove('red-highlight');
+					}
 				} else {
 					this.blockplan_card_elements['status'].innerHTML = 'Unknown';
 				}
@@ -988,12 +1062,6 @@ function buildFips() {
 			this.alarmCount = 0;
 			this.ackedCount = 0;
 			this.isolCount = 0;
-
-
-			//TODO - have to make better use of lastAlarmTimes
-			// -- alarms should display in chronological order of activation (starting with first alarm)
-			// -- zone alarm should always capture the oldest of these alarms as its 'last Alarm Time' until a reset is attempted - then pick up the oldest of the reactivated alarms (will likely be in list order at this point).
-			// -- all other display order should be in list order though
 
 			for(let i = 0, l = list.length; i < l; i++){
 				let device = list[i];
@@ -1056,13 +1124,13 @@ function buildFips() {
 					break;
 				}
 			}
-			//handling statuses: this.status is what's checked by any upstream FIPs. actually, just set activated and stuck
-			//TODO: think about what to do if this input is isolated at the upstream FIP - will the applied status conflict with this in some way?
+
 
 				if(this.alarmCount > 0){
 					this.status_internal = 'active';
 					this.stuck = true;
 					this.mainStatus = false;
+					if(this.confirmState == 'master') {this.confirmState = 'none'};
 				} else if(this.ackedCount > 0){
 					this.status_internal = 'active';
 					this.stuck = true;
@@ -1074,7 +1142,6 @@ function buildFips() {
 						if(!this.firstNormalTime) {
 							let d = new Date();
 							this.firstNormalTime = d.getTime();
-							console.log(this.firstNormalTime);
 						}
 					}
 				}
@@ -1092,7 +1159,6 @@ function buildFips() {
 				if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
 				if(!this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
 
-			//TODO - incorporate a 'multiple alarms' light in between PREV and NEXT buttons
 				//alarms exist that haven't been acknowledged. Flash the ALARM annunciator
 			} else if(this.alarmCount > 0 && this.ackedCount == this.alarmCount){
 				if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
@@ -1184,20 +1250,29 @@ function buildFips() {
 	};
 
 	f.displayMainStatus = function(fipStatus){
-			let d = new Date();
-			this.descLine.innerHTML = 'FirePanel 3000';
-			this.typeLine.innerHTML = provideTimeString(d);
-			if (f.message) {
-				this.displayLines[1].innerHTML = f.message;
-			} else {
-				this.displayLines[1].innerHTML = fip_default_message;
+			if (this.confirmState == 'none') {
+				let d = new Date();
+				this.descLine.innerHTML = 'FirePanel 3000';
+				this.typeLine.innerHTML = provideTimeString(d);
+				if (f.message) {
+					this.displayLines[1].innerHTML = f.message;
+				} else {
+					this.displayLines[1].innerHTML = fip_default_message;
+				}
+				if (f.contact) {
+					this.displayLines[2].innerHTML = f.contact;
+				} else {
+					this.displayLines[2].innerHTML = fip_default_contact;
+				}
+				this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
+			} else if (this.confirmState == 'master') {
+				this.descLine.innerHTML = '';
+				this.typeLine.innerHTML = '';
+				for (let i = 1, l = this.displayLines.length; i < l; i++) {
+					this.displayLines[i].innerHTML = '';
+				}
+				this.displayLines[1].innerHTML = 'Press ACKNOWLEDGE to perform master reset :-)';
 			}
-			if (f.contact) {
-				this.displayLines[2].innerHTML = f.contact;
-			} else {
-				this.displayLines[2].innerHTML = fip_default_contact;
-			}
-			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
 	};
 
 
@@ -1440,6 +1515,7 @@ function buildFips() {
 						//isolate the device
 						this.isolateDevice(device);
 						break;
+
 				}
 				//return confirmState to 'none'
 				this.confirmState = 'none';
@@ -1456,6 +1532,8 @@ function buildFips() {
 				}
 				this.update();
 			}
+		} else if (this.mainStatus && this.confirmState == 'master'){
+				this.masterReset(this.addressableDeviceList);
 		}
 	};
 
@@ -1513,24 +1591,33 @@ function buildFips() {
 			if (device.parent.category == 'circuit' && !device.parent.addressable && !device.parent.hasReactivated) {
 				device.parent.hasReactivated = true;
 			}
-
-
 		}
 	};
 
+	f.masterReset = function(list) {
+		this.displayLines[1].innerHTML = 'Master Reset in progress :-)';
+		for(let i = 0, l = list.length; i < l; i++) {
+			this.resetDevice(list[i]);
+		}
+		 this.confirmState = 'none';
+
+	}
+
 	f.handleReset = function(){
-		if(this.confirmState == 'none' && !this.mainStatus){
+		if(this.confirmState == 'none' && !this.mainStatus) {
 
 			//if there are acknowledged alarms, attempt to reset these to normal
 			if(this.ackedCount > 0){
 				this.confirmState = 'multi';
-			}
-
-			else if(this.sortedDeviceList[this.currentIndex].status == 'alarm'){
+			} else if(this.sortedDeviceList[this.currentIndex].status == 'alarm'){
 				this.confirmState = 'single';
 			}
 
-		} else if(this.confirmState == 'single' || this.confirmState == 'multi' || this.confirmState == 'isol'){
+		} else if(this.confirmState == 'none' && this.mainStatus) {
+			// engage master reset
+			this.confirmState = 'master';
+
+		} else if(this.confirmState == 'single' || this.confirmState == 'multi' || this.confirmState == 'isol' || this.confirmState == 'master'){
 			//go back
 			this.confirmState = 'none';
 		}
@@ -1631,7 +1718,7 @@ function buildFips() {
 				closeElements(f.blockplan);
 			} else {
 				f.blockplan.classList.toggle('show');
-				f.blockplan.scrollIntoView({behavior: 'smooth'});
+				//f.blockplan.scrollIntoView({behavior: 'smooth'});
 			}
 		}
 	});

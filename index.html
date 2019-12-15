@@ -4,6 +4,7 @@
 	<title>Fipoff FIP Simulation</title>
 	<meta http-equiv='Content-Type' content='text/html'; charset='UTF-8'>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+	<meta name="format-detection" content="telephone=no"/>
 	<meta name='theme-color' content='#6d3300'>
 	<meta name='Description' content='About: Simulator for learning about installed fire safety systems, Author:Tristan Miller'>
 	<link rel='manifest' href='manifest.json' />
@@ -20,10 +21,14 @@
 		<div class='viewport'>
 			<div class='title-screen'>
 				<div class='title-screen-content'>
-					<h1>Welcome to fipoff</h1>
-					<div class='title-screen-button-container'>
+					<div class='title-screen-titles'>
+						<h2>welcome to</h2>
+						<h1>fipoff</h1>
+						<h2>alarm system simulation</h2>
+					</div>
+					<div class='button-container'>
 						<button onClick='openMenu();'>Start</button>
-						<button>About</button>
+						<button onclick='showElement(document.getElementsByClassName("about")[0])'>About</button>
 					</div>
 				</div>
 			</div>
@@ -94,6 +99,25 @@
 			</div>
 		</div>
 
+		<div class='modal about'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+					<h2>About Fipoff</h2>
+				</div>
+				<div class='modal-body'>
+					<p>Fipoff is a flexible fire alarm system simulator for firefighters.</p>
+					<p>It is designed for users to be able to apply it in many different ways - its main job is to serve up plausible scenarios with systems that behave as expected.</p>
+
+					<p><div id='version'></div></p>
+					<div class='logo'></div>
+					<p>Created by Tristan Miller (D Shift), 2019. </p>
+					<p>Thanks to many people in the Northern command for testing and feedback ❤️</p>
+					<p><a href='mailto:tristan.miller@sa.gov.au'>tristan.miller@sa.gov.au</a></p>
+					<button onclick='hideElement(document.getElementsByClassName("about")[0])'>Okay!</button>
+				</div>
+			</div>
+		</div>
+
 		<div class='modal endScenario'>
 			<div class='modal-content'>
 				<div class='modal-header'>
@@ -101,7 +125,7 @@
 				</div>
 				<div class='modal-body'>
 					<div class='modal-button-container'>
-						<button onClick='getDigest(); hideElement(document.getElementsByClassName("endScenario")[0]); showElement(document.getElementsByClassName("digest")[0]);'>Yes</button>
+						<button onClick='getDigest(); hideElement(document.getElementsByClassName("endScenario")[0]); showElement(document.getElementsByClassName("digest")[0]); hideElement(document.getElementsByClassName("get-digest")[0])'>Yes</button>
 						<button onClick='hideElement(document.getElementsByClassName("endScenario")[0])'>No</button>
 					</div>
 				</div>
@@ -117,7 +141,8 @@
 				</div>
 				<div class='model-footer'>
 					<div class='modal-button-container'>
-						<button onclick='restartScenario();'>Restart Scenario</button><button onclick='quitToTitle()'>Quit to Title</button>
+						<button onclick='restartScenario();'>Restart Scenario</button>
+						<button onclick='quitToTitle()'>Quit to Title</button>
 					</div>
 				</div>
 			</div>
@@ -135,7 +160,7 @@
 			<span class='interface-button closeBox'>&times</span>
 			<span class ='extBell unlit'>🔔</span>
 			<span class ='warnSys unlit'>🏃</span>
-			<span class ='blockplan-view'>📖</span>
+			<button class ='blockplan-view'>View Block Plan</button>
 			<div class='panel-fff'>
 				<div class='panel-inner'>
 						<div class='panel-upper'>
@@ -195,9 +220,9 @@
 					</div>
 				</div>
 			</div>
-			<button class='interface-button blockplan-prev'>◀</button>
-			<button class='interface-button blockplan-next'>▶</button>
-			<div class='blockplan-footer'>will contain page number</div>
+			<button class='interface-button blockplan-prev'>Prev. Page</button>
+			<button class='interface-button blockplan-next'>Next Page</button>
+			<div class='blockplan-footer'></div>
 		</div>
 	</template>
 

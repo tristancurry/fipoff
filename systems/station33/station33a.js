@@ -412,7 +412,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'668px', y: '606px'},
+							pos: {x:'666px', y: '606px'},
 							concealed: true
 						},
 						{
@@ -421,7 +421,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'663px', y:'555px'}
+							pos: {x:'661px', y:'555px'}
 						},
 						{
 							name: 'Community room north (ceiling)',
@@ -429,7 +429,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'663px', y:'420px'},
+							pos: {x:'661px', y:'420px'},
 							concealed: true
 						},
 
@@ -439,7 +439,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'662px', y: '391px'}
+							pos: {x:'660px', y: '391px'}
 						},
 						{
 							name: 'Community room kitchen',
@@ -447,7 +447,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'663px', y:'272px'}
+							pos: {x:'661px', y:'272px'}
 						},
 						{
 							name: 'Community room toilet',
@@ -455,7 +455,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'716px', y:'273px'}
+							pos: {x:'714px', y:'273px'}
 						},
 						{
 							name: 'Gym south (ceiling)',
@@ -463,7 +463,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'689px', y: '175px'},
+							pos: {x:'687px', y: '175px'},
 							concealed: true
 						},
 						{
@@ -472,7 +472,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'696px', y:'121px'},
+							pos: {x:'694px', y:'121px'},
 							concealed: true
 						},
 						{
@@ -481,7 +481,7 @@ system = {
 							type: 'smoke',
 							subtype: 'pe',
 							addressable: true,
-							pos: {x:'757px', y:'88px'}
+							pos: {x:'755px', y:'88px'}
 						},
 
 					]

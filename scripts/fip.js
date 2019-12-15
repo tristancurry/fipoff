@@ -432,12 +432,13 @@ function buildFips() {
 			if(this.blockplan_displayed_device){
 				let device = this.blockplan_displayed_device;
 				if(device.status_internal){
+          if(device.status_internal == 'active') {
+            f.blockplan_card_elements['status'].classList.add('red-highlight');
+          } else {
+            f.blockplan_card_elements['status'].classList.remove('red-highlight');
+          }
 					this.blockplan_card_elements['status'].innerHTML = deviceStatusStrings[device.status_internal];
-					if(device.status_internal == 'active') {
-						f.blockplan_card_elements['status'].classList.add('red-highlight');
-					} else {
-						f.blockplan_card_elements['status'].classList.remove('red-highlight');
-					}
+
 				} else {
 					this.blockplan_card_elements['status'].innerHTML = 'Unknown';
 				}

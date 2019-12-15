@@ -1,9 +1,6 @@
 //main.js - main program code
 
 
-//TODO: build start screen interface around this - option to launch with random alarm
-//TODO: have some kind of 'end scenario' button where it checks the state of the system and what you looked at (e.g. did you open the block plan? did you inspect the nominated detector / zone?, did you leave the external bell and warning system isolated?)
-
 //GLOBALS
 
 
@@ -300,7 +297,7 @@ function triggerRandomAlarms(deviceList, _numAlarms, clustered, _stuckProb) {
 		}
 	}
 
-	//TODO: this alarm activation needs to be bundled into a function, which also adds the activation date...
+
 
 	for(let i = 0; i < numAlarms; i++){
 		let device = list[chosenDevices[i]];
@@ -460,7 +457,6 @@ function getFeedbackCode(device) {
 	if (device.category == 'circuit' && checkCircuitHasBeenLookedAt(device) && !device.hasBeenLookedAt) {device.hasBeenLookedAt = true;}
 	if (device.hasBeenLookedAt) {binaryString += '1';} else {binaryString += '0';}
 
-	console.log(binaryString);
 	let feedbackCode = parseInt(binaryString, 2);
 	if (feedbackCode == 8 && device.hasNoReason) {feedbackCode = 13;}
 
@@ -472,12 +468,10 @@ function getDigest() {
 	let digest = {};
 	let digest_content = document.getElementsByClassName('digest')[0].getElementsByClassName('modal-body')[0];
 
-	console.log('____________________');
 	for (let i = 0, l = trackingList.length; i < l; i++) {
 		let device = trackingList[i];
 		let code = getFeedbackCode(device);
 		feedbackList[code].push(device);
-		console.log(device.name + ', status: ' + feedbackStrings[code]);
 	}
 		// work out whether enough time has elapsed since first successful reset
 		// to see reactivations
@@ -513,8 +507,7 @@ function getDigest() {
 		} else {
 			digest.numCorrectlyHandledBut = feedbackList[3].length;
 		}
-		console.log(digest);
-		console.log(initialAlarmList.length);
+
 
 		if (digest.numCorrectlyHandled == initialAlarmList.length) {
 			digest.allCorrectlyHandled = true;
@@ -634,7 +627,6 @@ function buildFips() {
 
 
 		//create the associated blockplan
-		//TODO- might be worth creating this as a separate object within the FIP, with own methods etc.
 		temp = document.getElementsByClassName('template-blockplan')[0];
 		clone = temp.content.cloneNode(true);
 		f.panel.parentNode.appendChild(clone);
@@ -648,7 +640,6 @@ function buildFips() {
 			let colour;
 			if (f.parent.colour) {colour = f.parent.colour;} else {colour = 'default';}
 			let theme = fipThemes[colour];
-			console.log(theme);
 			f.panel.style.setProperty('--theme-color-bright', theme.bright);
 			f.panel.style.setProperty('--theme-color-panel', theme.panel);
 			f.panel.style.setProperty('--theme-color-bezel', theme.bezel);
@@ -679,7 +670,6 @@ function buildFips() {
 		}
 
 		f.blockplan_card = f.blockplan.getElementsByClassName('device-container')[0];
-		//TODO: find a way to make this stick to the window (and appear at a fixed position within the visible window)
 		f.blockplan_card_elements = {
 			header:	f.blockplan_card.getElementsByClassName('device-header')[0],
 			title: f.blockplan_card.getElementsByClassName('device-type')[0],
@@ -915,8 +905,7 @@ function buildFips() {
 						temp.style.width = f.blockplan_details['fip_dimensions'].x;
 						temp.style.height = f.blockplan_details['fip_dimensions'].y;
 						temp.classList.add('device-fip');
-					} //TODO: add conditional here, to handle FIPs on the blockplan
-					//needs data-index - this is the same as the device's position in the FIP's deviceList
+					}
 					temp.setAttribute('data-index', currentDeviceIndex);
 					currentDeviceIndex++;
 					//needs position
@@ -1074,12 +1063,6 @@ function buildFips() {
 			this.ackedCount = 0;
 			this.isolCount = 0;
 
-
-			//TODO - have to make better use of lastAlarmTimes
-			// -- alarms should display in chronological order of activation (starting with first alarm)
-			// -- zone alarm should always capture the oldest of these alarms as its 'last Alarm Time' until a reset is attempted - then pick up the oldest of the reactivated alarms (will likely be in list order at this point).
-			// -- all other display order should be in list order though
-
 			for(let i = 0, l = list.length; i < l; i++){
 				let device = list[i];
 				//check to see if the device is a circuit (non-addressable) and not already in alarm, acked or isolated, check to see if any of its children are alarmed
@@ -1141,13 +1124,13 @@ function buildFips() {
 					break;
 				}
 			}
-			//handling statuses: this.status is what's checked by any upstream FIPs. actually, just set activated and stuck
-			//TODO: think about what to do if this input is isolated at the upstream FIP - will the applied status conflict with this in some way?
+
 
 				if(this.alarmCount > 0){
 					this.status_internal = 'active';
 					this.stuck = true;
 					this.mainStatus = false;
+					if(this.confirmState == 'master') {this.confirmState = 'none'};
 				} else if(this.ackedCount > 0){
 					this.status_internal = 'active';
 					this.stuck = true;
@@ -1159,7 +1142,6 @@ function buildFips() {
 						if(!this.firstNormalTime) {
 							let d = new Date();
 							this.firstNormalTime = d.getTime();
-							console.log(this.firstNormalTime);
 						}
 					}
 				}
@@ -1177,7 +1159,6 @@ function buildFips() {
 				if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
 				if(!this.annunAlarm.classList.contains('flashing')){this.annunAlarm.classList.toggle('flashing')};
 
-			//TODO - incorporate a 'multiple alarms' light in between PREV and NEXT buttons
 				//alarms exist that haven't been acknowledged. Flash the ALARM annunciator
 			} else if(this.alarmCount > 0 && this.ackedCount == this.alarmCount){
 				if(this.annunAlarm.classList.contains('unlit')){this.annunAlarm.classList.toggle('unlit')};
@@ -1269,20 +1250,29 @@ function buildFips() {
 	};
 
 	f.displayMainStatus = function(fipStatus){
-			let d = new Date();
-			this.descLine.innerHTML = 'FirePanel 3000';
-			this.typeLine.innerHTML = provideTimeString(d);
-			if (f.message) {
-				this.displayLines[1].innerHTML = f.message;
-			} else {
-				this.displayLines[1].innerHTML = fip_default_message;
+			if (this.confirmState == 'none') {
+				let d = new Date();
+				this.descLine.innerHTML = 'FirePanel 3000';
+				this.typeLine.innerHTML = provideTimeString(d);
+				if (f.message) {
+					this.displayLines[1].innerHTML = f.message;
+				} else {
+					this.displayLines[1].innerHTML = fip_default_message;
+				}
+				if (f.contact) {
+					this.displayLines[2].innerHTML = f.contact;
+				} else {
+					this.displayLines[2].innerHTML = fip_default_contact;
+				}
+				this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
+			} else if (this.confirmState == 'master') {
+				this.descLine.innerHTML = '';
+				this.typeLine.innerHTML = '';
+				for (let i = 1, l = this.displayLines.length; i < l; i++) {
+					this.displayLines[i].innerHTML = '';
+				}
+				this.displayLines[1].innerHTML = 'Press ACKNOWLEDGE to perform master reset :-)';
 			}
-			if (f.contact) {
-				this.displayLines[2].innerHTML = f.contact;
-			} else {
-				this.displayLines[2].innerHTML = fip_default_contact;
-			}
-			this.displayLines[3].innerHTML = 'System ' + this.statusStrings[fipStatus];
 	};
 
 
@@ -1525,6 +1515,7 @@ function buildFips() {
 						//isolate the device
 						this.isolateDevice(device);
 						break;
+
 				}
 				//return confirmState to 'none'
 				this.confirmState = 'none';
@@ -1541,6 +1532,8 @@ function buildFips() {
 				}
 				this.update();
 			}
+		} else if (this.mainStatus && this.confirmState == 'master'){
+				this.masterReset(this.addressableDeviceList);
 		}
 	};
 
@@ -1598,24 +1591,33 @@ function buildFips() {
 			if (device.parent.category == 'circuit' && !device.parent.addressable && !device.parent.hasReactivated) {
 				device.parent.hasReactivated = true;
 			}
-
-
 		}
 	};
 
+	f.masterReset = function(list) {
+		this.displayLines[1].innerHTML = 'Master Reset in progress :-)';
+		for(let i = 0, l = list.length; i < l; i++) {
+			this.resetDevice(list[i]);
+		}
+		 this.confirmState = 'none';
+
+	}
+
 	f.handleReset = function(){
-		if(this.confirmState == 'none' && !this.mainStatus){
+		if(this.confirmState == 'none' && !this.mainStatus) {
 
 			//if there are acknowledged alarms, attempt to reset these to normal
 			if(this.ackedCount > 0){
 				this.confirmState = 'multi';
-			}
-
-			else if(this.sortedDeviceList[this.currentIndex].status == 'alarm'){
+			} else if(this.sortedDeviceList[this.currentIndex].status == 'alarm'){
 				this.confirmState = 'single';
 			}
 
-		} else if(this.confirmState == 'single' || this.confirmState == 'multi' || this.confirmState == 'isol'){
+		} else if(this.confirmState == 'none' && this.mainStatus) {
+			// engage master reset
+			this.confirmState = 'master';
+
+		} else if(this.confirmState == 'single' || this.confirmState == 'multi' || this.confirmState == 'isol' || this.confirmState == 'master'){
 			//go back
 			this.confirmState = 'none';
 		}

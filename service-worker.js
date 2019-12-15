@@ -7,13 +7,17 @@ let urlsToCache = [
 	'scripts/main.js',
 	'scripts/interface.js',
 	'systems/station33/station33a.js',
+	'systems/station33/blockplanA_addr.png',
 	'systems/station33/station33c.js',
+	'systems/station33/blockplanA_conv.png',
 	'systems/abstract/abstractSimple/abstractSimple.js',
+	'systems/abstract/abstractSimple/abstractSimple.png',
 	'systems/abstract/abstractComplex/abstractComplex.js',
-	'images/devices.png',
-	'abstractSimple.png',
-	'blockplanA_addr.png',
-	'blockplanA_conv.png',
+	'systems/abstract/abstractComplex/abstractComplex_main_contents.png',
+	'systems/abstract/abstractComplex/abstractComplex_main_p2.png',
+	'systems/abstract/abstractComplex/abstractComplex_main_p3.png',
+	'systems/abstract/abstractComplex/abstractComplex_east.png',
+	'systems/abstract/abstractComplex/abstractComplex_west.png',
 
 ];
 

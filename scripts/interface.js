@@ -7,10 +7,6 @@ let scenarioInfo = [0,0,0,0]; //system, activationNum, activationLoc, Faults
 
 let selections = []
 
-let systemMenu = ['station33a', 'station33c', 'abstractSimple', 'abstractComplex'];
-let locationMenu = [false, true];
-let faultMenu = [0, 0.02, 0.15, 1];
-
 const titleScreen = document.getElementsByClassName('title-screen')[0];
 const menuContainer = document.getElementsByClassName('menu-container')[0];
 const menuPages = menuContainer.getElementsByClassName('menu-page');

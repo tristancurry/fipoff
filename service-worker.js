@@ -4,7 +4,6 @@ let urlsToCache = [
 	'manifest.json',
 	'css/styles.css',
 	'images/bgtest.png',
-	'images/bgtest.png',
 	'images/devices.png',
 	'scripts/swHandling.js',
 	'scripts/main.js',

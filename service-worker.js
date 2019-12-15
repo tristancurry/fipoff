@@ -1,4 +1,4 @@
-let CACHE_NAME = 'fipoff-cache-test00j';
+let CACHE_NAME = 'fipoff-cache-release000';
 let urlsToCache = [
 	'index.html',
 	'manifest.json',
@@ -9,6 +9,8 @@ let urlsToCache = [
 	'scripts/swHandling.js',
 	'scripts/main.js',
 	'scripts/interface.js',
+	'scripts/fip.js',
+	'scripts/config.js',
 	'systems/station33/station33a.js',
 	'systems/station33/blockplanA_addr.png',
 	'systems/station33/station33c.js',

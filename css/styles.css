@@ -23,11 +23,19 @@
 	display: none;
 }
 
-.get-digest {
+.sim-controls {
 	display: none;
 	position: absolute;
 	right: 20px;
 	z-index: 5;
+}
+
+.help-button, .get-digest {
+	display: inline-block;
+	font-size: 14px;
+}
+
+.get-digest {
 }
 
 html {
@@ -640,7 +648,7 @@ div {
 }
 
 
-.menu-back[disabled], .menu-start[disabled] {
+.menu-back[disabled], .menu-start[disabled], .menu-back[disabled]:hover, .menu-start[disabled]:hover{
 	background-color: #666666;
 	color: #BBBBBB;
 }
@@ -731,6 +739,17 @@ div {
 
 .modal-button-container {
 	margin: auto;
+}
+
+
+
+.help h3, .help p {
+	padding: 0px;
+	text-align: justify;
+}
+
+.help h3 {
+	padding-top: 10px;
 }
 
 @keyframes animatetop {
@@ -982,6 +1001,10 @@ div {
 	.device-detector:hover, .device-fip:hover {
 		background-color: var(--theme-color-bright);
 		opacity: 0.3;
+	}
+
+	.menu-start:hover {
+		background-color: #118811;
 	}
 
 }

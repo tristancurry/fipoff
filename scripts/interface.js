@@ -43,7 +43,7 @@ viewport.addEventListener('click', function(event) {
 	}
 
 	if (t.classList.contains('about')) {hideElement(t);}
-
+	if(t.classList.contains('endScenario')|| t.classList.contains('help')) {hideElement(t); showElement(document.getElementsByClassName("sim-controls")[0])}
 });
 
 function closeElements(target) {
@@ -299,7 +299,7 @@ function beginScenario () {
 		window.setInterval(function(){checkStuckList(); thisFip.update();}, 500);
 	}
 	trackActiveDevices(initialAlarmList);
-	showElement(document.getElementsByClassName('get-digest')[0]);
+	showElement(document.getElementsByClassName('sim-controls')[0]);
 }
 
 function beginEnd() {
@@ -377,6 +377,6 @@ function quitToTitle () {
 	}
 	// 3. render title screen visible
 	hideElement(document.getElementsByClassName('digest')[0]);
-	hideElement(document.getElementsByClassName('get-digest')[0]);
+	hideElement(document.getElementsByClassName('sim-controls')[0]);
 	showElement(titleScreen);
 }

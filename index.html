@@ -27,12 +27,15 @@
 						<h2>alarm system simulation</h2>
 					</div>
 					<div class='button-container'>
-						<button onClick='openMenu();'>Start</button>
+						<button onclick='openMenu();'>Start</button>
 						<button onclick='showElement(document.getElementsByClassName("about")[0])'>About</button>
 					</div>
 				</div>
 			</div>
-			<button class='get-digest' onClick='beginEnd();'>End Scenario</button>
+			<div class='sim-controls'>
+				<button class='help-button' onclick='showElement(document.getElementsByClassName("help")[0]); hideElement(document.getElementsByClassName("sim-controls")[0])'>Help</button>
+				<button class='get-digest' onclick='beginEnd(); hideElement(document.getElementsByClassName("sim-controls")[0])'>End Scenario</button>
+			</div>
 			<div class='menu-container'>
 				<div class='menu-header'><h1>Create Scenario</h1></div>
 				<div class='menu-content'>
@@ -118,6 +121,27 @@
 			</div>
 		</div>
 
+		<div class='modal help'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+					<h2>Hints and tips</h2>
+				</div>
+				<div class='modal-body'>
+					<h3>Fire Indicator Panels</h3>
+					<p>Interact with the panel by pressing the buttons.</p>
+					<p>Alarms can be reset individually, or in groups if acknowledged beforehand.</p>
+					<p>Once all alarms are clear, all devices can viewed using the Prev/Next buttons.</p>
+					<h3>Block Plans</h3>
+					<p>Click/tap on a device on the block plan to investigate the device.</p>
+					<p>Some block plans have more than one page. If so, navigation buttons will appear each side of the block plan.</p>
+					<h3>General</h3>
+					<p>When you are ready, you can click the 'End Scenario' button. This will provide brief feedback on your actions before allowing you to restart the scenario or return to the title screen.</p>
+
+					<button onclick='hideElement(document.getElementsByClassName("help")[0]); showElement(document.getElementsByClassName("sim-controls")[0])'>Okay!</button>
+				</div>
+			</div>
+		</div>
+
 		<div class='modal endScenario'>
 			<div class='modal-content'>
 				<div class='modal-header'>
@@ -125,8 +149,8 @@
 				</div>
 				<div class='modal-body'>
 					<div class='modal-button-container'>
-						<button onClick='getDigest(); hideElement(document.getElementsByClassName("endScenario")[0]); showElement(document.getElementsByClassName("digest")[0]); hideElement(document.getElementsByClassName("get-digest")[0])'>Yes</button>
-						<button onClick='hideElement(document.getElementsByClassName("endScenario")[0])'>No</button>
+						<button onClick='getDigest(); hideElement(document.getElementsByClassName("endScenario")[0]); showElement(document.getElementsByClassName("digest")[0]); hideElement(document.getElementsByClassName("sim-controls")[0])'>Yes</button>
+						<button onClick='hideElement(document.getElementsByClassName("endScenario")[0]); showElement(document.getElementsByClassName("sim-controls")[0])'>No</button>
 					</div>
 				</div>
 			</div>

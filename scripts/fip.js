@@ -47,6 +47,7 @@ function buildFips() {
 		f.blockplan.getElementsByClassName('blockplan-content')[0].style.height = f.blockplan_details['dimensions'].y;
 
 		//apply theme colours
+		//DIFFERENT DESIGNS OF FIP MAY NEED MORE OR LESS OF THESE PROPERTIES
 		if (f.parent) {
 			let colour;
 			if (f.parent.colour) {colour = f.parent.colour;} else {colour = 'default';}

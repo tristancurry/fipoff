@@ -1,0 +1,40 @@
+how the confusing panels will work
+
+
+The confusing panels will be composed of a set number of elements chosen at random from different categories.
+
+DISPLAYS (ways of displaying which detectors/zones are in alarm) - this may be sensitive to conventional vs addressable
+INDICATORS (ways of displaying the overall status of the system)
+CONTROL PANELS (control layouts)
+RULES (how the controls work, the logic or process required to deal with alarms)
+
+the system for assembling these things will be quite separate to the existing Panels
+an additional item will be generated alongside the confusing panel - a 'manual' that is dynamically created,
+based on the precise selection of elements.
+
+FURTHER DETAIL OF THESE THINGS
+
+DISPLAYS:
+LCD, but just one strip that has a scrolling marquee effect
+normal LCD but with dead pixels
+status LEDs for each input (green, yellow, red, or just positional or 1d with flash patterns), zone groupings - several variations
+a clock whose little hand points to the loop/zone number, big hand to the detector (if all clear, points to NORMAL) A small card
+  pops up to reveal the type of detector
+LED matrix with grid reference/lookup table. eg row A and B are the two-digit loop number, C,D,E are three digit input number.
+  F is the type of input, G is the status of the input (alarm, ack, isol, normal)
+
+INDICATORS:
+normal status lights
+single led. rapid blinking red means alarms active. Long pulses mean alarms are acknowledged. Single flash every 2 seconds means system has isolations.
+
+CONTROL PANELS:
+A numerical keypad. That's it - functions are contextually mapped and can be discovered in the manual
+a single button to cycle through active alarms.
+acknowledgement requires pressing a thumbs-up logo somewhere else on the panel.
+user must press N for next, P for previous, A for acknowledge, D for disable, R for reset
+
+RULES:
+all alarms must be acknowledged before reset
+all alarms must be reset one-by-one
+alarms can only be isolated if acknowledged
+'do you really want to do this' as an extra confirmation step...
